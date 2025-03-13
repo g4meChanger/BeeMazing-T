@@ -24,7 +24,6 @@
             --header-height: 58px; /* 15px padding * 2 + 24px font-size + buffer */
             --footer-height: 70px;
             --button-height: 60px; /* Add-user-btn height */
-            --button-bottom: 90px; /* Distance from bottom including buffer */
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -65,21 +64,23 @@
         .content {
             position: absolute;
             top: var(--header-height);
-            bottom: 0; /* Extend to bottom, user-list will handle spacing */
+            bottom: var(--footer-height);
             width: 100%;
             padding: 20px;
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            overflow: hidden; /* Prevent content from triggering scroll */
         }
         .user-list {
             list-style: none;
             padding: 0;
             width: 90%;
             max-width: 500px;
-            max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--button-height) - 40px); /* Account for padding and button */
+            height: calc(100% - 40px); /* Full height minus padding */
+            max-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--button-height) - 40px); /* Constrain height */
             overflow-y: auto; /* Scroll only if content exceeds max-height */
+            margin: 0 auto; /* Center the list */
+            position: relative;
+            top: 0; /* Anchor to top */
         }
         .user-list-item {
             display: flex;
@@ -208,7 +209,7 @@
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
-            height: 60px;
+            height: var(--button-height);
             background: var(--secondary-color);
             color: var(--primary-color);
             border: 3px solid var(--primary-color);
@@ -223,7 +224,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            z-index: 99; /* Below modal but above content */
+            z-index: 99;
+            pointer-events: auto; /* Always clickable */
         }
         .add-user-btn:hover {
             background: var(--primary-color);
