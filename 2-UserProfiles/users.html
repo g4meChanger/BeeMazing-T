@@ -50,7 +50,6 @@
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
             display: flex;
             justify-content: center;
-            position: relative; /* For overlay positioning */
         }
         .profile-card {
             background: var(--accent-color);
@@ -62,7 +61,6 @@
             width: 90%;
             max-width: 400px;
             transition: transform 0.3s ease;
-            z-index: 10; /* Above overlay */
         }
         .profile-card:hover {
             transform: translateY(-10px);
@@ -157,7 +155,6 @@
             text-align: center;
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 10; /* Above overlay */
         }
         .footer a {
             padding: 12px 25px;
@@ -226,33 +223,13 @@
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
-        /* Honey Rain Overlay */
-        .rain-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(33, 33, 33, 0.4); /* Darker overlay */
-            z-index: 900; /* Below drops but above content */
-            pointer-events: none;
-            opacity: 0;
-            animation: overlayFade 2s ease-out forwards;
-        }
-        @keyframes overlayFade {
-            0% { opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { opacity: 0; }
-        }
         /* Honey Rain */
         .honey-drop {
             position: fixed;
-            width: 18px;
-            height: 24px;
-            background: radial-gradient(circle, #FFB300 20%, var(--primary-color) 80%);
+            width: 15px;
+            height: 20px;
+            background: radial-gradient(circle, #FFB300 30%, var(--primary-color) 70%);
             border-radius: 50% 50% 70% 70%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
             animation: rain 1.5s linear forwards;
             z-index: 1001;
             pointer-events: none;
@@ -264,7 +241,7 @@
             }
             100% {
                 transform: translateY(120vh);
-                opacity: 0.7; /* Slightly less fade for visibility */
+                opacity: 0.5;
             }
         }
         /* Reward Popup */
@@ -460,11 +437,6 @@
         }
 
         function triggerHoneyRain(rewardAmount) {
-            // Create overlay
-            const overlay = document.createElement("div");
-            overlay.className = "rain-overlay";
-            document.body.appendChild(overlay);
-
             // Create honey drops
             for (let i = 0; i < 50; i++) {
                 const drop = document.createElement("div");
@@ -481,15 +453,14 @@
             popup.textContent = `+${rewardAmount} 🍯`;
             document.body.appendChild(popup);
 
-            // Pulse the honey counter and clean up
+            // Pulse the honey counter after rain starts
             setTimeout(() => {
                 const rewardElement = document.getElementById("rewardAmount");
                 rewardElement.classList.add("pulse");
                 setTimeout(() => {
                     rewardElement.classList.remove("pulse");
                     popup.remove();
-                    overlay.remove();
-                }, 1000); // Pulse lasts 1s, then remove popup and overlay
+                }, 1000); // Pulse lasts 1s, then remove popup
             }, 1000); // Start pulse after 1s of rain
         }
 
