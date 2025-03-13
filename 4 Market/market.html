@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeMazing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary-color: #FFC107; /* Honey yellow */
+            --secondary-color: #212121; /* Deep black */
+            --accent-color: #FFFFFF; /* White */
+            --light-bg: #FFF8E1; /* Pale honey */
+            --text-color: #212121;
+            --danger-color: #D32F2F; /* Red for remove */
+            --modal-bg: rgba(33, 33, 33, 0.7);
+        }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .menu-icon {
+            font-size: 28px;
+            margin-right: 15px;
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .menu-icon:hover {
+            transform: rotate(90deg);
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            letter-spacing: 1px;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .reward-list {
+            list-style: none;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+        }
+        .reward-item {
+            background: var(--accent-color);
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .reward-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .reward-item strong {
+            color: var(--secondary-color);
+        }
+        .add-reward-btn {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .add-reward-btn:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            transform: translateX(-50%) scale(1.1);
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            padding: 10px 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            height: 70px;
+        }
+        .footer a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        .footer a:hover {
+            transform: scale(1.1);
+        }
+        .footer-icon img {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        .footer-icon span {
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+        @media (max-width: 600px) {
+            .add-reward-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+            .footer-icon img {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <i class="fas fa-bars menu-icon" aria-label="Menu"></i>
+        <div class="title">Market</div>
+    </div>
+
+    <div class="content">
+        <ul class="reward-list" id="rewardList">
+            <!-- Rewards will be loaded here dynamically -->
+        </ul>
+    </div>
+
+    <a href="addreward.html" class="add-reward-btn" aria-label="Add Reward">+</a>
+
+    <div class="footer">
+        <a href="/1%20Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/1%20Home/HomeBtn.png" alt="Home" />
+            <span>Home</span>
+        </a>
+        <a href="/3%20Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
+            <img src="/1%20Home/TasksBtn.png" alt="Tasks" />
+            <span>Tasks</span>
+        </a>
+        <a href="/4%20Market/market.html" class="footer-icon" aria-label="Market">
+            <img src="/1%20Home/MarketBtn.png" alt="Market" />
+            <span>Market</span>
+        </a>
+        <a href="/5%20Stats/stats.html" class="footer-icon" aria-label="Stats">
+            <img src="/1%20Home/StatsBtn.png" alt="Stats" />
+            <span>Stats</span>
+        </a>
+    </div>
+
+    <script>
+        function loadRewards() {
+            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards_market")) || [];
+            const rewardList = document.getElementById("rewardList");
+
+            rewardList.innerHTML = "";
+            if (rewards.length === 0) {
+                rewardList.innerHTML = "<p>No rewards in the hive. Click + to add one.</p>";
+                return;
+            }
+
+            rewards.forEach((reward) => {
+                const rewardItem = document.createElement("li");
+                rewardItem.className = "reward-item";
+                rewardItem.innerHTML = `
+                    <strong>${reward.name}</strong><br>
+                    Honey: ${reward.diamonds} 🍯
+                `;
+                rewardList.appendChild(rewardItem);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", loadRewards);
+    </script>
+</body>
+</html>

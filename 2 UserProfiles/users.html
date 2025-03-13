@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeMazing Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary-color: #FFC107;
+            --secondary-color: #212121;
+            --accent-color: #FFFFFF;
+            --light-bg: #FFF8E1;
+            --text-color: #212121;
+            --danger-color: #D32F2F;
+            --modal-bg: rgba(33, 33, 33, 0.7);
+        }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            color: var(--secondary-color);
+            padding: 20px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .content {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+            display: flex;
+            justify-content: center;
+        }
+        .profile-card {
+            background: var(--accent-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            transition: transform 0.3s ease;
+        }
+        .profile-card:hover {
+            transform: translateY(-10px);
+        }
+        .profile-card h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        .profile-card p {
+            font-size: 18px;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+        .reward-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        #sellButton {
+            background: var(--secondary-color);
+            color: var(--accent-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 20px;
+            transition: background-color 0.3s ease;
+        }
+        #sellButton:hover {
+            background: #424242;
+        }
+        .action-buttons {
+            margin: 20px 0;
+        }
+        .action-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--secondary-color);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+        .task-list {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .task-item {
+            background: var(--accent-color);
+            padding: 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        .task-item:hover {
+            transform: translateY(-5px);
+        }
+        .finished-btn {
+            background: var(--secondary-color);
+            color: var(--accent-color);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .finished-btn:hover {
+            background: #424242;
+        }
+        .footer {
+            padding: 10px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .footer a {
+            padding: 12px 25px;
+            background: var(--secondary-color);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .footer a:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal-content, .sell-modal-content {
+            background: var(--accent-color);
+            padding: 25px;
+            border-radius: 15px;
+            width: 85%;
+            max-width: 400px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--primary-color);
+        }
+        .modal-content strong, .sell-modal-content strong {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        .sell-modal-content input {
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            margin: 15px 0;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+        }
+        .sell-modal-content button {
+            background: var(--secondary-color);
+            color: var(--accent-color);
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .sell-modal-content button:hover {
+            background: #424242;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        /* Honey Rain */
+        .honey-drop {
+            position: fixed;
+            width: 15px;
+            height: 20px;
+            background: radial-gradient(circle, #FFB300 30%, var(--primary-color) 70%);
+            border-radius: 50% 50% 70% 70%;
+            animation: rain 1.5s linear forwards;
+            z-index: 1001;
+            pointer-events: none;
+        }
+        @keyframes rain {
+            0% {
+                transform: translateY(-20vh);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(120vh);
+                opacity: 0.5;
+            }
+        }
+        /* Reward Popup */
+        .reward-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(255, 193, 7, 0.8);
+            animation: floatUp 2s ease-out forwards;
+            z-index: 1002;
+            pointer-events: none;
+        }
+        @keyframes floatUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            80% { transform: translate(-50%, -70%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -90%) scale(0.8); opacity: 0; }
+        }
+        /* Pulse Effect for Honey Counter */
+        .pulse {
+            animation: pulse 1s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        BeeMazing Profile
+    </div>
+
+    <div class="content">
+        <div class="profile-card">
+            <h1 id="profileName">Bee Name</h1>
+            <p>Welcome to the hive of <span id="userName"></span>.</p>
+            <div class="reward-container">
+                <p><strong>Honey:</strong> <span id="rewardAmount">0</span> 🍯</p>
+                <button id="sellButton">Sell Honey</button>
+            </div>
+            <div class="action-buttons">
+                <a href="#" id="rewardsButton" class="action-btn">Rewards</a>
+                <a href="#" id="marketButton" class="action-btn">Market</a>
+            </div>
+            <h3>Assigned Tasks:</h3>
+            <div id="userTasks" class="task-list">
+                <!-- Tasks will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="/1%20Home/home.html">Back to Hive</a>
+    </div>
+
+    <div id="sellModal" class="modal" style="display:none;">
+        <div class="sell-modal-content">
+            <strong>Enter honey to sell:</strong><br>
+            <input type="number" id="sellAmount" placeholder="Enter amount" />
+            <button id="confirmSell">Sell</button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const userName = urlParams.get('user');
+
+        if (userName) {
+            document.getElementById('profileName').textContent = userName;
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('rewardsButton').href = `userrewards.html?user=${userName}`;
+            document.getElementById('marketButton').href = `usermarket.html?user=${userName}`;
+            loadUserTasks(userName);
+            loadUserReward(userName);
+        }
+
+        function loadUserTasks(userName) {
+            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+            const userTasks = tasks.filter(task => task.users.includes(userName));
+            const userTasksDiv = document.getElementById("userTasks");
+
+            if (userTasks.length === 0) {
+                userTasksDiv.innerHTML = "<p>No tasks assigned to this bee.</p>";
+            } else {
+                userTasksDiv.innerHTML = "";
+                userTasks.forEach(task => {
+                    const taskDiv = document.createElement("div");
+                    taskDiv.className = "task-item";
+                    taskDiv.innerHTML = `
+                        <strong>${task.title}</strong><br>
+                        Honey: ${task.reward || "0"} 🍯
+                    `;
+                    const currentUser = task.turn || task.users[Math.floor(Math.random() * task.users.length)];
+                    if (currentUser === userName) {
+                        const finishedButton = document.createElement("button");
+                        finishedButton.textContent = "Finish Task";
+                        finishedButton.className = "finished-btn";
+                        finishedButton.onclick = (e) => {
+                            e.stopPropagation();
+                            finishTask(userName, task, finishedButton);
+                        };
+                        taskDiv.appendChild(finishedButton);
+                    }
+                    userTasksDiv.appendChild(taskDiv);
+                    taskDiv.addEventListener("click", function() {
+                        showTaskDetails(task);
+                    });
+                });
+            }
+        }
+
+        function loadUserReward(userName) {
+            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+            const userReward = rewards[userName] || 0;
+            document.getElementById("rewardAmount").textContent = userReward;
+        }
+
+        document.getElementById('sellButton').addEventListener('click', function() {
+            document.getElementById('sellModal').style.display = 'flex';
+        });
+
+        document.getElementById('sellModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.getElementById('sellModal').style.display = 'none';
+            }
+        });
+
+        document.getElementById('confirmSell').addEventListener('click', function() {
+            const sellAmount = Number(document.getElementById('sellAmount').value);
+            if (sellAmount > 0) {
+                sellReward(userName, sellAmount);
+                document.getElementById('sellModal').style.display = 'none';
+            } else {
+                alert("Please enter a valid amount.");
+            }
+        });
+
+        function sellReward(userName, amount) {
+            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+            const userReward = rewards[userName] || 0;
+            if (userReward >= amount) {
+                rewards[userName] = userReward - amount;
+                localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+                loadUserReward(userName);
+            } else {
+                alert("Not enough honey!");
+            }
+        }
+
+        function finishTask(userName, task, button) {
+            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+            const taskIndex = tasks.findIndex(t => t.title === task.title);
+            const currentUserIndex = task.users.indexOf(task.turn);
+            const nextUser = task.users[(currentUserIndex + 1) % task.users.length];
+            task.turn = nextUser;
+            tasks[taskIndex] = task;
+            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+
+            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+            let userReward = rewards[userName] || 0;
+            const taskReward = Number(task.reward) || 0;
+            rewards[userName] = userReward + taskReward;
+            localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+
+            saveTaskHistory(userName, task);
+            triggerHoneyRain(taskReward);
+            loadUserTasks(userName);
+            loadUserReward(userName);
+        }
+
+        function saveTaskHistory(userName, task) {
+            const now = new Date();
+            const month = now.toLocaleString("default", { month: "long" });
+            const date = now.getDate();
+            const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+            const dateString = now.toLocaleDateString();
+
+            const history = JSON.parse(localStorage.getItem("familyApp_history")) || {};
+            if (!history[month]) history[month] = {};
+            if (!history[month][date]) history[month][date] = [];
+            history[month][date].push({
+                title: task.title,
+                user: userName,
+                timestamp: `${dateString} at ${time}`,
+            });
+            localStorage.setItem("familyApp_history", JSON.stringify(history));
+        }
+
+        function triggerHoneyRain(rewardAmount) {
+            // Create honey drops
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement("div");
+                drop.className = "honey-drop";
+                drop.style.left = `${Math.random() * 100}vw`;
+                drop.style.animationDelay = `${Math.random() * 0.5}s`; // Staggered start
+                document.body.appendChild(drop);
+                setTimeout(() => drop.remove(), 2000); // Remove after animation
+            }
+
+            // Create reward popup
+            const popup = document.createElement("div");
+            popup.className = "reward-popup";
+            popup.textContent = `+${rewardAmount} 🍯`;
+            document.body.appendChild(popup);
+
+            // Pulse the honey counter after rain starts
+            setTimeout(() => {
+                const rewardElement = document.getElementById("rewardAmount");
+                rewardElement.classList.add("pulse");
+                setTimeout(() => {
+                    rewardElement.classList.remove("pulse");
+                    popup.remove();
+                }, 1000); // Pulse lasts 1s, then remove popup
+            }, 1000); // Start pulse after 1s of rain
+        }
+
+        function showTaskDetails(task) {
+            const taskDetails = `
+                <strong>Title:</strong> ${task.title}<br>
+                <strong>Notes:</strong> ${task.notes || "None"}<br>
+                <strong>Room:</strong> ${task.room || "Not specified"}<br>
+                <strong>Repeat:</strong> ${task.repeat || "Not specified"}<br>
+                <strong>Settings:</strong> ${task.settings || "Not specified"}<br>
+                <strong>Date:</strong> ${task.date || "Not specified"}<br>
+                <strong>Reminder:</strong> ${task.reminder ? "Yes" : "No"}<br>
+                <strong>Bees:</strong> ${task.users.join(", ") || "None"}<br>
+                <strong>Honey:</strong> ${task.reward || "0"} 🍯<br>
+                <strong>Current Turn:</strong> ${task.turn || task.users[Math.floor(Math.random() * task.users.length)]}
+            `;
+            const modal = document.createElement("div");
+            modal.className = "modal";
+            modal.innerHTML = `
+                <div class="modal-content">
+                    ${taskDetails}
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
