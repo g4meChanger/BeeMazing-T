@@ -19,15 +19,15 @@
             --text-color: #212121;
             --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
+            --header-height: 68px;
+            --footer-height: 70px;
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
-            display: flex;
-            flex-direction: column;
             height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden;
         }
         .header {
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
@@ -36,20 +36,22 @@
             text-align: center;
             font-size: 28px;
             font-weight: 600;
-            text-transform: uppercase;
             letter-spacing: 1px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            position: sticky;
+            position: fixed;
             top: 0;
+            width: 100%;
+            height: var(--header-height);
             z-index: 100;
         }
         .content {
+            position: absolute;
+            top: var(--header-height);
+            bottom: var(--footer-height);
+            width: 100%;
             padding: 20px;
-            flex-grow: 1;
             overflow-y: auto;
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
-            display: flex;
-            justify-content: center;
         }
         .profile-card {
             background: var(--accent-color);
@@ -58,8 +60,9 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
-            width: 90%;
-            max-width: 400px;
+            width: 100%; /* Full width on small screens */
+            max-width: 480px; /* Increased from 400px for more room */
+            margin: 0 auto;
             transition: transform 0.3s ease;
         }
         .profile-card:hover {
@@ -100,6 +103,10 @@
         }
         .action-buttons {
             margin: 20px 0;
+            display: flex; /* Added flexbox */
+            justify-content: center; /* Center buttons */
+            flex-wrap: wrap; /* Allow wrapping if needed */
+            gap: 10px; /* Replace margins with gap for cleaner spacing */
         }
         .action-btn {
             display: inline-block;
@@ -110,7 +117,6 @@
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
-            margin: 0 10px;
             transition: all 0.3s ease;
         }
         .action-btn:hover {
@@ -151,24 +157,37 @@
             background: #424242;
         }
         .footer {
-            padding: 10px 0;
-            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            padding: 10px 0;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            height: var(--footer-height);
         }
         .footer a {
-            padding: 12px 25px;
-            background: var(--secondary-color);
-            color: var(--accent-color);
             text-decoration: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            color: var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
         }
         .footer a:hover {
-            background: var(--primary-color);
-            color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+        .footer-icon img {
+            width: 35px;
+            height: 35px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        .footer-icon span {
+            font-size: 12px;
+            margin-top: 2px;
+            font-weight: 600;
         }
         .modal {
             position: fixed;
@@ -273,11 +292,34 @@
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
+        /* Media Query for Mobile */
+        @media (max-width: 480px) {
+            .profile-card {
+                max-width: 100%; /* Full width on small screens */
+                padding: 15px; /* Slightly less padding */
+            }
+            .action-btn {
+                padding: 10px 15px; /* Reduced padding for mobile */
+                font-size: 14px; /* Smaller font */
+                margin: 5px; /* Reduced margin */
+            }
+            .action-buttons {
+                gap: 5px; /* Tighter gap on mobile */
+            }
+            .reward-container {
+                flex-direction: column; /* Stack honey and sell button on mobile */
+                gap: 10px;
+            }
+            #sellButton {
+                margin-left: 0; /* Remove margin on mobile */
+                width: 100%; /* Full width for consistency */
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        BeeMazing Profile
+        BeeMazing
     </div>
 
     <div class="content">
@@ -300,7 +342,10 @@
     </div>
 
     <div class="footer">
-        <a href="/BeeMazing-Y1/1-Home/home.html">Back to Hive</a>
+        <a href="/BeeMazing-Y1/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/1-Home/HomeBtn.png" alt="Home" />
+            <span>Home</span>
+        </a>
     </div>
 
     <div id="sellModal" class="modal" style="display:none;">
@@ -437,31 +482,26 @@
         }
 
         function triggerHoneyRain(rewardAmount) {
-            // Create honey drops
             for (let i = 0; i < 50; i++) {
                 const drop = document.createElement("div");
                 drop.className = "honey-drop";
                 drop.style.left = `${Math.random() * 100}vw`;
-                drop.style.animationDelay = `${Math.random() * 0.5}s`; // Staggered start
+                drop.style.animationDelay = `${Math.random() * 0.5}s`;
                 document.body.appendChild(drop);
-                setTimeout(() => drop.remove(), 2000); // Remove after animation
+                setTimeout(() => drop.remove(), 2000);
             }
-
-            // Create reward popup
             const popup = document.createElement("div");
             popup.className = "reward-popup";
             popup.textContent = `+${rewardAmount} 🍯`;
             document.body.appendChild(popup);
-
-            // Pulse the honey counter after rain starts
             setTimeout(() => {
                 const rewardElement = document.getElementById("rewardAmount");
                 rewardElement.classList.add("pulse");
                 setTimeout(() => {
                     rewardElement.classList.remove("pulse");
                     popup.remove();
-                }, 1000); // Pulse lasts 1s, then remove popup
-            }, 1000); // Start pulse after 1s of rain
+                }, 1000);
+            }, 1000);
         }
 
         function showTaskDetails(task) {

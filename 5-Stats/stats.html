@@ -340,19 +340,19 @@
 
     <div class="footer">
         <a href="/BeeMazing-Y1/1-Home/home.html" class="footer-icon" aria-label="Home">
-            <img src="/BeeMazing-Y1/1-Home/HomeBtn.png" alt="Home" />
+            <img src="/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
         </a>
         <a href="/BeeMazing-Y1/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
-            <img src="/BeeMazing-Y1/1-Home/TasksBtn.png" alt="Tasks" />
+            <img src="/1-Home/TasksBtn.png" alt="Tasks" />
             <span>Tasks</span>
         </a>
         <a href="/BeeMazing-Y1/4-Market/market.html" class="footer-icon" aria-label="Market">
-            <img src="/BeeMazing-Y1/1-Home/MarketBtn.png" alt="Market" />
+            <img src="/1-Home/MarketBtn.png" alt="Market" />
             <span>Market</span>
         </a>
         <a href="/BeeMazing-Y1/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
-            <img src="/BeeMazing-Y1/1-Home/StatsBtn.png" alt="Stats" />
+            <img src="/1-Home/StatsBtn.png" alt="Stats" />
             <span>Stats</span>
         </a>
     </div>
@@ -492,7 +492,7 @@
 
         document.addEventListener("DOMContentLoaded", renderHistory);
 
-        const screamAudio = new Audio('/999/scream.mp3');
+        const screamAudio = new Audio('/BeeMazing-Y1/999/scream.mp3');
         screamAudio.load();
 
         function triggerPrank() {
@@ -503,7 +503,7 @@
             screamAudio.play();
 
             const initialImage = document.createElement('img');
-            initialImage.src = '/999/igm1.png';
+            initialImage.src = '/BeeMazing-Y1/999/igm1.png';
             initialImage.alt = 'Initial Scary Face';
             initialImage.style.width = 'auto';
             initialImage.style.height = 'auto';
@@ -523,7 +523,7 @@
             setTimeout(() => {
                 overlay.innerHTML = '';
                 const finalImage = document.createElement('img');
-                finalImage.src = '/999/screaming.png';
+                finalImage.src = '/BeeMazing-Y1/999/screaming.png';
                 finalImage.alt = 'Final Scary Face';
                 finalImage.style.width = 'auto';
                 finalImage.style.height = 'auto';
