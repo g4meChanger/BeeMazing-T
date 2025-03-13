@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Make the entire user item clickable
             newUserItem.style.cursor = "pointer";
             newUserItem.addEventListener("click", function () {
-                window.location.href = `/2-UserProfiles/users.html?user=${encodeURIComponent(username)}`;
+                window.location.href = `/BeeMazing-Y1/2-UserProfiles/users.html?user=${encodeURIComponent(username)}`;
             });
 
             // Add remove button
