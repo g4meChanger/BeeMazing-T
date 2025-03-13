@@ -9,10 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     renderUsers();
 
-    // Show the modal and disable the + button
+    // Show the modal with a smooth animation when "+" button is clicked
     addUserBtn.addEventListener("click", function () {
-        addUserModal.classList.add("show");
-        addUserBtn.classList.add("disabled");
+        addUserModal.classList.add("show"); // Add 'show' class for animation
     });
 
     // Add user when "Add" button is clicked
@@ -22,19 +21,17 @@ document.addEventListener("DOMContentLoaded", function () {
             users.push(username);
             localStorage.setItem("users", JSON.stringify(users));
             renderUsers();
-            usernameInput.value = "";
-            addUserModal.classList.remove("show");
-            addUserBtn.classList.remove("disabled");
+            usernameInput.value = ""; // Clear input
+            addUserModal.classList.remove("show"); // Close modal
         } else {
             alert("Please enter a valid user name.");
         }
     });
 
-    // Close modal when clicking outside and re-enable + button
+    // Close modal when clicking outside the modal content
     addUserModal.addEventListener("click", function (e) {
         if (e.target === addUserModal) {
             addUserModal.classList.remove("show");
-            addUserBtn.classList.remove("disabled");
         }
     });
 
@@ -62,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Prevent remove button from triggering the profile view
             removeBtn.addEventListener("click", function (event) {
-                event.stopPropagation();
+                event.stopPropagation(); // Stop event from propagating to parent
                 showConfirmationDialog(username, newUserItem);
             });
 
@@ -71,9 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
             newUserItem.appendChild(removeBtn);
             userList.appendChild(newUserItem);
         });
-
-        // Scroll to the bottom of the list after adding a new user
-        userList.scrollTop = userList.scrollHeight;
     }
 
     // Function to show confirmation dialog
@@ -125,19 +119,23 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.appendChild(confirmationModal);
 
         modalContent.querySelector("#confirmYes").addEventListener("click", function () {
+            // Remove the user from the array
             const userIndex = users.indexOf(username);
             if (userIndex !== -1) {
                 users.splice(userIndex, 1);
-                localStorage.setItem("users", JSON.stringify(users));
+                localStorage.setItem("users", JSON.stringify(users)); // Update localStorage
             }
+
+            // Remove the DOM element
             userList.removeChild(userItem);
+
+            // Remove the confirmation modal
             document.body.removeChild(confirmationModal);
-            addUserBtn.classList.remove("disabled");
         });
 
         modalContent.querySelector("#confirmNo").addEventListener("click", function () {
+            // Remove the confirmation modal
             document.body.removeChild(confirmationModal);
-            addUserBtn.classList.remove("disabled");
         });
     }
 });
