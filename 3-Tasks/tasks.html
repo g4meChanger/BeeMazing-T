@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BeeMazing</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -12,22 +12,23 @@
             box-sizing: border-box;
         }
         :root {
-            --primary-color: #FFC107; /* Honey yellow */
-            --secondary-color: #212121; /* Deep black */
-            --accent-color: #FFFFFF; /* White */
-            --light-bg: #FFF8E1; /* Pale honey */
+            --primary-color: #FFC107;
+            --secondary-color: #212121;
+            --accent-color: #FFFFFF;
+            --light-bg: #FFF8E1;
             --text-color: #212121;
-            --danger-color: #D32F2F; /* Red for remove */
+            --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
+            --header-height: 58px; /* 15px padding * 2 + 24px font + 4px buffer */
+            --footer-height: 70px;
+            --add-btn-height: 80px; /* 60px button + 20px buffer */
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
-            overflow-x: hidden;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; /* Prevent body scroll */
         }
         .header {
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
@@ -36,8 +37,10 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            position: sticky;
+            position: fixed; /* Changed to fixed */
             top: 0;
+            width: 100%;
+            height: var(--header-height);
             z-index: 100;
         }
         .menu-icon {
@@ -57,8 +60,12 @@
             letter-spacing: 1px;
         }
         .content {
-            flex: 1;
+            position: absolute;
+            top: var(--header-height);
+            bottom: calc(var(--footer-height) + var(--add-btn-height)); /* Reserve space for button */
+            width: 100%;
             padding: 20px;
+            overflow-y: auto; /* Scroll only when needed */
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
         }
         .task-item {
@@ -85,7 +92,7 @@
             padding: 10px 0;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
             z-index: 100;
-            height: 70px;
+            height: var(--footer-height);
         }
         .footer a {
             text-decoration: none;
@@ -110,7 +117,7 @@
         }
         .add-task-btn {
             position: fixed;
-            bottom: 90px;
+            bottom: calc(var(--footer-height) + 10px); /* Above footer */
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
@@ -127,6 +134,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
+            z-index: 99; /* Below footer but above content */
         }
         .add-task-btn:hover {
             background: var(--primary-color);
@@ -198,6 +206,7 @@
                 width: 50px;
                 height: 50px;
                 font-size: 28px;
+                bottom: calc(var(--footer-height) + 10px); /* Consistent on mobile */
             }
             .footer-icon img {
                 width: 35px;
