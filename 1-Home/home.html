@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- Prevent zoom -->
     <meta name="theme-color" content="#FFC107">
     <title>BeeMazing</title>
     <link rel="manifest" href="manifest.json">
@@ -21,15 +21,16 @@
             --text-color: #212121;
             --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
-            --header-height: 58px; /* 15px padding * 2 + 24px font + 4px for safety */
+            --header-height: 58px;
             --footer-height: 70px;
+            --add-btn-height: 80px; /* 60px button + 20px buffer */
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
             height: 100vh;
-            overflow: hidden; /* Prevent body scrolling */
+            overflow: hidden;
         }
         .header {
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
@@ -38,7 +39,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            position: fixed; /* Changed to fixed */
+            position: fixed;
             top: 0;
             width: 100%;
             height: var(--header-height);
@@ -63,10 +64,10 @@
         .content {
             position: absolute;
             top: var(--header-height);
-            bottom: var(--footer-height);
+            bottom: calc(var(--footer-height) + var(--add-btn-height)); /* Reserve space for button */
             width: 100%;
             padding: 20px;
-            overflow-y: auto; /* Scroll only when content overflows */
+            overflow-y: auto;
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
             display: flex;
             flex-direction: column;
@@ -171,6 +172,7 @@
             text-align: center;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
             border: 2px solid var(--primary-color);
+            position: relative; /* Ensure it stays in view */
         }
         .modal-content h3 {
             color: var(--secondary-color);
@@ -184,6 +186,8 @@
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             font-size: 16px;
+            outline: none; /* Remove focus outline */
+            -webkit-appearance: none; /* Remove default mobile styles */
         }
         .modal-content button {
             padding: 12px 25px;
@@ -201,7 +205,7 @@
         }
         .add-user-btn {
             position: fixed;
-            bottom: 90px;
+            bottom: calc(var(--footer-height) + 10px); /* Position above footer */
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
@@ -220,7 +224,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            z-index: 99; /* Below footer but above content */
+            z-index: 99;
         }
         .add-user-btn:hover {
             background: var(--primary-color);
@@ -240,10 +244,14 @@
                 width: 50px;
                 height: 50px;
                 font-size: 28px;
+                bottom: calc(var(--footer-height) + 10px); /* Consistent on mobile */
             }
             .footer-icon img {
                 width: 35px;
                 height: 35px;
+            }
+            .modal-content {
+                width: 90%; /* Slightly wider on mobile */
             }
         }
     </style>
