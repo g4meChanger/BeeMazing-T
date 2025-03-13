@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BeeMazing - Add Reward</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -17,19 +17,25 @@
             --accent-color: #FFFFFF;
             --light-bg: #FFF8E1;
             --text-color: #212121;
+            --header-height: 58px; /* 15px padding * 2 + 24px font + 4px buffer */
+            --footer-height: 70px; /* Matches footer height */
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
-            display: flex;
-            flex-direction: column;
             height: 100vh;
+            overflow: hidden; /* Prevent body scroll */
         }
         .header {
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
             padding: 15px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: var(--header-height);
+            z-index: 100;
         }
         .title {
             font-size: 24px;
@@ -37,10 +43,15 @@
             color: var(--secondary-color);
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-align: center;
         }
         .content {
-            flex: 1;
+            position: absolute;
+            top: var(--header-height);
+            bottom: var(--footer-height); /* Reserve space for footer */
+            width: 100%;
             padding: 20px;
+            overflow-y: auto; /* Scroll only if needed (unlikely here) */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -69,6 +80,8 @@
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             font-size: 16px;
+            outline: none; /* Remove focus outline */
+            -webkit-appearance: none; /* Normalize mobile input */
         }
         .form-container button {
             width: 100%;
@@ -93,6 +106,8 @@
             padding: 10px 0;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
             text-align: center;
+            height: var(--footer-height);
+            z-index: 100;
         }
         .footer a {
             color: var(--secondary-color);
@@ -116,7 +131,7 @@
     <div class="content">
         <div class="form-container">
             <label for="rewardName">Reward:</label>
-            <input type="text" id="rewardName" placeholder="e.g., Honey Spa">
+            <input type="text" id="rewardName" placeholder="Enter reward">
             <label for="rewardDiamonds">Honey:</label>
             <input type="number" id="rewardDiamonds" placeholder="Enter honey cost" min="1">
             <button onclick="saveReward()">Save</button>
