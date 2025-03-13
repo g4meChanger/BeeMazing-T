@@ -14,24 +14,22 @@
             box-sizing: border-box;
         }
         :root {
-            --primary-color: #FFC107;
-            --secondary-color: #212121;
-            --accent-color: #FFFFFF;
-            --light-bg: #FFF8E1;
+            --primary-color: #FFC107; /* Honey yellow */
+            --secondary-color: #212121; /* Deep black */
+            --accent-color: #FFFFFF; /* White */
+            --light-bg: #FFF8E1; /* Pale honey */
             --text-color: #212121;
-            --danger-color: #D32F2F;
+            --danger-color: #D32F2F; /* Red for remove */
             --modal-bg: rgba(33, 33, 33, 0.7);
-            --header-height: 58px;
-            --footer-height: 70px;
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
+            overflow-x: hidden;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
         }
         .header {
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
@@ -40,10 +38,8 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            position: fixed;
+            position: sticky;
             top: 0;
-            width: 100%;
-            height: var(--header-height);
             z-index: 100;
         }
         .menu-icon {
@@ -63,22 +59,18 @@
             letter-spacing: 1px;
         }
         .content {
+            flex: 1;
             padding: 20px;
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
             display: flex;
             flex-direction: column;
             align-items: center;
-            flex-grow: 1; /* Allow content to expand */
-        }
-        .user-list-container {
-            width: 90%;
-            max-width: 500px;
-            max-height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); /* 40px for padding */
-            overflow-y: auto; /* Scroll only when needed */
         }
         .user-list {
             list-style: none;
             padding: 0;
+            width: 90%;
+            max-width: 500px;
         }
         .user-list-item {
             display: flex;
@@ -125,7 +117,7 @@
             padding: 10px 0;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
             z-index: 100;
-            height: var(--footer-height);
+            height: 70px;
         }
         .footer a {
             text-decoration: none;
@@ -203,25 +195,25 @@
         }
         .add-user-btn {
             position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            background: var(--secondary-color);
-            color: var(--primary-color);
-            border: 3px solid var(--primary-color);
-            border-radius: 50%;
-            font-size: 36px;
-            line-height: 60px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    border: 3px solid var(--primary-color);
+    border-radius: 50%;
+    font-size: 36px;
+    line-height: 60px; /* Explicitly set to match height */
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none; /* Ensure no underline */
         }
         .add-user-btn:hover {
             background: var(--primary-color);
@@ -256,11 +248,9 @@
     </div>
 
     <div class="content">
-        <div class="user-list-container">
-            <ul class="user-list" id="userList">
-                <!-- Users will be added here dynamically -->
-            </ul>
-        </div>
+        <ul class="user-list" id="userList">
+            <!-- Users will be added here dynamically -->
+        </ul>
     </div>
 
     <div class="modal" id="addUserModal">
