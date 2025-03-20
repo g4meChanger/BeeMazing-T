@@ -19,16 +19,16 @@
             --text-color: #212121;
             --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
-            --header-height: 58px; /* 15px padding * 2 + 24px font + 4px buffer */
+            --header-height: 58px;
             --footer-height: 70px;
-            --add-btn-height: 80px; /* 60px button + 20px buffer */
+            --add-btn-height: 80px;
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
             background-color: var(--light-bg);
             color: var(--text-color);
             height: 100vh;
-            overflow: hidden; /* Prevent body scroll */
+            overflow: hidden;
         }
         .header {
             background: linear-gradient(135deg, var(--primary-color), #FFB300);
@@ -37,7 +37,7 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            position: fixed; /* Changed to fixed */
+            position: fixed;
             top: 0;
             width: 100%;
             height: var(--header-height);
@@ -62,10 +62,10 @@
         .content {
             position: absolute;
             top: var(--header-height);
-            bottom: calc(var(--footer-height) + var(--add-btn-height)); /* Reserve space for button */
+            bottom: calc(var(--footer-height) + var(--add-btn-height));
             width: 100%;
             padding: 20px;
-            overflow-y: auto; /* Scroll only when needed */
+            overflow-y: auto;
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
             display: flex;
             flex-direction: column;
@@ -125,7 +125,7 @@
         }
         .add-reward-btn {
             position: fixed;
-            bottom: calc(var(--footer-height) + 10px); /* Above footer */
+            bottom: calc(var(--footer-height) + 10px);
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
@@ -142,7 +142,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            z-index: 99; /* Below footer but above content */
+            z-index: 99;
         }
         .add-reward-btn:hover {
             background: var(--primary-color);
@@ -187,7 +187,7 @@
                 width: 50px;
                 height: 50px;
                 font-size: 28px;
-                bottom: calc(var(--footer-height) + 10px); /* Consistent on mobile */
+                bottom: calc(var(--footer-height) + 10px);
             }
             .footer-icon img {
                 width: 35px;
@@ -252,7 +252,8 @@
                 const deleteButton = document.createElement("button");
                 deleteButton.className = "delete-btn";
                 deleteButton.textContent = "Delete";
-                deleteButton.addEventListener("click", () => {
+                deleteButton.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Prevent event bubbling
                     deleteReward(index);
                     loadRewards();
                 });
@@ -267,42 +268,57 @@
                 rewardItem.addEventListener("touchstart", (e) => {
                     startX = e.touches[0].clientX;
                     isSwiping = true;
+                    // Reset other swiped items
+                    document.querySelectorAll('.reward-item.swiped').forEach(item => {
+                        if (item !== rewardItem) item.classList.remove('swiped');
+                    });
                 });
 
                 rewardItem.addEventListener("touchmove", (e) => {
                     if (!isSwiping) return;
                     currentX = e.touches[0].clientX;
                     const diffX = startX - currentX;
-                    if (diffX > 50) {
+                    if (diffX > 50 && diffX < 150) { // Added upper limit to prevent excessive sliding
                         rewardItem.classList.add("swiped");
-                    } else if (diffX < -50) {
+                    } else if (diffX < -10) { // Slightly negative threshold to close
                         rewardItem.classList.remove("swiped");
                     }
                 });
 
-                rewardItem.addEventListener("touchend", () => {
+                rewardItem.addEventListener("touchend", (e) => {
                     isSwiping = false;
+                    // Don't trigger delete here - let the button handle it
                 });
 
                 // Mouse events (for desktop)
                 rewardItem.addEventListener("mousedown", (e) => {
                     startX = e.clientX;
                     isSwiping = true;
+                    document.querySelectorAll('.reward-item.swiped').forEach(item => {
+                        if (item !== rewardItem) item.classList.remove('swiped');
+                    });
                 });
 
                 rewardItem.addEventListener("mousemove", (e) => {
                     if (!isSwiping) return;
                     currentX = e.clientX;
                     const diffX = startX - currentX;
-                    if (diffX > 50) {
+                    if (diffX > 50 && diffX < 150) {
                         rewardItem.classList.add("swiped");
-                    } else if (diffX < -50) {
+                    } else if (diffX < -10) {
                         rewardItem.classList.remove("swiped");
                     }
                 });
 
-                rewardItem.addEventListener("mouseup", () => {
+                rewardItem.addEventListener("mouseup", (e) => {
                     isSwiping = false;
+                });
+
+                // Click outside to close swipe
+                document.addEventListener("click", (e) => {
+                    if (!rewardItem.contains(e.target) && rewardItem.classList.contains("swiped")) {
+                        rewardItem.classList.remove("swiped");
+                    }
                 });
 
                 rewardList.appendChild(rewardItem);
