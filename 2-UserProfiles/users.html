@@ -60,8 +60,8 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
             text-align: center;
-            width: 100%; /* Full width on small screens */
-            max-width: 480px; /* Increased from 400px for more room */
+            width: 100%;
+            max-width: 480px;
             margin: 0 auto;
             transition: transform 0.3s ease;
         }
@@ -100,28 +100,6 @@
         }
         #sellButton:hover {
             background: #424242;
-        }
-        .action-buttons {
-            margin: 20px 0;
-            display: flex; /* Added flexbox */
-            justify-content: center; /* Center buttons */
-            flex-wrap: wrap; /* Allow wrapping if needed */
-            gap: 10px; /* Replace margins with gap for cleaner spacing */
-        }
-        .action-btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: var(--secondary-color);
-            color: var(--accent-color);
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .action-btn:hover {
-            background: var(--primary-color);
-            color: var(--secondary-color);
         }
         .task-list {
             margin-top: 20px;
@@ -242,7 +220,6 @@
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
-        /* Honey Rain */
         .honey-drop {
             position: fixed;
             width: 15px;
@@ -254,16 +231,9 @@
             pointer-events: none;
         }
         @keyframes rain {
-            0% {
-                transform: translateY(-20vh);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(120vh);
-                opacity: 0.5;
-            }
+            0% { transform: translateY(-20vh); opacity: 1; }
+            100% { transform: translateY(120vh); opacity: 0.5; }
         }
-        /* Reward Popup */
         .reward-popup {
             position: fixed;
             top: 50%;
@@ -283,7 +253,6 @@
             80% { transform: translate(-50%, -70%) scale(1); opacity: 1; }
             100% { transform: translate(-50%, -90%) scale(0.8); opacity: 0; }
         }
-        /* Pulse Effect for Honey Counter */
         .pulse {
             animation: pulse 1s ease-in-out;
         }
@@ -292,27 +261,18 @@
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
-        /* Media Query for Mobile */
         @media (max-width: 480px) {
             .profile-card {
-                max-width: 100%; /* Full width on small screens */
-                padding: 15px; /* Slightly less padding */
-            }
-            .action-btn {
-                padding: 10px 15px; /* Reduced padding for mobile */
-                font-size: 14px; /* Smaller font */
-                margin: 5px; /* Reduced margin */
-            }
-            .action-buttons {
-                gap: 5px; /* Tighter gap on mobile */
+                max-width: 100%;
+                padding: 15px;
             }
             .reward-container {
-                flex-direction: column; /* Stack honey and sell button on mobile */
+                flex-direction: column;
                 gap: 10px;
             }
             #sellButton {
-                margin-left: 0; /* Remove margin on mobile */
-                width: 100%; /* Full width for consistency */
+                margin-left: 0;
+                width: 100%;
             }
         }
     </style>
@@ -330,10 +290,6 @@
                 <p><strong>Honey:</strong> <span id="rewardAmount">0</span> 🍯</p>
                 <button id="sellButton">Sell Honey</button>
             </div>
-            <div class="action-buttons">
-                <a href="#" id="rewardsButton" class="action-btn">Rewards</a>
-                <a href="#" id="marketButton" class="action-btn">Market</a>
-            </div>
             <h3>Assigned Tasks:</h3>
             <div id="userTasks" class="task-list">
                 <!-- Tasks will be displayed here -->
@@ -345,6 +301,14 @@
         <a href="/BeeMazing-Y1/1-Home/home.html" class="footer-icon" aria-label="Home">
             <img src="/BeeMazing-Y1/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
+        </a>
+        <a href="#" id="rewardsButton" class="footer-icon" aria-label="Rewards">
+            <img src="/BeeMazing-Y1/1-Home/MarketBtn.png" alt="Rewards" />
+            <span>Rewards</span>
+        </a>
+        <a href="#" id="marketButton" class="footer-icon" aria-label="Market">
+            <img src="/BeeMazing-Y1/1-Home/StatsBtn.png" alt="Market" />
+            <span>Market</span>
         </a>
     </div>
 
