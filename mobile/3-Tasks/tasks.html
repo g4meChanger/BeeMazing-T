@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BeeMazing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --primary-color: #FFC107;
+            --secondary-color: #212121;
+            --accent-color: #FFFFFF;
+            --light-bg: #FFF8E1;
+            --text-color: #212121;
+            --danger-color: #D32F2F;
+            --modal-bg: rgba(33, 33, 33, 0.7);
+            --header-height: 58px; /* 15px padding * 2 + 24px font + 4px buffer */
+            --footer-height: 70px;
+            --add-btn-height: 80px; /* 60px button + 20px buffer */
+        }
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            height: 100vh;
+            overflow: hidden; /* Prevent body scroll */
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: fixed; /* Changed to fixed */
+            top: 0;
+            width: 100%;
+            height: var(--header-height);
+            z-index: 100;
+        }
+        .menu-icon {
+            font-size: 28px;
+            margin-right: 15px;
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .menu-icon:hover {
+            transform: rotate(90deg);
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            letter-spacing: 1px;
+        }
+        .content {
+            position: absolute;
+    top: calc(var(--header-height) + 115px); /* 58px header + ~42px date header */
+            bottom: calc(var(--footer-height) + var(--add-btn-height)); /* Reserve space for button */
+            width: 100%;
+            padding: 20px;
+            overflow-y: auto; /* Scroll only when needed */
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+        }
+        .task-item {
+            padding: 15px;
+            background: var(--accent-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .task-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            padding: 10px 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+            height: var(--footer-height);
+        }
+        .footer a {
+            text-decoration: none;
+            color: var(--secondary-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        .footer a:hover {
+            transform: scale(1.1);
+        }
+        .footer-icon img {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        .footer-icon span {
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+        .add-task-btn {
+            position: fixed;
+            bottom: calc(var(--footer-height) + 10px); /* Above footer */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            z-index: 99; /* Below footer but above content */
+        }
+        .add-task-btn:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            transform: translateX(-50%) scale(1.1);
+        }
+        .task-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .modal-content {
+            background: var(--accent-color);
+            padding: 25px;
+            border-radius: 15px;
+            width: 85%;
+            max-width: 400px;
+            text-align: left;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--primary-color);
+            animation: modalFadeIn 0.5s ease-out;
+        }
+        @keyframes modalFadeIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .modal-content strong {
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .task-item .delete-btn {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .task-item.swiped-left {
+            transform: translateX(-100px);
+        }
+        .task-item.swiped-left .delete-btn {
+            display: block;
+        }
+        .task-item .delete-btn:hover {
+            background-color: #B71C1C;
+        }
+        @media (max-width: 600px) {
+            .add-task-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+                bottom: calc(var(--footer-height) + 10px); /* Consistent on mobile */
+            }
+            .footer-icon img {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        .date-header {
+    background: linear-gradient(135deg, var(--primary-color), #FFB300); /* 🌟 Full yellow */
+    position: sticky;
+    top: var(--header-height); 
+    z-index: 50;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding-bottom: 5px;
+    padding: 5px 0; /* tighter */
+}
+
+.month-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--secondary-color);
+    background: transparent; /* ✅ Remove extra background */
+}
+
+
+.month-nav button {
+    background: var(--accent-color);
+    border: none;
+    color: var(--secondary-color);
+    padding: 4px 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin: 0 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.day-scroll {
+    display: flex;
+    overflow-x: auto;
+    padding: 6px 10px;
+    gap: 8px;
+    background: transparent; /* ✅ Remove white */
+    scroll-behavior: smooth;
+}
+
+.day-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.day {
+    min-width: 38px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: var(--secondary-color);
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.day:hover {
+    background: #FFF3CD;
+    transform: scale(1.08);
+}
+
+.day.selected {
+    background: var(--secondary-color);
+    color: var(--accent-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.day-scroll-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: transparent; /* ✅ Let it inherit the yellow gradient from .date-header */
+    padding: 6px 0; /* ✅ Optional: reduce spacing to tighten layout */
+    overflow: hidden;
+}
+
+
+.scroll-btn {
+    background: var(--primary-color);
+    border: none;
+    color: var(--secondary-color);
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin: 0 5px;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.scroll-btn:hover {
+    background: #FFB300;
+}
+
+        
+    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="header">
+        <i class="fas fa-bars menu-icon" aria-label="Menu"></i>
+        <div class="title">Tasks</div>
+    </div>
+
+    <div class="date-header">
+        <div class="month-nav">
+            <button id="prevMonth">&lt;</button>
+            <span id="monthLabel">April 2025</span>
+            <button id="nextMonth">&gt;</button>
+        </div>
+        <div class="day-scroll-wrapper">
+            <button class="scroll-btn" id="scrollLeft">&lt;</button>
+            <div class="day-scroll" id="dayScrollContainer">
+                <!-- Days will be injected dynamically -->
+            </div>
+            <button class="scroll-btn" id="scrollRight">&gt;</button>
+        </div>
+        
+    </div>
+    
+    
+
+    <div class="content" id="taskList">
+        <!-- Tasks will be loaded dynamically here -->
+    </div>
+
+    <a href="/mobile/3-Tasks/addtasks.html" class="add-task-btn" aria-label="Add Task">+</a>
+
+    <div class="footer">
+        <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/mobile/1-Home/HomeBtn.png" alt="Home" />
+            <span>Home</span>
+        </a>
+        <a href="/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
+            <img src="/mobile/1-Home/TasksBtn.png" alt="Tasks" />
+            <span>Tasks</span>
+        </a>
+        <a href="/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
+            <img src="/mobile/1-Home/MarketBtn.png" alt="Market" />
+            <span>Market</span>
+        </a>
+        <a href="/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
+            <img src="/mobile/1-Home/StatsBtn.png" alt="Stats" />
+            <span>Stats</span>
+        </a>
+    </div>
+
+    <script>
+  
+
+
+
+
+
+
+  function loadTasksForDate(selectedDate) {
+    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
+
+    function parseLocalDate(dateStr) {
+        const [year, month, day] = dateStr.split("-").map(Number);
+        return new Date(year, month - 1, day);
+    }
+
+    const visibleTasks = tasks.filter(task => {
+        if (!task.date) return false;
+        const range = task.date.split(" to ");
+        const from = parseLocalDate(range[0]);
+        const to = range[1] ? parseLocalDate(range[1]) : new Date(3000, 0, 1);
+        const selected = parseLocalDate(selectedDate);
+        return selected >= from && selected <= to;
+    });
+
+    if (visibleTasks.length === 0) {
+        taskList.innerHTML = "<p>No tasks for this day.</p>";
+        return;
+    }
+
+    // This line replaces the previous "today" variable
+const today = selectedDate;
+
+
+    visibleTasks.forEach((task, index) => {
+        const taskDiv = document.createElement("div");
+        taskDiv.className = "task-item";
+
+        let repeatLimit = 1;
+        if (task.repeat === "Daily") repeatLimit = task.timesPerDay || 1;
+        if (task.repeat === "Weekly") repeatLimit = task.timesPerWeek || 1;
+        if (task.repeat === "Monthly") repeatLimit = task.timesPerMonth || 1;
+
+        const completedUsers = task.completions?.[today] || [];
+const completedCount = Array.isArray(completedUsers) ? completedUsers.length : completedUsers;
+
+        const isCompleted = completedCount >= repeatLimit;
+
+        const currentTurn = task.turn || task.users[0];
+        const nextIndex = (task.users.indexOf(currentTurn) + 1) % task.users.length;
+        const nextTurn = task.users.slice(nextIndex).concat(task.users.slice(0, nextIndex));
+
+        taskDiv.innerHTML = `
+    <strong>${task.title}</strong><br>
+    Turn: ${currentTurn}<br>
+    Completed: ${repeatLimit > 1 ? `${completedCount}/${repeatLimit}<br>` : ""}
+    ${isCompleted ? `<span style="color: green; font-weight: bold;">Completed</span><br>` : ""}
+`;
+
+
+
+        // Add delete button
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "delete-btn";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            deleteTask(index);
+            loadTasksForDate(selectedDate);
+        });
+        taskDiv.appendChild(deleteButton);
+
+        // Swipe to delete logic
+        let startX = 0;
+        let isDragging = false;
+        let swipedLeft = false;
+        let clickStartTime = 0;
+
+        const onStart = (e) => {
+            isDragging = false;
+            startX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
+            clickStartTime = new Date().getTime();
+        };
+
+        const onMove = (e) => {
+            const currentX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
+            const diffX = currentX - startX;
+
+            if (Math.abs(diffX) > 10) {
+                isDragging = true;
+            }
+
+            if (diffX < -50 && !swipedLeft) {
+                taskDiv.classList.add("swiped-left");
+                swipedLeft = true;
+            } else if (diffX > 50 && swipedLeft) {
+                taskDiv.classList.remove("swiped-left");
+                swipedLeft = false;
+            }
+        };
+
+        const onEnd = () => {
+            isDragging = false;
+        };
+
+        taskDiv.addEventListener("touchstart", onStart);
+        taskDiv.addEventListener("touchmove", onMove);
+        taskDiv.addEventListener("touchend", onEnd);
+
+        taskDiv.addEventListener("mousedown", onStart);
+        taskDiv.addEventListener("mousemove", (e) => {
+            if (e.buttons !== 1) return;
+            onMove(e);
+        });
+        taskDiv.addEventListener("mouseup", onEnd);
+
+        taskDiv.addEventListener("click", (e) => {
+            const clickDuration = new Date().getTime() - clickStartTime;
+            if (swipedLeft || isDragging || clickDuration > 300) return;
+            showTaskDetails(task);
+        });
+
+        taskList.appendChild(taskDiv);
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+        function saveTask(index, task) {
+            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+            tasks[index] = task;
+            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+        }
+
+        function deleteTask(index) {
+            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+            tasks.splice(index, 1);
+            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+        }
+
+
+        
+
+
+
+
+
+        function showTaskDetails(task) {
+    let currentUser = task.turn || task.users[0];
+    const userOrder = [...task.users];
+    const currentIndex = userOrder.indexOf(currentUser);
+
+    const selectedDate = document.querySelector(".day.selected")?.dataset.date;
+const completedRaw = task.completions?.[selectedDate] || [];
+
+    const completedUsers = Array.isArray(completedRaw) ? completedRaw : [];
+
+    let requiredTimes = 1;
+    if (task.repeat === "Daily") requiredTimes = task.timesPerDay || 1;
+    if (task.repeat === "Weekly") requiredTimes = task.timesPerWeek || 1;
+    if (task.repeat === "Monthly") requiredTimes = task.timesPerMonth || 1;
+
+    // Calculate how many turns are left
+    const remainingTurns = requiredTimes - completedUsers.length;
+
+    // Build nextTurn array from current turn, cycling through users
+    let nextTurn = [];
+    let index = currentIndex;
+    for (let i = 0; i < remainingTurns - 1; i++) {
+        index = (index + 1) % userOrder.length;
+        nextTurn.push(userOrder[index]);
+    }
+
+    let taskDetails = "";
+
+    if (task.title) taskDetails += `<strong>Title:</strong> ${task.title}<br>`;
+    if (task.notes) taskDetails += `<strong>Notes:</strong> ${task.notes}<br>`;
+    if (task.room) taskDetails += `<strong>Room:</strong> ${task.room}<br>`;
+    if (task.repeat) {
+        taskDetails += `<strong>Frequency:</strong> ${task.repeat}`;
+        if (task.repeat === "Daily" && task.timesPerDay)
+            taskDetails += ` - ${task.timesPerDay} time(s) per day`;
+        if (task.repeat === "Weekly" && task.timesPerWeek)
+            taskDetails += ` - ${task.timesPerWeek} time(s) per week`;
+        if (task.repeat === "Monthly" && task.timesPerMonth)
+            taskDetails += ` - ${task.timesPerMonth} time(s) per month`;
+        taskDetails += "<br>";
+    }
+    if (task.settings) taskDetails += `<strong>Settings:</strong> ${task.settings}<br>`;
+    if (task.date) taskDetails += `<strong>Date:</strong> ${task.date}<br>`;
+    if (task.reminder) taskDetails += `<strong>Reminder:</strong> Yes<br>`;
+    if (task.users?.length) taskDetails += `<strong>Users:</strong> ${task.users.join(", ")}<br>`;
+    if (task.reward && task.reward !== "0") taskDetails += `<strong>Reward:</strong> ${task.reward} 🍯<br>`;
+
+    taskDetails += `<strong>Current Turn:</strong> ${currentUser}<br>`;
+    taskDetails += `<strong>Next:</strong> ${nextTurn.length > 0 ? nextTurn.join(" → ") : "-"}<br>`;
+
+    if (completedUsers.length > 0) {
+        taskDetails += `
+            <div style="margin-top: 8px;">
+                <strong>Completed by:</strong> ${completedUsers.join(", ")}
+                <button id="editCompletionBtn" style="margin-left: 10px; padding: 4px 8px; font-size: 12px; border-radius: 6px; background: var(--primary-color); color: var(--secondary-color); border: none; cursor: pointer;">Edit</button>
+            </div>
+        `;
+    }
+
+    taskDetails += `
+        <br>
+        <button id="editTurnBtn" style="padding:6px 10px; border:none; background:var(--primary-color); color:var(--secondary-color); font-weight:bold; border-radius:6px; cursor:pointer;">Edit Turn Order</button>
+        &nbsp;
+        <button id="editTaskBtn" style="padding:6px 10px; border:none; background:var(--secondary-color); color:var(--accent-color); font-weight:bold; border-radius:6px; cursor:pointer;">Edit Task</button>
+    `;
+
+    const modal = document.createElement("div");
+    modal.className = "task-modal";
+    modal.innerHTML = `
+        <div class="modal-content">
+            ${taskDetails}
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (e) => {
+        if (e.target.classList.contains("task-modal")) {
+            modal.remove();
+        }
+    });
+
+    document.getElementById("editTurnBtn").addEventListener("click", () => {
+        modal.remove();
+        showEditTurnModal(task);
+    });
+
+    document.getElementById("editTaskBtn").addEventListener("click", () => {
+        localStorage.setItem("familyApp_editTask", JSON.stringify(task));
+        localStorage.setItem("familyApp_editTask_index", task.title + "-" + task.date);
+        window.location.href = "/mobile/3-Tasks/addtasks.html";
+    });
+
+    const editBtn = document.getElementById("editCompletionBtn");
+if (editBtn) {
+    editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        modal.remove();
+
+        const selectedDate = document.querySelector(".day.selected")?.dataset.date;
+        const completedRaw = task.completions?.[selectedDate] || [];
+        const completedUsers = Array.isArray(completedRaw) ? completedRaw : [];
+
+        showEditCompletionModal(task, completedUsers, selectedDate, modal);
+    });
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+function finishTask(task) {
+    const selectedDate = document.querySelector(".day.selected")?.dataset.date;
+    if (!selectedDate) return;
+
+    const today = selectedDate;
+    const currentUser = task.turn || task.users[0];
+
+    if (!task.completions) task.completions = {};
+    if (!Array.isArray(task.completions[selectedDate])) task.completions[selectedDate] = [];
+
+if (!task.completions[selectedDate].includes(currentUser)) {
+    task.completions[selectedDate].push(currentUser);
+}
+
+
+    // Give honey reward
+    const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+    const rewardAmount = Number(task.reward) || 0;
+    if (!rewards[currentUser]) rewards[currentUser] = 0;
+    rewards[currentUser] += rewardAmount;
+    localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+
+    // Rotate turn
+    const currentIndex = task.users.indexOf(currentUser);
+    const nextIndex = (currentIndex + 1) % task.users.length;
+    task.turn = task.users[nextIndex];
+
+    // Save task
+    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+    const index = tasks.findIndex(t => t.title === task.title && t.date === task.date);
+    if (index !== -1) {
+        tasks[index] = task;
+        localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+    }
+
+    loadTasksForDate(selectedDate);
+    showTaskDetails(task);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function showEditCompletionModal(task, completedUsers, today, parentModal) {
+    const modal = document.createElement("div");
+    modal.className = "task-modal";
+
+    const checkboxes = task.users.map(user => `
+        <label style="display:block;margin-bottom:8px;">
+            <input type="checkbox" value="${user}" ${completedUsers.includes(user) ? "checked" : ""}>
+            ${user}
+        </label>
+    `).join("");
+
+    modal.innerHTML = `
+        <div class="modal-content">
+            <strong>Edit Completed By:</strong><br><br>
+            ${checkboxes}
+            <button id="saveCompletionBtn" style="margin-top: 10px; padding: 8px 12px; background: var(--primary-color); color: var(--secondary-color); border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">
+                Save
+            </button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+
+    document.getElementById("saveCompletionBtn").addEventListener("click", () => {
+        const checkboxes = modal.querySelectorAll("input[type='checkbox']");
+        const newCompleted = [];
+        const removedUsers = [];
+
+        checkboxes.forEach(box => {
+            const user = box.value;
+            if (box.checked) {
+                newCompleted.push(user);
+            } else if (completedUsers.includes(user)) {
+                removedUsers.push(user);
+            }
+        });
+
+        if (!task.completions) task.completions = {};
+        task.completions[today] = newCompleted;
+
+        // ✅ Recalculate turn: PRIORITIZE removed users
+        let newTurn = null;
+
+        for (const removed of removedUsers) {
+            if (task.users.includes(removed)) {
+                newTurn = removed;
+                break;
+            }
+        }
+
+        if (!newTurn) {
+            const completedSet = new Set(newCompleted);
+            newTurn = task.users.find(u => !completedSet.has(u)) || task.users[0];
+        }
+
+        task.turn = newTurn;
+
+        // 💸 Deduct honey for removed users
+        const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+        const rewardAmount = Number(task.reward) || 0;
+
+        removedUsers.forEach(user => {
+            if (!rewards[user]) rewards[user] = 0;
+            rewards[user] = Math.max(0, rewards[user] - rewardAmount);
+        });
+
+        localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+
+        // 💾 Save updated task
+        const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+        const index = tasks.findIndex(t => t.title === task.title && t.date === task.date);
+        if (index !== -1) {
+            tasks[index] = task;
+            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+        }
+
+        modal.remove();
+        parentModal.remove();
+
+        const selectedDate = document.querySelector(".day.selected")?.dataset.date;
+        if (selectedDate) loadTasksForDate(selectedDate);
+        showTaskDetails(task);
+    });
+}
+
+
+
+
+
+
+
+
+
+function showEditTurnModal(task) {
+    const modal = document.createElement("div");
+    modal.className = "task-modal";
+
+    const generateUserOptions = (selected) => {
+        return task.users.map(user => `
+            <option value="${user}" ${user === selected ? 'selected' : ''}>${user}</option>
+        `).join("");
+    };
+
+    const generateUserList = (excludeUser) => {
+        return task.users
+            .filter(user => user !== excludeUser)
+            .map(user => `
+                <li draggable="true" style="
+                    padding: 8px 10px;
+                    margin: 4px 0;
+                    background: #fff8dc;
+                    border: 1px solid #ccc;
+                    border-radius: 6px;
+                    cursor: grab;
+                    transition: all 0.2s ease;
+                ">${user}</li>
+            `).join("");
+    };
+
+    const currentTurn = task.turn || task.users[0];
+
+    modal.innerHTML = `
+        <div class="modal-content">
+            <strong>Edit Current Turn:</strong><br>
+            <select id="turnSelector" style="margin: 6px 0 12px;">
+                ${generateUserOptions(currentTurn)}
+            </select><br>
+
+            <strong>Edit Turn Order:</strong><br>
+            <ul id="userOrderList" style="list-style: none; padding: 0; margin: 10px 0;">
+                ${generateUserList(currentTurn)}
+            </ul>
+
+            <button id="saveTurnOrder" style="padding: 8px 12px; background: var(--primary-color); color: var(--secondary-color); border: none; font-weight: bold; border-radius: 6px; cursor: pointer;">
+                Save
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const listContainer = () => modal.querySelector("#userOrderList");
+
+    const enableDragAndDrop = () => {
+        let draggingItem = null;
+        const listItems = listContainer().querySelectorAll("li");
+
+        listItems.forEach((item) => {
+            item.addEventListener("dragstart", () => {
+                draggingItem = item;
+                item.style.opacity = "0.5";
+            });
+
+            item.addEventListener("dragend", () => {
+                item.style.opacity = "1";
+                draggingItem = null;
+            });
+
+            item.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                const bounding = item.getBoundingClientRect();
+                const offset = e.clientY - bounding.top;
+
+                if (offset > bounding.height / 2) {
+                    item.after(draggingItem);
+                } else {
+                    item.before(draggingItem);
+                }
+            });
+        });
+    };
+
+    enableDragAndDrop();
+
+    // Sync the user order list when current turn changes
+    document.getElementById("turnSelector").addEventListener("change", (e) => {
+        const newTurn = e.target.value;
+        listContainer().innerHTML = generateUserList(newTurn);
+        enableDragAndDrop(); // Re-enable drag after rebuilding list
+    });
+
+    // Save logic
+    document.getElementById("saveTurnOrder").addEventListener("click", () => {
+        const selectedTurn = document.getElementById("turnSelector").value;
+        const reordered = Array.from(listContainer().querySelectorAll("li")).map(li => li.textContent.trim());
+
+        task.turn = selectedTurn;
+        task.users = [selectedTurn, ...reordered];
+
+        const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+        const index = tasks.findIndex(t => t.title === task.title && t.date === task.date);
+        if (index !== -1) {
+            tasks[index] = task;
+            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+        }
+
+        modal.remove();
+loadTasksForDate(document.querySelector(".day.selected")?.dataset.date);
+
+    });
+
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function generateScrollableDates(monthOffset = 0) {
+    const container = document.getElementById("dayScrollContainer");
+    container.innerHTML = "";
+
+    const today = new Date();
+    today.setDate(1); // start from 1st of month
+    today.setMonth(today.getMonth() + monthOffset);
+
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    document.getElementById("monthLabel").textContent = today.toLocaleDateString(undefined, {
+        month: 'long',
+        year: 'numeric'
+    });
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const date = new Date(currentYear, currentMonth, i);
+        const btn = document.createElement("div");
+        btn.className = "day";
+        btn.textContent = i;
+        btn.dataset.date = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+            btn.classList.add("selected");
+            loadTasksForDate(btn.dataset.date);
+        });
+
+        // Preselect today
+        const now = new Date();
+       if (date.toDateString() === new Date().toDateString()) {
+    btn.classList.add("selected");
+
+    // Only load tasks if no day is currently selected (prevents duplicate reloads)
+    if (!document.querySelector(".day.selected")) {
+        loadTasksForDate(btn.dataset.date);
+    }
+        }
+
+        container.appendChild(btn);
+    }
+
+    setTimeout(() => {
+    const selected = document.querySelector(".day.selected");
+    if (selected) {
+        selected.scrollIntoView({ behavior: "smooth", inline: "center" });
+    }
+}, 50);
+}
+
+
+let monthOffset = 0;
+document.getElementById("prevMonth").addEventListener("click", () => {
+    monthOffset--;
+    generateScrollableDates(monthOffset);
+});
+
+document.getElementById("nextMonth").addEventListener("click", () => {
+    monthOffset++;
+    generateScrollableDates(monthOffset);
+});
+
+
+        generateScrollableDates();
+
+        // Scroll buttons
+document.getElementById("scrollLeft").addEventListener("click", () => {
+    document.getElementById("dayScrollContainer").scrollBy({
+        left: -200,
+        behavior: "smooth"
+    });
+});
+
+document.getElementById("scrollRight").addEventListener("click", () => {
+    document.getElementById("dayScrollContainer").scrollBy({
+        left: 200,
+        behavior: "smooth"
+    });
+});
+
+    </script>
+</body>
+</html>

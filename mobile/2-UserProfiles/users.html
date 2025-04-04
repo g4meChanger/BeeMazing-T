@@ -45,14 +45,15 @@
             z-index: 100;
         }
         .content {
-            position: absolute;
-            top: var(--header-height);
-            bottom: var(--footer-height);
-            width: 100%;
-            padding: 20px;
-            overflow-y: auto;
-            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
-        }
+    position: absolute;
+    top: calc(var(--header-height) + 115px); /* header + date picker height */
+    bottom: var(--footer-height);
+    width: 100%;
+    padding: 20px;
+    overflow-y: auto;
+    background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+}
+
         .profile-card {
             background: var(--accent-color);
             border: 2px solid var(--primary-color);
@@ -275,12 +276,112 @@
                 width: 100%;
             }
         }
+
+
+
+
+
+
+
+
+
+        .date-header {
+    background: linear-gradient(135deg, var(--primary-color), #FFB300);
+    position: sticky;
+    top: var(--header-height);
+    z-index: 50;
+    padding: 5px 0;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+.month-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4px 0;
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--secondary-color);
+}
+.month-nav button {
+    background: var(--accent-color);
+    border: none;
+    color: var(--secondary-color);
+    padding: 4px 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin: 0 8px;
+    cursor: pointer;
+}
+.day-scroll-wrapper {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: transparent;
+    padding: 6px 0;
+}
+.day-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 6px 10px;
+    scroll-behavior: smooth;
+}
+.day-scroll::-webkit-scrollbar {
+    display: none;
+}
+.day {
+    min-width: 38px;
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: var(--secondary-color);
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.day:hover {
+    background: #FFF3CD;
+}
+.day.selected {
+    background: var(--secondary-color);
+    color: var(--accent-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.scroll-btn {
+    background: var(--primary-color);
+    border: none;
+    color: var(--secondary-color);
+    font-size: 20px;
+    font-weight: bold;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    margin: 0 5px;
+}
+
     </style>
 </head>
 <body>
     <div class="header">
         BeeMazing
     </div>
+
+    <div class="date-header">
+        <div class="month-nav">
+            <button id="prevMonth">&lt;</button>
+            <span id="monthLabel">Loading...</span>
+            <button id="nextMonth">&gt;</button>
+        </div>
+        <div class="day-scroll-wrapper">
+            <button class="scroll-btn" id="scrollLeft">&lt;</button>
+            <div class="day-scroll" id="dayScrollContainer"></div>
+            <button class="scroll-btn" id="scrollRight">&gt;</button>
+        </div>
+    </div>
+    
 
     <div class="content">
         <div class="profile-card">
@@ -298,17 +399,17 @@
     </div>
 
     <div class="footer">
-        <a href="/BeeMazing-Y1/1-Home/home.html" class="footer-icon" aria-label="Home">
-            <img src="/BeeMazing-Y1/1-Home/HomeBtn.png" alt="Home" />
+        <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/mobile/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
         </a>
-        <a href="#" id="rewardsButton" class="footer-icon" aria-label="Rewards">
-            <img src="/BeeMazing-Y1/1-Home/RewardsBtn.png" alt="Rewards" />
-            <span>Rewards</span>
-        </a>
         <a href="#" id="marketButton" class="footer-icon" aria-label="Market">
-            <img src="/BeeMazing-Y1/1-Home/MarketBtn.png" alt="Market" />
+            <img src="/mobile/1-Home/MarketBtn.png" alt="Market" />
             <span>Market</span>
+        </a>
+        <a href="#" id="rewardsButton" class="footer-icon" aria-label="Rewards">
+            <img src="/mobile/1-Home/RewardsBtn.png" alt="Rewards" />
+            <span>Rewards</span>
         </a>
     </div>
 
@@ -327,46 +428,103 @@
         if (userName) {
             document.getElementById('profileName').textContent = userName;
             document.getElementById('userName').textContent = userName;
-            document.getElementById('rewardsButton').href = `userrewards.html?user=${userName}`;
-            document.getElementById('marketButton').href = `usermarket.html?user=${userName}`;
+            document.getElementById('rewardsButton').href = `/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
+            document.getElementById('marketButton').href = `/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
             loadUserTasks(userName);
             loadUserReward(userName);
         }
 
-        function loadUserTasks(userName) {
-            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
-            const userTasks = tasks.filter(task => task.users.includes(userName));
-            const userTasksDiv = document.getElementById("userTasks");
 
-            if (userTasks.length === 0) {
-                userTasksDiv.innerHTML = "<p>No tasks assigned to this bee.</p>";
-            } else {
-                userTasksDiv.innerHTML = "";
-                userTasks.forEach(task => {
-                    const taskDiv = document.createElement("div");
-                    taskDiv.className = "task-item";
-                    taskDiv.innerHTML = `
-                        <strong>${task.title}</strong><br>
-                        Honey: ${task.reward || "0"} 🍯
-                    `;
-                    const currentUser = task.turn || task.users[Math.floor(Math.random() * task.users.length)];
-                    if (currentUser === userName) {
-                        const finishedButton = document.createElement("button");
-                        finishedButton.textContent = "Finish Task";
-                        finishedButton.className = "finished-btn";
-                        finishedButton.onclick = (e) => {
-                            e.stopPropagation();
-                            finishTask(userName, task, finishedButton);
-                        };
-                        taskDiv.appendChild(finishedButton);
-                    }
-                    userTasksDiv.appendChild(taskDiv);
-                    taskDiv.addEventListener("click", function() {
-                        showTaskDetails(task);
-                    });
-                });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+        function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("sv-SE")) {
+    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+    const userTasks = tasks.filter(task => task.users.includes(userName));
+    const userTasksDiv = document.getElementById("userTasks");
+
+    if (userTasks.length === 0) {
+        userTasksDiv.innerHTML = "<p>No tasks assigned to this bee.</p>";
+    } else {
+        userTasksDiv.innerHTML = "";
+
+        // 🔐 Get today's date string in local format (YYYY-MM-DD)
+        const today = new Date().toLocaleDateString("sv-SE");
+        const isToday = selectedDate === today;
+
+        userTasks.forEach(task => {
+            const taskDiv = document.createElement("div");
+            taskDiv.className = "task-item";
+
+            let requiredTimes = 1;
+            if (task.repeat === "Daily") requiredTimes = task.timesPerDay || 1;
+            if (task.repeat === "Weekly") requiredTimes = task.timesPerWeek || 1;
+            if (task.repeat === "Monthly") requiredTimes = task.timesPerMonth || 1;
+
+            let completedRaw = task.completions?.[selectedDate] || [];
+            let completedUsers = Array.isArray(completedRaw) ? completedRaw : [];
+            let completedTimes = completedUsers.length;
+
+            let progressText = completedTimes >= requiredTimes
+                ? `<span style="color: green; font-weight: bold;">Completed</span>`
+                : `${completedTimes}/${requiredTimes}`;
+
+            taskDiv.innerHTML = `
+                <strong>${task.title}</strong><br>
+                Honey: ${task.reward || "0"} 🍯<br>
+                Progress: ${progressText}
+            `;
+
+            const currentUser = task.turn || task.users[0];
+
+            // ✅ Only allow "Finish Task" if the selected date is today
+            if (isToday && currentUser === userName && !completedUsers.includes(userName) && completedTimes < requiredTimes) {
+                const finishedButton = document.createElement("button");
+                finishedButton.textContent = "Finish Task";
+                finishedButton.className = "finished-btn";
+                finishedButton.onclick = (e) => {
+                    e.stopPropagation();
+                    finishTask(userName, task, finishedButton, selectedDate);
+                };
+                taskDiv.appendChild(finishedButton);
             }
-        }
+
+            taskDiv.addEventListener("click", function () {
+                showTaskDetails(task);
+            });
+
+            userTasksDiv.appendChild(taskDiv);
+        });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 
         function loadUserReward(userName) {
             const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
@@ -406,26 +564,54 @@
             }
         }
 
-        function finishTask(userName, task, button) {
-            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
-            const taskIndex = tasks.findIndex(t => t.title === task.title);
-            const currentUserIndex = task.users.indexOf(task.turn);
-            const nextUser = task.users[(currentUserIndex + 1) % task.users.length];
-            task.turn = nextUser;
-            tasks[taskIndex] = task;
-            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
 
-            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
-            let userReward = rewards[userName] || 0;
-            const taskReward = Number(task.reward) || 0;
-            rewards[userName] = userReward + taskReward;
-            localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
 
-            saveTaskHistory(userName, task);
-            triggerHoneyRain(taskReward);
-            loadUserTasks(userName);
-            loadUserReward(userName);
-        }
+
+
+
+
+
+
+
+        function finishTask(userName, task, button, selectedDate) {
+    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+    const taskIndex = tasks.findIndex(t => t.title === task.title && t.date === task.date);
+
+    const today = selectedDate;
+
+    if (!task.completions) task.completions = {};
+    if (!Array.isArray(task.completions[today])) task.completions[today] = [];
+
+    if (!task.completions[today].includes(userName)) {
+        task.completions[today].push(userName);
+
+        const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+        const taskReward = Number(task.reward) || 0;
+        rewards[userName] = (rewards[userName] || 0) + taskReward;
+        localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+
+        const currentIndex = task.users.indexOf(task.turn);
+        const nextUser = task.users[(currentIndex + 1) % task.users.length];
+        task.turn = nextUser;
+
+        tasks[taskIndex] = task;
+        localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+
+        saveTaskHistory(userName, task);
+        triggerHoneyRain(taskReward);
+        loadUserTasks(userName, selectedDate);
+        loadUserReward(userName);
+    }
+}
+
+
+
+
+
+
+
+
+
 
         function saveTaskHistory(userName, task) {
             const now = new Date();
@@ -495,6 +681,99 @@
                 }
             });
         }
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        let monthOffset = 0;
+
+function generateScrollableDates(monthOffset = 0) {
+    const container = document.getElementById("dayScrollContainer");
+    container.innerHTML = "";
+
+    const today = new Date();
+    today.setDate(1); // Start at beginning of the month
+    today.setMonth(today.getMonth() + monthOffset);
+
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    document.getElementById("monthLabel").textContent = today.toLocaleDateString(undefined, {
+        month: 'long',
+        year: 'numeric'
+    });
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const date = new Date(currentYear, currentMonth, i);
+        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+        const btn = document.createElement("div");
+        btn.className = "day";
+        btn.textContent = i;
+        btn.dataset.date = dateStr;
+
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+            btn.classList.add("selected");
+            loadUserTasks(userName, dateStr); // 🔁 pass selected date to task loader
+        });
+
+        const now = new Date();
+        const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        if (dateStr === nowStr) {
+            btn.classList.add("selected");
+            loadUserTasks(userName, dateStr); // ⏳ load today's tasks initially
+        }
+
+        container.appendChild(btn);
+    }
+
+    setTimeout(() => {
+        const selected = document.querySelector(".day.selected");
+        if (selected) {
+            selected.scrollIntoView({ behavior: "smooth", inline: "center" });
+        }
+    }, 50);
+}
+
+document.getElementById("prevMonth").addEventListener("click", () => {
+    monthOffset--;
+    generateScrollableDates(monthOffset);
+});
+
+document.getElementById("nextMonth").addEventListener("click", () => {
+    monthOffset++;
+    generateScrollableDates(monthOffset);
+});
+
+document.getElementById("scrollLeft").addEventListener("click", () => {
+    document.getElementById("dayScrollContainer").scrollBy({
+        left: -200,
+        behavior: "smooth"
+    });
+});
+
+document.getElementById("scrollRight").addEventListener("click", () => {
+    document.getElementById("dayScrollContainer").scrollBy({
+        left: 200,
+        behavior: "smooth"
+    });
+});
+
+// ✅ Initialize
+generateScrollableDates();
     </script>
 </body>
 </html>

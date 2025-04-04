@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- Prevent zoom -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#FFC107">
     <title>BeeMazing</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -23,7 +23,7 @@
             --modal-bg: rgba(33, 33, 33, 0.7);
             --header-height: 58px;
             --footer-height: 70px;
-            --add-btn-height: 80px; /* 60px button + 20px buffer */
+            --add-btn-height: 80px;
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -64,7 +64,7 @@
         .content {
             position: absolute;
             top: var(--header-height);
-            bottom: calc(var(--footer-height) + var(--add-btn-height)); /* Reserve space for button */
+            bottom: calc(var(--footer-height) + var(--add-btn-height));
             width: 100%;
             padding: 20px;
             overflow-y: auto;
@@ -172,7 +172,7 @@
             text-align: center;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
             border: 2px solid var(--primary-color);
-            position: relative; /* Ensure it stays in view */
+            position: relative;
         }
         .modal-content h3 {
             color: var(--secondary-color);
@@ -186,7 +186,7 @@
             border: 2px solid var(--primary-color);
             border-radius: 8px;
             font-size: 16px;
-            outline: none; /* Remove focus outline */
+            outline: none;
         }
         .modal-content button {
             padding: 12px 25px;
@@ -204,7 +204,7 @@
         }
         .add-user-btn {
             position: fixed;
-            bottom: calc(var(--footer-height) + 10px); /* Position above footer */
+            bottom: calc(var(--footer-height) + 10px);
             left: 50%;
             transform: translateX(-50%);
             width: 60px;
@@ -243,14 +243,14 @@
                 width: 50px;
                 height: 50px;
                 font-size: 28px;
-                bottom: calc(var(--footer-height) + 10px); /* Consistent on mobile */
+                bottom: calc(var(--footer-height) + 10px);
             }
             .footer-icon img {
                 width: 35px;
                 height: 35px;
             }
             .modal-content {
-                width: 90%; /* Slightly wider on mobile */
+                width: 90%;
             }
         }
     </style>
@@ -278,25 +278,25 @@
 
     <a href="#" class="add-user-btn" id="addUserBtn" aria-label="Add User">+</a>
     <div class="footer">
-        <a href="home.html" class="footer-icon" aria-label="Home">
-            <img src="HomeBtn.png" alt="Home" />
+        <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/mobile/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
         </a>
-        <a href="/BeeMazing-Y1/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
-            <img src="TasksBtn.png" alt="Tasks" />
+        <a href="/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
+            <img src="/mobile/1-Home/TasksBtn.png" alt="Tasks" />
             <span>Tasks</span>
         </a>
-        <a href="/BeeMazing-Y1/4-Market/market.html" class="footer-icon" aria-label="Market">
-            <img src="MarketBtn.png" alt="Market" />
+        <a href="/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
+            <img src="/mobile/1-Home/MarketBtn.png" alt="Market" />
             <span>Market</span>
         </a>
-        <a href="/BeeMazing-Y1/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
-            <img src="StatsBtn.png" alt="Stats" />
+        <a href="/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
+            <img src="/mobile/1-Home/StatsBtn.png" alt="Stats" />
             <span>Stats</span>
         </a>
     </div>
 
-    <script src="home.js"></script>
+    <script src="/web/1-Home/home.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

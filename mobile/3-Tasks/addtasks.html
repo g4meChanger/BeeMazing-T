@@ -60,7 +60,6 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
         }
         .form-group {
             padding: 15px 0;
@@ -368,6 +367,55 @@
             background: #B71C1C;
             transform: translateY(-3px);
         }
+
+        .date-flex-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.date-flex-row label {
+    width: 80px; /* keeps the label aligned with other fields */
+    margin: 0;
+}
+
+.date-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* increased from 10px */
+    flex-wrap: wrap;
+}
+
+.date-display {
+    min-width: 110px;
+    max-width: 150px;
+    text-align: center;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: var(--accent-color);
+    border: 2px solid var(--primary-color);
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--secondary-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+
+
+.date-display:hover {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+.date-input {
+    display: none;
+}
+
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -381,11 +429,11 @@
     <div class="content">
         <form id="addTaskForm">
             <div class="form-group-full">
-                <label for="taskTitle">Title</label>
+                <label for="taskTitle"></label>
                 <input type="text" id="taskTitle" placeholder="Enter task title" required>
             </div>
             <div class="form-group-full">
-                <label for="taskNotes">Notes (Optional)</label>
+                <label for="taskNotes"></label>
                 <textarea id="taskNotes" placeholder="Enter any additional notes"></textarea>
             </div>
             <div class="form-group">
@@ -394,20 +442,53 @@
                 <input type="hidden" id="roomSelection" value="">
             </div>
             <div class="form-group">
-                <label>Repeat</label>
+                <label>Frequency</label>
                 <button type="button" id="selectRepeat" class="select-btn">Select</button>
                 <input type="hidden" id="repeatSelection" value="">
             </div>
+            
+            <!-- NEW: Times Per Day input (only shown when Daily is selected) -->
+            <div class="form-group" id="timesPerDayGroup" style="display: none;">
+                <label>Times per Day</label>
+                <input type="text" id="timesPerDayInput" value="1" readonly
+    style="width: 60px; text-align: center; padding: 6px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--accent-color); font-size: 16px; cursor: pointer;">
+            </div>
+
+            <!-- Weekly Frequency Input -->
+<div class="form-group" id="timesPerWeekGroup" style="display: none;">
+    <label>Times per Week</label>
+    <input type="text" id="timesPerWeekInput" value="1" readonly
+    style="width: 60px; text-align: center; padding: 6px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--accent-color); font-size: 16px; cursor: pointer;">
+    
+
+</div>
+
+<!-- Monthly Frequency Input -->
+<div class="form-group" id="timesPerMonthGroup" style="display: none;">
+    <label>Times per Month</label>
+    <input type="text" id="timesPerMonthInput" value="1" readonly
+style="width: 60px; text-align: center; padding: 6px; border: 2px solid var(--primary-color); border-radius: 8px; background: var(--accent-color); font-size: 16px; cursor: pointer;">
+
+
+</div>
+
+            
             <div class="form-group">
                 <label>Settings</label>
                 <button type="button" id="selectSettings" class="select-btn">Select</button>
                 <input type="hidden" id="settingsSelection" value="">
             </div>
-            <div class="form-group">
+            <div class="form-group date-flex-row">
                 <label>Date</label>
-                <div id="dateDisplay" class="date-display">Today</div>
-                <input type="text" id="taskDate" style="display:none;" />
+                <div class="date-controls">
+                    <button type="button" id="dateModeToggle" class="select-btn">From</button>
+                    <div id="dateDisplay" class="date-display">Today</div>
+                    <div id="dateDisplayTo" class="date-display" style="display: none;">To Date</div>
+                </div>
+                <input type="text" id="taskDate" class="date-input" />
+                <input type="text" id="taskDateTo" class="date-input" />
             </div>
+            
             <div class="form-group">
                 <label>Reminder</label>
                 <label class="switch">
@@ -417,10 +498,6 @@
                 <button type="button" id="addAlarmBtn" class="select-btn" style="display: none; margin-left: 10px;">+ Add Alarm</button>
             </div>
             <div id="alarmContainer" style="margin-top: 10px;"></div>
-            <div id="frequencyContainer" class="frequency-container">
-                <label for="frequencyInput">xTimes</label>
-                <input type="number" id="frequencyInput" placeholder="Enter frequency (e.g., 2)" min="1">
-            </div>
             <div class="form-group">
                 <label>
                     <span id="assignedToDisplay" class="select-btn">Select users</span>
@@ -499,15 +576,168 @@
         </div>
     </div>
 
+    <div class="modal" id="timesPerDayModal">
+        <div class="modal-content fancy-modal">
+            <h3>How many times per day?</h3>
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
+                <button class="btn-save" data-value="1">1</button>
+                <button class="btn-save" data-value="2">2</button>
+                <button class="btn-save" data-value="3">3</button>
+                <button class="btn-save" data-value="4">4</button>
+                <button class="btn-save" data-value="5">5</button>
+            </div>
+            <input type="number" id="customTimesInput" placeholder="Or enter your own" min="1" class="fancy-input smaller-input">
+            <div style="margin-top: 10px;">
+                <button id="saveCustomTimesBtn" class="btn-save">Save</button>
+                <button class="btn-cancel" id="closeTimesModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="timesPerWeekModal">
+        <div class="modal-content fancy-modal">
+            <h3>How many times per week?</h3>
+            <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
+                <button class="btn-save" data-value="1">1</button>
+                <button class="btn-save" data-value="2">2</button>
+                <button class="btn-save" data-value="3">3</button>
+                <button class="btn-save" data-value="4">4</button>
+                <button class="btn-save" data-value="5">5</button>
+            </div>
+            <input type="number" id="customTimesWeekInput" placeholder="Or enter your own" min="1" class="fancy-input smaller-input">
+            <div style="margin-top: 10px;">
+                <button id="saveCustomTimesWeekBtn" class="btn-save">Save</button>
+                <button id="closeTimesWeekModal" class="btn-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+<div class="modal" id="timesPerMonthModal">
+    <div class="modal-content fancy-modal">
+        <h3>How many times per month?</h3>
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
+            <button class="btn-save" data-value="1">1</button>
+            <button class="btn-save" data-value="2">2</button>
+            <button class="btn-save" data-value="3">3</button>
+            <button class="btn-save" data-value="4">4</button>
+            <button class="btn-save" data-value="5">5</button>
+        </div>
+        <input type="number" id="customTimesMonthInput" placeholder="Or enter your own" min="1" class="fancy-input smaller-input">
+        <div style="margin-top: 10px;">
+            <button id="saveCustomTimesMonthBtn" class="btn-save">Save</button>
+            <button id="closeTimesMonthModal" class="btn-cancel">Cancel</button>
+        </div>
+    </div>
+</div>
+    
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+
+document.addEventListener("DOMContentLoaded", () => {
+    const editTask = JSON.parse(localStorage.getItem("familyApp_editTask"));
+
+    if (editTask) {
+        document.getElementById("taskTitle").value = editTask.title || "";
+        document.getElementById("taskNotes").value = editTask.notes || "";
+        document.getElementById("roomSelection").value = editTask.room || "";
+        document.getElementById("selectRoom").textContent = editTask.room || "Select";
+
+        document.getElementById("repeatSelection").value = editTask.repeat || "";
+        document.getElementById("selectRepeat").textContent = editTask.repeat || "Select";
+
+        document.getElementById("settingsSelection").value = editTask.settings || "";
+        document.getElementById("selectSettings").textContent = editTask.settings || "Select";
+
+        document.getElementById("RewardValue").value = editTask.reward || "";
+        document.getElementById("selectReward").textContent = editTask.reward ? `Reward: ${editTask.reward} 🍯` : "Reward";
+
+        document.getElementById("taskReminder").checked = !!editTask.reminder;
+
+        if (editTask.reminder && editTask.alarms) {
+            editTask.alarms.forEach(time => {
+                const alarmWrapper = document.createElement('div');
+                alarmWrapper.style.marginBottom = '10px';
+                alarmWrapper.style.display = 'flex';
+                alarmWrapper.style.alignItems = 'center';
+
+                const alarmInput = document.createElement('input');
+                alarmInput.type = 'time';
+                alarmInput.value = time;
+                alarmInput.style.marginRight = '10px';
+                alarmInput.style.padding = '10px';
+                alarmInput.style.border = '2px solid var(--primary-color)';
+                alarmInput.style.borderRadius = '8px';
+                alarmInput.style.background = 'var(--accent-color)';
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.className = 'btn-cancel';
+                removeButton.addEventListener('click', () => alarmWrapper.remove());
+
+                alarmWrapper.appendChild(alarmInput);
+                alarmWrapper.appendChild(removeButton);
+                document.getElementById("alarmContainer").appendChild(alarmWrapper);
+            });
+        }
+
+        if (editTask.date && editTask.date.includes(" to ")) {
+            const [from, to] = editTask.date.split(" to ");
+            document.getElementById("taskDate").value = from;
+            document.getElementById("taskDateTo").value = to;
+            document.getElementById("dateDisplay").textContent = new Date(from).toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+            document.getElementById("dateDisplayTo").textContent = new Date(to).toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+            document.getElementById("dateDisplayTo").style.display = "inline-block";
+            document.getElementById("dateModeToggle").textContent = "From - To";
+            dateMode = "from-to";
+        } else {
+            document.getElementById("taskDate").value = editTask.date || "";
+            document.getElementById("dateDisplay").textContent = new Date(editTask.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+        }
+
+        if (editTask.users) {
+            selectedUsers = [...editTask.users];
+            updateSelectedUsersDisplay();
+        }
+
+        if (editTask.repeat === "Daily" && editTask.timesPerDay) {
+            document.getElementById("timesPerDayGroup").style.display = "flex";
+            document.getElementById("timesPerDayInput").value = editTask.timesPerDay;
+        }
+        if (editTask.repeat === "Weekly" && editTask.timesPerWeek) {
+            document.getElementById("timesPerWeekGroup").style.display = "flex";
+            document.getElementById("timesPerWeekInput").value = editTask.timesPerWeek;
+        }
+        if (editTask.repeat === "Monthly" && editTask.timesPerMonth) {
+            document.getElementById("timesPerMonthGroup").style.display = "flex";
+            document.getElementById("timesPerMonthInput").value = editTask.timesPerMonth;
+        }
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // Show modal with smooth transition
         function showModal(modal) {
             modal.classList.remove('hide');
             modal.classList.add('show');
             modal.style.display = 'flex';
         }
-
+    
         // Hide modal with smooth transition
         function hideModal(modal) {
             modal.classList.remove('show');
@@ -517,12 +747,44 @@
             }, 300);
         }
 
+        function setupTimesModal(inputEl, modalEl, closeBtnEl, customInputEl, saveBtnEl) {
+    // Open modal on focus
+    inputEl.addEventListener("focus", () => {
+        customInputEl.value = "";
+        showModal(modalEl);
+    });
+
+    // Quick pick buttons
+    modalEl.querySelectorAll("button[data-value]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            inputEl.value = btn.getAttribute("data-value");
+            hideModal(modalEl);
+        });
+    });
+
+    // Save custom value
+    saveBtnEl.addEventListener("click", () => {
+        let val = parseInt(customInputEl.value.trim());
+        if (val && val > 0) {
+            val = Math.min(val, 100);
+            inputEl.value = val;
+            hideModal(modalEl);
+        }
+    });
+
+    // Close modal
+    closeBtnEl.addEventListener("click", () => {
+        hideModal(modalEl);
+    });
+}
+
+    
         // User Modal Logic
         const userModal = document.getElementById("userModal");
         const assignedToDisplay = document.getElementById("assignedToDisplay");
         const userList = document.getElementById("userList");
         const assignedToSelection = document.getElementById("assignedToSelection");
-
+    
         let selectedUsers = [];
         const populateUsers = () => {
             const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -537,7 +799,7 @@
                 userItem.style.borderRadius = "8px";
                 userItem.style.cursor = "pointer";
                 userItem.style.textAlign = "center";
-
+    
                 userItem.addEventListener("mouseover", () => {
                     userItem.style.backgroundColor = "var(--primary-color)";
                     userItem.style.color = "var(--secondary-color)";
@@ -566,30 +828,30 @@
                 userList.appendChild(userItem);
             });
         };
-
+    
         const updateSelectedUsersDisplay = () => {
             assignedToSelection.value = selectedUsers.join(", ");
             assignedToDisplay.textContent = selectedUsers.length > 0 ? `Selected: ${selectedUsers.join(", ")}` : "Select users";
         };
-
+    
         document.addEventListener("DOMContentLoaded", () => {
             populateUsers();
         });
-
+    
         assignedToDisplay.addEventListener("click", () => {
             showModal(userModal);
         });
-
+    
         window.addEventListener("click", (e) => {
             if (e.target === userModal) {
                 hideModal(userModal);
             }
         });
-
+    
         document.getElementById("closeUserModal").addEventListener("click", () => {
             hideModal(userModal);
         });
-
+    
         // Reward Modal Logic
         const rewardModal = document.getElementById("rewardModal");
         const selectRewardButton = document.getElementById("selectReward");
@@ -597,11 +859,11 @@
         const rewardInput = document.getElementById("rewardInput");
         const saveRewardButton = document.getElementById("saveRewardBtn");
         const closeRewardButton = document.getElementById("closeRewardModal");
-
+    
         selectRewardButton.addEventListener("click", () => {
             showModal(rewardModal);
         });
-
+    
         saveRewardButton.addEventListener("click", (event) => {
             event.preventDefault();
             const reward = rewardInput.value;
@@ -611,27 +873,27 @@
             }
             hideModal(rewardModal);
         });
-
+    
         closeRewardButton.addEventListener("click", () => {
             hideModal(rewardModal);
         });
-
+    
         // Generic Modal Setup
         function setupModal(modalId, buttonId, inputId) {
             const modal = document.getElementById(modalId);
             const button = document.getElementById(buttonId);
             const input = document.getElementById(inputId);
-
+    
             button.addEventListener('click', () => {
                 showModal(modal);
             });
-
+    
             window.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     hideModal(modal);
                 }
             });
-
+    
             modal.addEventListener('click', (e) => {
                 if (e.target.tagName === 'LI') {
                     input.value = e.target.getAttribute('data-value');
@@ -640,36 +902,166 @@
                 }
             });
         }
-
+    
         setupModal('roomModal', 'selectRoom', 'roomSelection');
-        setupModal('repeatModal', 'selectRepeat', 'repeatSelection');
         setupModal('settingsModal', 'selectSettings', 'settingsSelection');
 
-        // Flatpickr Date Picker
-        flatpickr("#taskDate", {
+        const repeatModal = document.getElementById('repeatModal');
+const repeatButton = document.getElementById('selectRepeat');
+const repeatInput = document.getElementById('repeatSelection');
+const timesPerDayGroup = document.getElementById('timesPerDayGroup');
+const timesPerWeekGroup = document.getElementById('timesPerWeekGroup');
+const timesPerMonthGroup = document.getElementById('timesPerMonthGroup');
+
+
+repeatButton.addEventListener('click', () => {
+    showModal(repeatModal);
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === repeatModal) {
+        hideModal(repeatModal);
+    }
+});
+
+repeatModal.addEventListener('click', (e) => {
+    if (e.target.tagName === 'LI') {
+        const selected = e.target.getAttribute('data-value');
+        repeatInput.value = selected;
+        repeatButton.textContent = selected;
+        hideModal(repeatModal);
+
+        // Show/hide correct "x times" group
+        timesPerDayGroup.style.display = selected === "Daily" ? "flex" : "none";
+        timesPerWeekGroup.style.display = selected === "Weekly" ? "flex" : "none";
+        timesPerMonthGroup.style.display = selected === "Monthly" ? "flex" : "none";
+
+        // Set initial value to 1
+        if (selected === "Daily") timesPerDayInput.value = "1";
+        if (selected === "Weekly") document.getElementById("timesPerWeekInput").value = "1";
+        if (selected === "Monthly") document.getElementById("timesPerMonthInput").value = "1";
+    }
+});
+
+
+const timesPerDayInput = document.getElementById("timesPerDayInput");
+const timesPerDayModal = document.getElementById("timesPerDayModal");
+const closeTimesModal = document.getElementById("closeTimesModal");
+const saveCustomTimesBtn = document.getElementById("saveCustomTimesBtn");
+const customTimesInput = document.getElementById("customTimesInput");
+
+// Open modal when input clicked
+timesPerDayInput.addEventListener("focus", () => {
+    customTimesInput.value = ""; // Clear previous custom input
+    showModal(timesPerDayModal);
+});
+
+
+// Quick pick buttons (1–5)
+timesPerDayModal.querySelectorAll("button[data-value]").forEach(btn => {
+    btn.addEventListener("click", () => {
+        timesPerDayInput.value = btn.getAttribute("data-value");
+        hideModal(timesPerDayModal);
+    });
+});
+
+// Custom input save
+saveCustomTimesBtn.addEventListener("click", () => {
+    let val = customTimesInput.value.trim();
+    if (val && parseInt(val) > 0) {
+        val = Math.min(parseInt(val), 100); // cap at 100
+        timesPerDayInput.value = val;
+        hideModal(timesPerDayModal);
+    }
+});
+
+
+// Close modal
+closeTimesModal.addEventListener("click", () => {
+    hideModal(timesPerDayModal);
+});
+
+
+setupTimesModal(
+    document.getElementById("timesPerMonthInput"),
+    document.getElementById("timesPerMonthModal"),
+    document.getElementById("closeTimesMonthModal"),
+    document.getElementById("customTimesMonthInput"),
+    document.getElementById("saveCustomTimesMonthBtn")
+);
+
+// Close times modals when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target === timesPerDayModal) hideModal(timesPerDayModal);
+    if (e.target === document.getElementById("timesPerWeekModal")) hideModal(document.getElementById("timesPerWeekModal"));
+    if (e.target === document.getElementById("timesPerMonthModal")) hideModal(document.getElementById("timesPerMonthModal"));
+});
+
+
+
+
+    
+        // Date Mode Toggle Logic
+        let dateMode = "from";
+        const dateDisplay = document.getElementById("dateDisplay");
+        const dateDisplayTo = document.getElementById("dateDisplayTo");
+        const dateInputFrom = document.getElementById("taskDate");
+        const dateInputTo = document.getElementById("taskDateTo");
+        const toggleButton = document.getElementById("dateModeToggle");
+    
+        toggleButton.addEventListener("click", () => {
+            if (dateMode === "from") {
+                dateMode = "from-to";
+                toggleButton.textContent = "From - To";
+                dateDisplayTo.style.display = "inline-block";
+            } else {
+                dateMode = "from";
+                toggleButton.textContent = "From";
+                dateDisplayTo.style.display = "none";
+                dateInputTo.value = "";
+                dateDisplayTo.textContent = "To Date";
+            }
+        });
+    
+        const flatpickrFrom = flatpickr("#taskDate", {
             dateFormat: "Y-m-d",
             defaultDate: "today",
             disableMobile: true,
-            onChange: function(selectedDates, dateStr, instance) {
-                const options = { month: "long", day: "numeric" };
-                const formattedDate = new Date(selectedDates[0]).toLocaleDateString(undefined, options);
-                document.getElementById("dateDisplay").textContent = formattedDate;
+            onChange: function (selectedDates) {
+                const formatted = new Date(selectedDates[0]).toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+                dateDisplay.textContent = formatted;
             },
-            positionElement: document.getElementById("dateDisplay"),
-            static: false,
+            positionElement: dateDisplay,
             appendTo: document.body
         });
-
-        document.getElementById("dateDisplay").addEventListener("click", () => {
-            document.getElementById("taskDate")._flatpickr.open();
+    
+        const flatpickrTo = flatpickr("#taskDateTo", {
+            dateFormat: "Y-m-d",
+            disableMobile: true,
+            onChange: function (selectedDates) {
+                const formatted = new Date(selectedDates[0]).toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+                dateDisplayTo.textContent = formatted;
+            },
+            positionElement: dateDisplayTo,
+            appendTo: document.body
         });
-
+    
+        dateDisplay.addEventListener("click", () => {
+            flatpickrFrom.open();
+        });
+    
+        dateDisplayTo.addEventListener("click", () => {
+            if (dateMode === "from-to") {
+                flatpickrTo.open();
+            }
+        });
+    
         // Reminder and Alarm Logic
         const reminderToggle = document.getElementById('taskReminder');
         const addAlarmBtn = document.getElementById('addAlarmBtn');
         const alarmContainer = document.getElementById('alarmContainer');
         let alarms = [];
-
+    
         reminderToggle.addEventListener('change', () => {
             if (reminderToggle.checked) {
                 addAlarmBtn.style.display = 'inline-block';
@@ -679,13 +1071,13 @@
                 alarms = [];
             }
         });
-
+    
         addAlarmBtn.addEventListener('click', () => {
             const alarmWrapper = document.createElement('div');
             alarmWrapper.style.marginBottom = '10px';
             alarmWrapper.style.display = 'flex';
             alarmWrapper.style.alignItems = 'center';
-
+    
             const alarmInput = document.createElement('input');
             alarmInput.type = 'time';
             alarmInput.style.marginRight = '10px';
@@ -693,7 +1085,7 @@
             alarmInput.style.border = '2px solid var(--primary-color)';
             alarmInput.style.borderRadius = '8px';
             alarmInput.style.background = 'var(--accent-color)';
-
+    
             const removeButton = document.createElement('button');
             removeButton.textContent = 'Remove';
             removeButton.style.padding = '5px 10px';
@@ -701,49 +1093,89 @@
             removeButton.style.color = 'var(--accent-color)';
             removeButton.style.border = 'none';
             removeButton.style.borderRadius = '8px';
-
+    
             removeButton.addEventListener('click', () => {
                 alarmWrapper.remove();
                 alarms = alarms.filter(a => a !== alarmInput.value);
             });
-
+    
             alarmInput.addEventListener('input', () => {
                 if (!alarms.includes(alarmInput.value)) {
                     alarms.push(alarmInput.value);
                 }
             });
-
+    
             alarmWrapper.appendChild(alarmInput);
             alarmWrapper.appendChild(removeButton);
             alarmContainer.appendChild(alarmWrapper);
         });
-
+    
         // Form Submission
         document.getElementById("addTaskForm").addEventListener("submit", function (event) {
             event.preventDefault();
-
+    
             const title = document.getElementById("taskTitle").value.trim();
             const notes = document.getElementById("taskNotes").value.trim();
             const room = document.getElementById("roomSelection").value;
             const repeat = document.getElementById("repeatSelection").value;
             const settings = document.getElementById("settingsSelection").value;
-            const date = document.getElementById("taskDate").value;
+            const dateFrom = document.getElementById("taskDate").value;
+            const dateTo = document.getElementById("taskDateTo").value;
             const reminder = document.getElementById("taskReminder").checked;
             const users = document.getElementById("assignedToSelection").value.split(", ");
             const reward = document.getElementById("RewardValue").value;
+            let timesPerDay = parseInt(document.getElementById("timesPerDayInput").value) || null;
+let timesPerWeek = parseInt(document.getElementById("timesPerWeekInput").value) || null;
+let timesPerMonth = parseInt(document.getElementById("timesPerMonthInput").value) || null;
 
+// Cap values at 100
+if (timesPerDay > 100) timesPerDay = 100;
+if (timesPerWeek > 100) timesPerWeek = 100;
+if (timesPerMonth > 100) timesPerMonth = 100;
+// Ensure values are at least 1 (if not null)
+if (timesPerDay !== null && timesPerDay < 1) timesPerDay = 1;
+if (timesPerWeek !== null && timesPerWeek < 1) timesPerWeek = 1;
+if (timesPerMonth !== null && timesPerMonth < 1) timesPerMonth = 1;
+
+
+
+
+    
             if (!title) {
                 alert("Task title is required!");
                 return;
             }
-
+    
+            const dateValue = dateMode === "from" ? dateFrom : `${dateFrom} to ${dateTo}`;
             const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
-            tasks.push({ title, notes, room, repeat, settings, date, reminder, users, reward, alarms });
-            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+            const editTask = JSON.parse(localStorage.getItem("familyApp_editTask"));
+if (editTask) {
+    // Replace existing task by title + date match
+    const index = tasks.findIndex(t => t.title === editTask.title && t.date === editTask.date);
+    if (index !== -1) {
+        tasks[index] = {
+            title, notes, room, repeat, settings,
+            date: dateValue, reminder, users, reward, alarms,
+            timesPerDay, timesPerWeek, timesPerMonth
+        };
+    }
+    localStorage.removeItem("familyApp_editTask");
+} else {
+    // New task
+    tasks.push({
+        title, notes, room, repeat, settings,
+        date: dateValue, reminder, users, reward, alarms,
+        timesPerDay, timesPerWeek, timesPerMonth
+    });
+}
 
+
+localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+
+    
             alert("Task saved successfully!");
             window.location.href = "tasks.html";
         });
-    </script>
+    </script>    
 </body>
 </html>
