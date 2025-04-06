@@ -734,7 +734,7 @@
     <div id="luckyChestContainer"></div>
   </div>
 
-
+  
             <div class="reward-container">
                 <p><strong>Honey:</strong> <span id="rewardAmount">0</span> 🍯</p>
                 <button id="sellButton">Sell Honey</button>
@@ -1384,9 +1384,8 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
             <img src="${image}" alt="Reward" class="reward-image">
             <h2 class="reward-title">${chest.name}</h2>
             <p class="reward-description">
-  ${chest.type === "dice"
-    ? `"Test your Luck"<br>&rarr; Get a surprise reward.`
-    : (chest.description || "You unlocked a surprise!")}
+  ${chest.quote ? `<em>"${chest.quote}"</em><br>` : ""}
+  ${chest.effect || "You unlocked a surprise!"}
 </p>
 
             <button class="claim-button">Claim Reward</button>
