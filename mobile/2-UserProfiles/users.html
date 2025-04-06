@@ -727,6 +727,14 @@
         <div class="profile-card">
             <h1 id="profileName">Bee Name</h1>
             <p>Welcome to the hive of <span id="userName"></span>.</p>
+
+                   <!-- 🎁 Lucky Chest Section -->
+<div class="lucky-chests-section">
+    <h3 style="margin-top: 30px; color: var(--primary-color);">🎁 Lucky Chests</h3>
+    <div id="luckyChestContainer"></div>
+  </div>
+
+
             <div class="reward-container">
                 <p><strong>Honey:</strong> <span id="rewardAmount">0</span> 🍯</p>
                 <button id="sellButton">Sell Honey</button>
@@ -737,11 +745,7 @@
             </div>
         </div>
 
-            <!-- 🎁 Lucky Chest Section -->
-<div class="lucky-chests-section">
-    <h3 style="margin-top: 30px; color: var(--primary-color);">🎁 Lucky Chests</h3>
-    <div id="luckyChestContainer"></div>
-  </div>
+     
     </div>
 
 
@@ -1379,7 +1383,12 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
         modal.innerHTML = `
             <img src="${image}" alt="Reward" class="reward-image">
             <h2 class="reward-title">${chest.name}</h2>
-            <p class="reward-description">${chest.description || "You unlocked a surprise!"}</p>
+            <p class="reward-description">
+  ${chest.type === "dice"
+    ? `"Test your Luck"<br>&rarr; Get a surprise reward.`
+    : (chest.description || "You unlocked a surprise!")}
+</p>
+
             <button class="claim-button">Claim Reward</button>
         `;
 
