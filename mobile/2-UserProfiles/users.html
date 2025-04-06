@@ -365,9 +365,10 @@
 
 
         .date-header {
-            background: var(--secondary-color); /* dark background like footer */
-    position: sticky;
-    top: 0; /* move to top now that header is gone */
+    background: var(--secondary-color);
+    position: fixed; /* <--- change from sticky to fixed */
+    top: 0;
+    width: 100%;
     z-index: 50;
     padding: 5px 0;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
