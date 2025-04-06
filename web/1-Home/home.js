@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const manageMembersList = document.getElementById("manageMembersList");
 
     // Determine the base path (mobile or web) based on the current URL
-    const isMobile = window.location.pathname.includes("/mobile/");
-    const basePath = isMobile ? "/mobile" : "/web";
+    const isMobile = window.location.pathname.includes("/BeeMazing-Y1/mobile/");
+    const basePath = isMobile ? "/BeeMazing-Y1/mobile" : "/web";
 
     // Load users from localStorage on page load
     const users = JSON.parse(localStorage.getItem("users")) || [];
