@@ -61,12 +61,12 @@
             letter-spacing: 1px;
         }
         .content {
-            position: absolute;
-    top: 115px;
+    position: absolute;
+    top: calc(var(--header-height) + 90px); /* Add space for .date-header (~90px) */
     bottom: var(--footer-height);
     width: 100%;
     padding: 20px;
-    padding-bottom: 140px; /* 🐝 Adds space so tasks scroll below the + button */
+    padding-bottom: 140px;
     overflow-y: auto;
             background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
         }
