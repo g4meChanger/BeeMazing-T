@@ -1180,6 +1180,23 @@ document.getElementById("scrollRight").addEventListener("click", () => {
     });
 });
 
+
+
+
+
+
+
+
+
+window.addEventListener("load", () => {
+    const dateHeader = document.querySelector(".date-header");
+    const content = document.querySelector(".content");
+    const headerHeight = dateHeader.offsetHeight;
+
+    content.style.paddingTop = `${headerHeight + 12}px`; // add a little breathing room
+});
+
+
     </script>
 </body>
 </html>
