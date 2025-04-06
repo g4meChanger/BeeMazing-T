@@ -1290,25 +1290,15 @@ function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = fals
     const video = document.getElementById("chestVideo");
 
     overlay.style.display = "flex";
-    video.currentTime = 1.5;
 
     // ⛑️ Force mobile playback with fallback
     const playPromise = video.play();
 
 
-    const fallbackMsg = document.getElementById("videoFallbackMessage");
-
-video.onplay = () => {
-    if (fallbackMsg) fallbackMsg.style.display = "none";
+    video.onplay = () => {
+    console.log("Video started");
 };
 
-video.onerror = () => {
-    if (fallbackMsg) fallbackMsg.style.display = "block";
-};
-
-setTimeout(() => {
-    if (!video.ended && fallbackMsg) fallbackMsg.style.display = "block";
-}, 5000);
 
 
     if (playPromise !== undefined) {
@@ -1328,14 +1318,6 @@ setTimeout(() => {
         overlay.style.display = "none";
         showLuckyChestRewardOverlay(userName, chest, chestIndex);
     };
-
-    // ⏳ Optional timeout fallback (in case onended never fires on mobile)
-    setTimeout(() => {
-        if (!video.ended) {
-            overlay.style.display = "none";
-            showLuckyChestRewardOverlay(userName, chest, chestIndex);
-        }
-    }, 7000); // safety timeout in case mobile fails to fire onended
 }
 
 
@@ -1463,24 +1445,22 @@ window.addEventListener("load", adjustContentTop);
     align-items:center;
     overflow: hidden;
 ">
-   <video id="chestVideo"
-   autoplay
-   muted
-   playsinline
-   controls
-   poster="/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png"
-   style="
-       max-width: 90vw;
-       max-height: 90vh;
-       border-radius: 20px;
-       box-shadow: 0 0 30px rgba(255, 193, 7, 0.6); /* ✨ BRIGHT glow */
-       background: #1a1a1a; /* fallback background */
-       display: block;
-   ">
-  <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
-
-   Your browser does not support the video tag.
+<video id="chestVideo"
+autoplay
+muted
+playsinline
+style="
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(255, 193, 7, 0.6);
+    background: #1a1a1a;
+    display: block;
+">
+<source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
+Your browser does not support the video tag.
 </video>
+
 
 <div id="videoFallbackMessage" style="
     color: white;
