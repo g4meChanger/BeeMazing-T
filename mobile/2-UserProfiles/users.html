@@ -701,20 +701,20 @@
 
 
     <div class="footer">
-        <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
-            <img src="/mobile/1-Home/HomeBtn.png" alt="Home" />
+        <a href="/BeeMazing-Y1/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/BeeMazing-Y1/mobile/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
         </a>
         <a href="#" id="profileButton" class="footer-icon" aria-label="Profile">
-            <img src="/mobile/1-Home/ProfileBtn.png" alt="Profile" />
+            <img src="/BeeMazing-Y1/mobile/1-Home/ProfileBtn.png" alt="Profile" />
             <span>Profile</span>
         </a>
         <a href="#" id="marketButton" class="footer-icon" aria-label="Market">
-            <img src="/mobile/1-Home/MarketBtn.png" alt="Market" />
+            <img src="/BeeMazing-Y1/mobile/1-Home/MarketBtn.png" alt="Market" />
             <span>Market</span>
         </a>
         <a href="#" id="rewardsButton" class="footer-icon" aria-label="Rewards">
-            <img src="/mobile/1-Home/RewardsBtn.png" alt="Rewards" />
+            <img src="/BeeMazing-Y1/mobile/1-Home/RewardsBtn.png" alt="Rewards" />
             <span>Rewards</span>
         </a>
     </div>
@@ -750,10 +750,10 @@
         if (userName) {
     document.getElementById('profileName').textContent = userName;
     document.getElementById('userName').textContent = userName;
-    document.getElementById('rewardsButton').href = `/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
-    document.getElementById('marketButton').href = `/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
+    document.getElementById('rewardsButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
+    document.getElementById('marketButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
     // 🆕 add this line
-    document.getElementById('profileButton').href = `/mobile/2-UserProfiles/users.html?user=${userName}`;
+    document.getElementById('profileButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${userName}`;
 
     loadUserTasks(userName);
     loadUserReward(userName);
@@ -1241,8 +1241,8 @@ function loadLuckyChests(userName) {
         const isUnlocked = chest.progress >= chest.requiredPoints;
 
         const chestImage = isUnlocked
-            ? '/mobile/4-Market/LuckyChest/ChestReady.gif'
-            : '/mobile/4-Market/LuckyChest/ChestPending.png';
+            ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
+            : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
 
         const card = document.createElement("div");
         card.className = "lucky-chest-card";
@@ -1394,7 +1394,7 @@ function claimLuckyChest(userName, chestIndex) {
 
 <div id="chestVideoOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:2000; justify-content:center; align-items:center;">
     <video id="chestVideo" width="100%" height="100%" autoplay>
-        <source src="/mobile/4-Market/LuckyChest/Chest.mp4" type="video/mp4" />
+        <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest.mp4" type="video/mp4" />
         Your browser does not support the video tag.
     </video>
 </div>
