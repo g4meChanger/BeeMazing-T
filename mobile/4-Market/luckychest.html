@@ -129,12 +129,16 @@
   border-radius: 10px;
   width: 90%;
   max-width: 400px;
-  border: 2px solid var(--primary-color);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   max-height: 90vh;
   overflow-y: auto;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
 }
+
 
 
     .form-group {
@@ -319,10 +323,18 @@
         bottom: calc(var(--footer-height) + 10px);
       }
     }
+
+
+    @media (max-width: 600px) {
+  .modal-content {
+    margin: 10px;
+  }
+}
+
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest</div>
+  <div class="header">Lucky Chest 1</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -653,12 +665,15 @@
       userListEl.style.display = userListEl.style.display === "none" ? "block" : "none";
     });
 
-    window.addEventListener("click", e => {
-      if (e.target.classList.contains("modal")) {
-        e.target.classList.remove("show");
-        userListEl.style.display = "none";
-      }
-    });
+    document.querySelectorAll(".modal").forEach(modal => {
+  modal.addEventListener("click", e => {
+    if (e.target === modal) {
+      modal.classList.remove("show");
+      userListEl.style.display = "none";
+    }
+  });
+});
+
 
     document.querySelectorAll('.footer a').forEach(link => {
       const currentPath = window.location.pathname.replace(/\/$/, '');
