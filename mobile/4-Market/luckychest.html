@@ -106,18 +106,21 @@
     }
 
     .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      -webkit-overflow-scrolling: touch;
-    }
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  overflow-y: auto;
+  padding: 20px; /* lets you see top/bottom */
+  -webkit-overflow-scrolling: touch;
+}
+
 
     .modal.show {
       display: flex;
@@ -125,12 +128,11 @@
 
     .modal-content {
   background: var(--accent-color);
-  padding: 20px 20px 30px; /* Top, left/right, bottom */
-  padding-bottom: 30px; /* <-- Add this */
+  padding: 20px 20px 30px;
   border-radius: 10px;
   width: 90%;
   max-width: 400px;
-  max-height: 90vh;
+  max-height: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -335,7 +337,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest 2</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest 3</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
