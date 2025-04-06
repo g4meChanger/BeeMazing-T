@@ -79,18 +79,17 @@
         }
 
 
-
         .content {
-    position: relative; /* Use relative instead of absolute */
-    margin-top: calc(var(--header-height) + 100px); /* header + date picker */
-    margin-bottom: var(--footer-height); /* Reserve space for footer */
+    position: relative;
     width: 100%;
-    padding: 20px;
-    padding-bottom: 80px; /* Allow tasks to scroll under the + button */
     overflow-y: auto;
-    height: calc(100vh - var(--header-height) - 100px - var(--footer-height)); /* true visible height */
     background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+    padding: 0 20px 100px; /* horizontal and bottom only */
+    height: calc(100vh - var(--footer-height));
 }
+
+
+
 
 
 
