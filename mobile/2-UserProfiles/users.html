@@ -1292,6 +1292,22 @@ function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = fals
     // ⛑️ Force mobile playback with fallback
     const playPromise = video.play();
 
+
+    const fallbackMsg = document.getElementById("videoFallbackMessage");
+
+video.onplay = () => {
+    if (fallbackMsg) fallbackMsg.style.display = "none";
+};
+
+video.onerror = () => {
+    if (fallbackMsg) fallbackMsg.style.display = "block";
+};
+
+setTimeout(() => {
+    if (!video.ended && fallbackMsg) fallbackMsg.style.display = "block";
+}, 5000);
+
+
     if (playPromise !== undefined) {
         playPromise
             .then(() => {
@@ -1444,19 +1460,34 @@ window.addEventListener("load", adjustContentTop);
     align-items:center;
     overflow: hidden;
 ">
-    <video id="chestVideo"
-        autoplay
-        muted
-        playsinline
-        style="
-            max-width: 90vw;
-            max-height: 90vh;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
-        ">
-        <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-    </video>
+   <video id="chestVideo"
+   autoplay
+   muted
+   playsinline
+   style="
+       max-width: 90vw;
+       max-height: 90vh;
+       border-radius: 20px;
+       box-shadow: 0 0 30px rgba(255, 193, 7, 0.6); /* ✨ BRIGHT glow */
+       background: #1a1a1a; /* fallback background */
+       display: block;
+   ">
+   <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest.mp4" type="video/mp4" />
+   Your browser does not support the video tag.
+</video>
+
+<div id="videoFallbackMessage" style="
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 10px;
+    display: none;
+">
+    If nothing happens, tap again to continue.
+</div>
+
+
+
 </div>
 
 
