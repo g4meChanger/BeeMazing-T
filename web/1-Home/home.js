@@ -100,8 +100,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 removeBtn.textContent = "X";
                 removeBtn.addEventListener("click", function (event) {
                     event.stopPropagation();
-                    showConfirmationDialog(username, newUserItem);
+                    showConfirmModal(username);
                 });
+                
                 newUserItem.appendChild(removeBtn);
             }
 
@@ -154,66 +155,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Function to show confirmation dialog (used by mobile version)
-    function showConfirmationDialog(username, userItem) {
-        const confirmationModal = document.createElement("div");
-        confirmationModal.style.position = "fixed";
-        confirmationModal.style.top = "0";
-        confirmationModal.style.left = "0";
-        confirmationModal.style.width = "100%";
-        confirmationModal.style.height = "100%";
-        confirmationModal.style.display = "flex";
-        confirmationModal.style.justifyContent = "center";
-        confirmationModal.style.alignItems = "center";
-        confirmationModal.style.background = "rgba(0, 0, 0, 0.5)";
 
-        const modalContent = document.createElement("div");
-        modalContent.style.background = "white";
-        modalContent.style.padding = "20px";
-        modalContent.style.borderRadius = "8px";
-        modalContent.style.textAlign = "center";
-        modalContent.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.2)";
-        modalContent.innerHTML = `
-            <p>Are you sure you want to delete user "${username}"?</p>
-            <button id="confirmYes" style="
-                background-color: black; 
-                color: white; 
-                border: none; 
-                padding: 10px 20px; 
-                font-size: 16px; 
-                border-radius: 5px; 
-                cursor: pointer; 
-                margin: 10px;">
-                Yes
-            </button>
-            <button id="confirmNo" style="
-                background-color: white; 
-                color: black; 
-                border: 2px solid black; 
-                padding: 10px 20px; 
-                font-size: 16px; 
-                border-radius: 5px; 
-                cursor: pointer; 
-                margin: 10px;">
-                No
-            </button>
-        `;
+    let userToRemove = null;
 
-        confirmationModal.appendChild(modalContent);
-        document.body.appendChild(confirmationModal);
+function showConfirmModal(username) {
+    userToRemove = username;
+    document.getElementById("confirmModal").classList.add("show");
+}
 
-        modalContent.querySelector("#confirmYes").addEventListener("click", function () {
-            const userIndex = users.indexOf(username);
-            if (userIndex !== -1) {
-                users.splice(userIndex, 1);
-                localStorage.setItem("users", JSON.stringify(users));
-            }
-            userList.removeChild(userItem);
-            document.body.removeChild(confirmationModal);
-        });
-
-        modalContent.querySelector("#confirmNo").addEventListener("click", function () {
-            document.body.removeChild(confirmationModal);
-        });
+document.getElementById("confirmYesBtn").addEventListener("click", () => {
+    if (userToRemove) {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const updated = users.filter(user => user !== userToRemove);
+        localStorage.setItem("users", JSON.stringify(updated));
+        userToRemove = null;
+        document.getElementById("confirmModal").classList.remove("show");
+        location.reload(); // Reload to re-render the user list
     }
+});
+
+document.getElementById("confirmNoBtn").addEventListener("click", () => {
+    userToRemove = null;
+    document.getElementById("confirmModal").classList.remove("show");
+});
+
+
 });

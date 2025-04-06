@@ -59,7 +59,7 @@
         .content {
             flex: 1;
             padding: 20px;
-            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
         }
         .section {
             margin-bottom: 30px;
@@ -188,28 +188,51 @@
             width: 100%;
             display: flex;
             justify-content: space-around;
-            background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            background: var(--secondary-color); /* Changed to black */
             padding: 10px 0;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
             z-index: 100;
             height: 70px;
         }
         .footer a {
-            text-decoration: none;
-            color: var(--secondary-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
+    text-decoration: none;
+    color: var(--accent-color); /* Changed to white for text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
         .footer a:hover {
             transform: scale(1.1);
         }
+
+
+
+
+
         .footer-icon img {
-            width: 40px;
-            height: 40px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
+    width: 40px;
+    height: 40px;
+    filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* Default: white */
+}
+
+.footer a.active img {
+    filter: none;
+    filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg) brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+}
+
+
+
+
+.footer a.active span {
+    color: var(--primary-color);
+}
+
+
+
+
+
+
         .footer-icon span {
             font-size: 12px;
             margin-top: 5px;
@@ -369,6 +392,34 @@
     </div>
 
     <script>
+
+
+
+    // Dynamically highlight the active footer icon
+    document.querySelectorAll('.footer a').forEach(link => {
+        // Normalize both paths (remove trailing slashes)
+        const currentPath = window.location.pathname.replace(/\/$/, '');
+        const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
+
+        if (currentPath === linkPath) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
         function renderHistory() {
             const history = JSON.parse(localStorage.getItem("familyApp_history")) || {};
             const historyContainer = document.getElementById("historyContainer");

@@ -13,14 +13,16 @@
         }
         :root {
             --primary-color: #FFC107;
-            --secondary-color: #212121;
-            --accent-color: #FFFFFF;
-            --light-bg: #FFF8E1;
-            --text-color: #212121;
+    --secondary-color: #212121;
+    --accent-color: #FFFFFF;
+    --light-bg: #1E1F26; /* dark background */
+    --text-color: #FFFFFF; /* white text */
             --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
             --header-height: 68px;
             --footer-height: 70px;
+            --border-dark: #444754; /* 👈 Add this if not already present */
+            --card-bg: #2A2B32;
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -30,33 +32,42 @@
             overflow: hidden;
         }
         .header {
-            background: linear-gradient(135deg, var(--primary-color), #FFB300);
-            color: var(--secondary-color);
-            padding: 20px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: var(--header-height);
-            z-index: 100;
-        }
-        .content {
+    background: linear-gradient(135deg, var(--primary-color), #FFB300);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: var(--header-height);
+    z-index: 100;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    letter-spacing: 1px;
+}
+
+
+.content {
     position: absolute;
-    top: calc(var(--header-height) + 115px); /* header + date picker height */
+    top: 115px;
     bottom: var(--footer-height);
     width: 100%;
     padding: 20px;
     overflow-y: auto;
-    background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+    background-color: var(--light-bg); /* <-- Add this */
+    background-image: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="20" cy="20" r="2" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E');
+    background-repeat: repeat;
 }
 
         .profile-card {
-            background: var(--accent-color);
-            border: 2px solid var(--primary-color);
+            background: var(--card-bg); /* dark card background like task items */
+            border: 2px solid var(--border-dark); /* dark border like tasks */
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
@@ -72,12 +83,12 @@
         .profile-card h1 {
             font-size: 32px;
             font-weight: 600;
-            color: var(--secondary-color);
+            color: var(--accent-color); /* white */
             margin-bottom: 15px;
         }
         .profile-card p {
             font-size: 18px;
-            color: var(--text-color);
+            color: var(--accent-color); /* white */
             margin-bottom: 20px;
         }
         .reward-container {
@@ -109,20 +120,24 @@
             gap: 15px;
         }
         .task-item {
-            background: var(--accent-color);
-            padding: 15px;
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-        .task-item:hover {
-            transform: translateY(-5px);
-        }
+    background: #2A2B32; /* match tasks.html dark card background */
+    color: var(--text-color); /* ensure text is white */
+    padding: 16px;
+    border: 2px solid var(--border-dark);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.task-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.3); /* subtle yellow glow */
+}
         .finished-btn {
-            background: var(--secondary-color);
-            color: var(--accent-color);
+            background: var(--primary-color);
+            color: var(--secondary-color);
             border: none;
             padding: 12px;
             border-radius: 8px;
@@ -133,41 +148,104 @@
             transition: background-color 0.3s ease;
         }
         .finished-btn:hover {
-            background: #424242;
+            background: #FFD54F;
         }
+       
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         .footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            background: linear-gradient(135deg, var(--primary-color), #FFB300);
-            padding: 10px 0;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 100;
-            height: var(--footer-height);
-        }
-        .footer a {
-            text-decoration: none;
-            color: var(--secondary-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
-        .footer a:hover {
-            transform: scale(1.1);
-        }
-        .footer-icon img {
-            width: 35px;
-            height: 35px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
-        .footer-icon span {
-            font-size: 12px;
-            margin-top: 2px;
-            font-weight: 600;
-        }
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: var(--secondary-color);
+    padding: 10px 0;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    height: var(--footer-height);
+}
+
+.footer a {
+    text-decoration: none;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.footer a:hover {
+    transform: scale(1.1);
+}
+
+.footer-icon img {
+    width: 40px;
+    height: 40px;
+    filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.footer a.active img {
+    filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg)
+        brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+}
+
+.footer-icon span {
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.footer a.active span {
+    color: var(--primary-color);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         .modal {
             position: fixed;
             top: 0;
@@ -182,7 +260,8 @@
             animation: fadeIn 0.3s ease-out;
         }
         .modal-content, .sell-modal-content {
-            background: var(--accent-color);
+            background: #2A2B32; /* match task card background */
+            color: var(--accent-color); /* white text */
             padding: 25px;
             border-radius: 15px;
             width: 85%;
@@ -191,7 +270,7 @@
             border: 2px solid var(--primary-color);
         }
         .modal-content strong, .sell-modal-content strong {
-            color: var(--secondary-color);
+            color: var(--accent-color); /* white */
             font-weight: 600;
         }
         .sell-modal-content input {
@@ -286,9 +365,9 @@
 
 
         .date-header {
-    background: linear-gradient(135deg, var(--primary-color), #FFB300);
+            background: var(--secondary-color); /* dark background like footer */
     position: sticky;
-    top: var(--header-height);
+    top: 0; /* move to top now that header is gone */
     z-index: 50;
     padding: 5px 0;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -300,18 +379,25 @@
     padding: 4px 0;
     font-weight: bold;
     font-size: 18px;
-    color: var(--secondary-color);
+    color: var(--accent-color); /* white text */
 }
 .month-nav button {
-    background: var(--accent-color);
+    background: var(--secondary-color); /* dark background */
     border: none;
-    color: var(--secondary-color);
+    color: var(--accent-color);         /* white text */
     padding: 4px 10px;
     font-size: 16px;
     border-radius: 8px;
     margin: 0 8px;
     cursor: pointer;
 }
+
+
+.month-nav button:hover {
+    background: var(--primary-color);  /* yellow on hover */
+    color: var(--secondary-color);     /* black text */
+}
+
 .day-scroll-wrapper {
     display: flex;
     align-items: center;
@@ -335,8 +421,8 @@
     line-height: 38px;
     text-align: center;
     border-radius: 50%;
-    background: var(--accent-color);
-    color: var(--secondary-color);
+    background: var(--secondary-color); /* dark bubble */
+    color: var(--accent-color);         /* white text */
     font-weight: bold;
     cursor: pointer;
     flex-shrink: 0;
@@ -346,14 +432,14 @@
     background: #FFF3CD;
 }
 .day.selected {
-    background: var(--secondary-color);
-    color: var(--accent-color);
+    background: var(--primary-color);
+    color: var(--secondary-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 .scroll-btn {
-    background: var(--primary-color);
+    background: var(--secondary-color);
     border: none;
-    color: var(--secondary-color);
+    color: var(--accent-color);             /* White arrows */
     font-size: 20px;
     font-weight: bold;
     padding: 5px 10px;
@@ -362,12 +448,221 @@
     margin: 0 5px;
 }
 
+@media (max-width: 600px) {
+    .footer-icon img {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+
+
+
+
+
+
+
+
+.lucky-chest-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border-dark);
+  border-radius: 12px;
+  padding: 15px 20px;
+  margin-top: 10px;
+  display: flex;
+  gap: 20px; /* increased spacing between image and text */
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.lucky-chest-card img {
+  width: 100px; /* increased from 80px */
+  height: 100px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 12px;
+}
+
+.lucky-chest-card .info {
+  flex: 1;
+  padding-left: 10px; /* 👈 helps shift content slightly right */
+}
+
+.lucky-chest-card .info h4 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  color: var(--primary-color);
+}
+
+.lucky-chest-card .info p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-color);
+}
+
+.lucky-chest-progress {
+  font-weight: bold;
+  color: var(--text-color);
+  margin-top: 6px;
+}
+
+.lucky-chest-card:hover img {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+
+
+.lucky-chest-card.locked img {
+    opacity: 0.8;
+    filter: grayscale(50%);
+}
+
+
+
+.pulse {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.flash-effect {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: white;
+    opacity: 0;
+    animation: flashBang 0.5s ease-out;
+    z-index: 3000;
+}
+
+@keyframes flashBang {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.reward-reveal {
+    animation: rewardAppear 0.8s ease-out;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.reward-image {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 12px;
+    animation: rewardPulse 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px var(--primary-color));
+}
+
+.reward-title {
+    font-size: 26px;
+    color: var(--primary-color);
+    font-weight: 700;
+    margin-bottom: 10px;
+    animation: floatText 1s ease-out;
+}
+
+.reward-description {
+    font-size: 16px;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    animation: floatText 1.2s ease-out;
+}
+
+.claim-button {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.claim-button:hover {
+    background-color: #ffd54f;
+}
+
+@keyframes rewardAppear {
+    0% { transform: scale(0.6); opacity: 0; }
+    60% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+@keyframes rewardPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+@keyframes floatText {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+
+
+
+
+.reward-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.9); /* Almost black */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2001; /* on top of the flash */
+  animation: fadeInOverlay 0.4s ease-out;
+}
+
+@keyframes fadeInOverlay {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+
+
+
+
+
     </style>
 </head>
 <body>
-    <div class="header">
-        BeeMazing
-    </div>
 
     <div class="date-header">
         <div class="month-nav">
@@ -396,12 +691,23 @@
                 <!-- Tasks will be displayed here -->
             </div>
         </div>
+
+            <!-- 🎁 Lucky Chest Section -->
+<div class="lucky-chests-section">
+    <h3 style="margin-top: 30px; color: var(--primary-color);">🎁 Lucky Chests</h3>
+    <div id="luckyChestContainer"></div>
+  </div>
     </div>
+
 
     <div class="footer">
         <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
             <img src="/mobile/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
+        </a>
+        <a href="#" id="profileButton" class="footer-icon" aria-label="Profile">
+            <img src="/mobile/1-Home/ProfileBtn.png" alt="Profile" />
+            <span>Profile</span>
         </a>
         <a href="#" id="marketButton" class="footer-icon" aria-label="Market">
             <img src="/mobile/1-Home/MarketBtn.png" alt="Market" />
@@ -412,6 +718,8 @@
             <span>Rewards</span>
         </a>
     </div>
+    
+    
 
     <div id="sellModal" class="modal" style="display:none;">
         <div class="sell-modal-content">
@@ -422,20 +730,49 @@
     </div>
 
     <script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         const urlParams = new URLSearchParams(window.location.search);
         const userName = urlParams.get('user');
 
         if (userName) {
-            document.getElementById('profileName').textContent = userName;
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('rewardsButton').href = `/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
-            document.getElementById('marketButton').href = `/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
-            loadUserTasks(userName);
-            loadUserReward(userName);
-        }
+    document.getElementById('profileName').textContent = userName;
+    document.getElementById('userName').textContent = userName;
+    document.getElementById('rewardsButton').href = `/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
+    document.getElementById('marketButton').href = `/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
+    // 🆕 add this line
+    document.getElementById('profileButton').href = `/mobile/2-UserProfiles/users.html?user=${userName}`;
+
+    loadUserTasks(userName);
+    loadUserReward(userName);
+}
 
 
 
+
+// ✅ Highlight the correct footer icon after hrefs are set
+document.querySelectorAll('.footer a').forEach(link => {
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '');
+
+    if (currentPath === linkPath) {
+        link.classList.add('active');
+    } else {
+        link.classList.remove('active');
+    }
+});
 
 
 
@@ -455,7 +792,7 @@
 
 
 
-        function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("sv-SE")) {
+function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("sv-SE")) {
     const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
     const userTasks = tasks.filter(task => task.users.includes(userName));
     const userTasksDiv = document.getElementById("userTasks");
@@ -465,7 +802,6 @@
     } else {
         userTasksDiv.innerHTML = "";
 
-        // 🔐 Get today's date string in local format (YYYY-MM-DD)
         const today = new Date().toLocaleDateString("sv-SE");
         const isToday = selectedDate === today;
 
@@ -492,10 +828,15 @@
                 Progress: ${progressText}
             `;
 
-            const currentUser = task.turn || task.users[0];
+            const currentTurn = task.tempTurnReplacement?.replacement || task.turn || task.users[0];
+            const remainingForUser = completedUsers.filter(u => u === userName).length;
 
-            // ✅ Only allow "Finish Task" if the selected date is today
-            if (isToday && currentUser === userName && !completedUsers.includes(userName) && completedTimes < requiredTimes) {
+            // Button visibility: allow if today, it's their turn, and they haven't hit the limit
+            const canFinish = isToday &&
+                currentTurn === userName &&
+                remainingForUser < requiredTimes;
+
+            if (canFinish) {
                 const finishedButton = document.createElement("button");
                 finishedButton.textContent = "Finish Task";
                 finishedButton.className = "finished-btn";
@@ -514,8 +855,6 @@
         });
     }
 }
-
-
 
 
 
@@ -567,48 +906,81 @@
 
 
 
-
-
-
-
-
-
         function finishTask(userName, task, button, selectedDate) {
     const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
     const taskIndex = tasks.findIndex(t => t.title === task.title && t.date === task.date);
+    if (taskIndex === -1) return;
 
     const today = selectedDate;
 
+    // Repeat limits
+    const repeatLimit = task.repeat === "Daily" ? task.timesPerDay || 1 :
+                        task.repeat === "Weekly" ? task.timesPerWeek || 1 :
+                        task.repeat === "Monthly" ? task.timesPerMonth || 1 : 1;
+
+    // Init completions if needed
     if (!task.completions) task.completions = {};
     if (!Array.isArray(task.completions[today])) task.completions[today] = [];
 
-    if (!task.completions[today].includes(userName)) {
-        task.completions[today].push(userName);
+    // Check if user can still complete (up to repeatLimit)
+    const userCompletions = task.completions[today].filter(u => u === userName).length;
+    if (userCompletions >= repeatLimit) return;
 
-        const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
-        const taskReward = Number(task.reward) || 0;
-        rewards[userName] = (rewards[userName] || 0) + taskReward;
-        localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+    // Add completion
+    task.completions[today].push(userName);
 
-        const currentIndex = task.users.indexOf(task.turn);
-        const nextUser = task.users[(currentIndex + 1) % task.users.length];
-        task.turn = nextUser;
+    // Give reward to original user (if delegated)
+    const rewardAmount = Number(task.reward) || 0;
+    const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+    const originalUser = task.originalOwner?.[userName] || userName;
+    rewards[originalUser] = (rewards[originalUser] || 0) + rewardAmount;
+    localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
 
-        tasks[taskIndex] = task;
-        localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
-
-        saveTaskHistory(userName, task);
-        triggerHoneyRain(taskReward);
-        loadUserTasks(userName, selectedDate);
-        loadUserReward(userName);
+    if (typeof updateLuckyChestProgress === "function") {
+        updateLuckyChestProgress(originalUser, rewardAmount);
     }
+
+    const completedCount = task.completions[today].length;
+    const userList = task.users;
+    const currentTurn = task.tempTurnReplacement?.replacement || task.turn || userList[0];
+
+    // Handle turn rotation
+    if (task.tempTurnReplacement && userName === task.tempTurnReplacement.replacement) {
+        // Replacement user completed their turn; move to next in original order
+        const originalUser = task.tempTurnReplacement.original;
+        const originalIndex = userList.indexOf(originalUser);
+        const nextIndex = (originalIndex + 1) % userList.length;
+        task.turn = userList[nextIndex];
+
+        // Clean up temporary replacement
+        delete task.tempTurnReplacement;
+        if (task.originalOwner) delete task.originalOwner[userName];
+    } else {
+        // Normal rotation: move to next user who hasn’t completed fully
+        const userCompletionCounts = {};
+        task.completions[today].forEach(u => {
+            userCompletionCounts[u] = (userCompletionCounts[u] || 0) + 1;
+        });
+        const currentIndex = userList.indexOf(currentTurn);
+        let nextIndex = (currentIndex + 1) % userList.length;
+        let looped = false;
+
+        while ((userCompletionCounts[userList[nextIndex]] || 0) >= repeatLimit && !looped) {
+            nextIndex = (nextIndex + 1) % userList.length;
+            if (nextIndex === currentIndex) looped = true;
+        }
+
+        task.turn = looped ? userList[0] : userList[nextIndex];
+    }
+
+    tasks[taskIndex] = task;
+    localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+
+    if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
+    if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
+    if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
+    if (typeof loadUserReward === 'function') loadUserReward(userName);
 }
-
-
-
-
-
-
 
 
 
@@ -774,6 +1146,258 @@ document.getElementById("scrollRight").addEventListener("click", () => {
 
 // ✅ Initialize
 generateScrollableDates();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const userName = urlParams.get('user');
+
+  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+  const userChests = allChests[userName] || [];
+
+  const container = document.getElementById("luckyChestContainer");
+
+  if (userChests.length === 0) {
+    container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
+    return;
+  }
+
+  // ✅ Just use the dynamic loader now
+  loadLuckyChests(userName);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function updateLuckyChestProgress(userName, earnedHoney) {
+    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+    const userChests = allChests[userName] || [];
+
+    let updated = false;
+
+    userChests.forEach(chest => {
+        if (chest.progress < chest.requiredPoints) {
+            chest.progress += earnedHoney;
+            if (chest.progress > chest.requiredPoints) {
+                chest.progress = chest.requiredPoints;
+            }
+            updated = true;
+        }
+    });
+
+    if (updated) {
+        allChests[userName] = userChests;
+        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+        loadLuckyChests(userName); // re-render UI
+    }
+}
+
+
+
+
+
+
+
+function loadLuckyChests(userName) {
+    const container = document.getElementById("luckyChestContainer");
+    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+    const userChests = allChests[userName] || [];
+
+    container.innerHTML = "";
+
+    if (userChests.length === 0) {
+        container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
+        return;
+    }
+
+    userChests.forEach((chest, index) => {
+        const isUnlocked = chest.progress >= chest.requiredPoints;
+
+        const chestImage = isUnlocked
+            ? '/mobile/4-Market/LuckyChest/ChestReady.gif'
+            : '/mobile/4-Market/LuckyChest/ChestPending.png';
+
+        const card = document.createElement("div");
+        card.className = "lucky-chest-card";
+        if (!isUnlocked) card.classList.add("locked");
+
+        card.innerHTML = `
+            <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
+            <div class="info">
+                <h4></h4>
+                <p>Unlock to reveal your reward!</p>
+                <div class="lucky-chest-progress">
+                    Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
+                </div>
+            </div>
+        `;
+
+        if (isUnlocked) {
+            card.style.cursor = "pointer";
+            card.addEventListener("click", () => {
+                revealLuckyChestReward(userName, chest, index);
+            });
+        }
+
+        container.appendChild(card);
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+function revealLuckyChestReward(userName, chest, chestIndex) {
+    const overlay = document.getElementById("chestVideoOverlay");
+    const video = document.getElementById("chestVideo");
+
+    // Show the overlay and play the video
+    overlay.style.display = "flex";
+    video.currentTime = 0;
+    video.play();
+
+    video.onended = () => {
+        overlay.style.display = "none";
+
+        // 1. Create and add flash effect
+        const flash = document.createElement("div");
+        flash.className = "flash-effect";
+        document.body.appendChild(flash);
+
+        // 2. After flash animation, show the reward modal inside a dark overlay
+        setTimeout(() => {
+            flash.remove();
+
+            const image = chest.image && chest.image.trim() !== ""
+                ? (chest.image.startsWith("/") ? chest.image : "/" + chest.image)
+                : "https://cdn-icons-png.flaticon.com/512/766/766544.png";
+
+            // Create dark background overlay
+            const rewardOverlay = document.createElement("div");
+            rewardOverlay.className = "reward-overlay"; // 👈 fully dark background
+
+            // Create reward modal content
+            const modal = document.createElement("div");
+            modal.className = "modal-content reward-reveal";
+            modal.innerHTML = `
+                <img src="${image}" alt="Reward" class="reward-image">
+                <h2 class="reward-title">${chest.name}</h2>
+                <p class="reward-description">${chest.description || "You unlocked a surprise!"}</p>
+                <button class="claim-button">Claim Reward</button>
+
+            `;
+
+            // Allow dismiss by clicking outside the modal
+            rewardOverlay.addEventListener("click", (e) => {
+                if (!e.target.closest(".modal-content")) {
+                    rewardOverlay.remove();
+                }
+            });
+
+            rewardOverlay.appendChild(modal);
+document.body.appendChild(rewardOverlay);
+
+// ✅ Add this to make the Claim button work
+modal.querySelector(".claim-button").addEventListener("click", () => {
+    claimLuckyChest(userName, chestIndex);
+    rewardOverlay.remove();
+});
+
+        }, 500); // match flash animation duration
+    };
+}
+
+
+
+
+
+
+
+
+function claimLuckyChest(userName, chestIndex) {
+    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+    const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+    const userChests = allChests[userName] || [];
+
+    const claimedChest = userChests[chestIndex];
+    if (!claimedChest) return;
+
+    // Add to user's rewards
+    if (!rewards[userName]) rewards[userName] = [];
+    const now = new Date();
+    rewards[userName].push({
+    name: claimedChest.name,
+    description: claimedChest.description,
+    image: claimedChest.image,
+    date: now.toLocaleDateString(),
+    claimedAt: now.toISOString(),
+    type: claimedChest.type || "normal",   // important
+    outcomes: claimedChest.outcomes || []  // only present for dice chest
+});
+
+
+    // Remove claimed chest from list
+    userChests.splice(chestIndex, 1);
+    allChests[userName] = userChests;
+
+    // Save back
+    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
+
+
+    // Reload
+    loadLuckyChests(userName);
+}
+
+
+
+
+
+
+
+
+
     </script>
+
+<div id="chestVideoOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:black; z-index:2000; justify-content:center; align-items:center;">
+    <video id="chestVideo" width="100%" height="100%" autoplay>
+        <source src="/mobile/4-Market/LuckyChest/Chest.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+    </video>
+</div>
+
 </body>
 </html>

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucky Chest</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #FFC107;
+      --secondary-color: #212121;
+      --accent-color: #2A2B32;
+      --text-color: #FFFFFF;
+      --border-dark: #444754;
+      --light-bg: #1E1F26;
+      --footer-height: 70px;
+      --add-btn-height: 80px;
+      --header-height: 58px;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      padding-bottom: calc(var(--footer-height) + var(--add-btn-height));
+    }
+
+    .header {
+      background: var(--secondary-color);
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary-color);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: var(--header-height);
+      z-index: 100;
+    }
+
+    .container {
+      padding: 20px;
+      margin-top: var(--header-height);
+      background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      justify-items: center;
+    }
+
+    .chest-card {
+      background: var(--accent-color);
+      border: 2px solid var(--border-dark);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      width: 100%;
+      max-width: 150px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .chest-card:hover {
+      transform: scale(1.05);
+    }
+
+    .chest-card img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 5px;
+    }
+
+    .chest-card h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 6px 0 4px;
+      color: var(--primary-color);
+    }
+
+    .chest-card .quote {
+      font-size: 11px;
+      font-style: italic;
+      margin-bottom: 4px;
+    }
+
+    .chest-card .effect {
+      font-size: 11px;
+      color: #ccc;
+    }
+
+    .chest-card .honey {
+      font-size: 11px;
+      color: var(--primary-color);
+      margin-top: 4px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--accent-color);
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      border: 2px solid var(--primary-color);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent-color);
+      color: var(--text-color);
+      border: 2px solid var(--border-dark);
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary-color);
+      color: var(--secondary-color);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #e0a800;
+    }
+
+    .select-btn {
+      width: 100%;
+      background: var(--accent-color);
+      border: 2px solid var(--border-dark);
+      color: var(--text-color);
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      padding: 10px;
+      margin: 5px 0;
+      background: var(--secondary-color);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    ul li:hover {
+      background: var(--primary-color);
+      color: var(--secondary-color);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background: var(--secondary-color);
+      padding: 10px 0;
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      height: var(--footer-height);
+    }
+
+    .footer a {
+      text-decoration: none;
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.3s ease;
+    }
+
+    .footer a:hover {
+      transform: scale(1.1);
+    }
+
+    .footer-icon img {
+      width: 40px;
+      height: 40px;
+      filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    .footer a.active img {
+      filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg) brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    .footer a.active span {
+      color: var(--primary-color);
+    }
+
+    .footer-icon span {
+      font-size: 12px;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+
+    .add-reward-btn {
+      position: fixed;
+      bottom: calc(var(--footer-height) + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      background: var(--secondary-color);
+      color: var(--primary-color);
+      border: 3px solid var(--primary-color);
+      border-radius: 50%;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      z-index: 99;
+    }
+
+    .add-reward-btn:hover {
+      background: var(--primary-color);
+      color: var(--secondary-color);
+      transform: translateX(-50%) scale(1.1);
+    }
+
+    .lucky-chest-btn {
+      position: fixed;
+      bottom: calc(var(--footer-height) + 10px);
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #D32F2F;
+      color: rgb(0, 0, 0);
+      border: 3px solid rgb(0, 0, 0);
+      border-radius: 50%;
+      font-size: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      z-index: 101;
+    }
+
+    .lucky-chest-btn:hover {
+      background: #B71C1C;
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 600px) {
+      .footer-icon img {
+        width: 35px;
+        height: 35px;
+      }
+      .add-reward-btn, .lucky-chest-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 28px;
+        bottom: calc(var(--footer-height) + 10px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Lucky Chest</div>
+  <div class="container" id="chestContainer"></div>
+
+  <div class="modal" id="assignModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Assign Chest</h3>
+      <div class="form-group">
+        <label>Assign To:</label>
+        <button class="select-btn" id="selectUserBtn">Select User</button>
+        <input type="hidden" id="selectedUser" />
+        <ul id="userList" style="display: none;"></ul>
+      </div>
+      <div class="form-group">
+        <label>Points Required to Unlock:</label>
+        <input type="number" id="requiredPoints" min="1" placeholder="e.g. 100" />
+      </div>
+      <button class="btn" onclick="assignChest()">Assign Chest</button>
+      <button class="btn" id="deleteChestBtn" style="margin-top: 10px; background: #D32F2F; display: none;">Delete Chest</button>
+    </div>
+  </div>
+
+  <div class="modal" id="diceModal">
+    <div class="modal-content">
+      <h3>Assign "Roll the Dice"</h3>
+      <div class="form-group">
+        <label>Select User:</label>
+        <select id="diceUserSelect"></select>
+      </div>
+      <div class="form-group">
+        <label>Points Required to Unlock:</label>
+        <input type="number" id="diceRequiredPoints" min="1" placeholder="e.g. 100" />
+      </div>
+      <div id="diceRewards"></div>
+      <button class="btn" onclick="saveDiceChest()">Assign Dice Chest</button>
+    </div>
+  </div>
+  
+
+  <div class="modal" id="newChestModal">
+    <div class="modal-content">
+      <h3>Create New Chest</h3>
+      <div class="form-group">
+        <label>Name (optional if Honey is provided):</label>
+        <input type="text" id="newChestName" placeholder="Chest Name" />
+      </div>
+      <div class="form-group">
+        <label>Quote (optional):</label>
+        <input type="text" id="newChestQuote" placeholder="Inspirational quote" />
+      </div>
+      <div class="form-group">
+        <label>Effect (optional):</label>
+        <input type="text" id="newChestEffect" placeholder="Reward effect" />
+      </div>
+      <div class="form-group">
+        <label>Honey (optional):</label>
+        <input type="number" id="newChestHoney" min="0" placeholder="e.g. 50" />
+      </div>
+      <div class="form-group">
+        <label>Image URL (optional):</label>
+        <input type="text" id="newChestImage" placeholder="Leave blank for default" />
+      </div>
+      <button class="btn" onclick="createNewChest()">Create Chest</button>
+    </div>
+  </div>
+  
+  <div class="add-reward-btn" id="openNewChestModal" aria-label="Add Reward">+</div>
+
+  <div class="footer">
+    <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+      <img src="/mobile/1-Home/HomeBtn.png" alt="Home" />
+      <span>Home</span>
+    </a>
+    <a href="/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
+      <img src="/mobile/1-Home/TasksBtn.png" alt="Tasks" />
+      <span>Tasks</span>
+    </a>
+    <a href="/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
+      <img src="/mobile/1-Home/MarketBtn.png" alt="Market" />
+      <span>Market</span>
+    </a>
+    <a href="/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
+      <img src="/mobile/1-Home/StatsBtn.png" alt="Stats" />
+      <span>Stats</span>
+    </a>
+  </div>
+
+  <script>
+    let chests = JSON.parse(localStorage.getItem("customChests")) || [
+      { name: "The Key", quote: "You hold the key to the path of others.", effect: "➡ Transfer one of your tasks to another user. You get the honey.", image: "/mobile/4-Market/LuckyChest/Keyy.gif", isCustom: false },
+      { name: "Double Trouble", quote: "Today’s efforts are worth double.", effect: "➡ Next task = double honey.", image: "/mobile/4-Market/LuckyChest/DoubleTrouble.png", isCustom: false },
+      { name: "Roll the Dice", quote: "Test your Luck", effect: "➡ Get a surprise reward.", image: "/mobile/4-Market/LuckyChest/dice.gif", isCustom: false },
+      { name: "Dance Party", quote: "Feel the rhythm!", effect: "➡ Dance after a task. If someone joins, both get honey.", image: "/mobile/4-Market/LuckyChest/Dance.jpg", isCustom: false },
+      { name: "Bee-Witched!", quote: "Your magical aura changes the rules...", effect: "➡ Make a silly rule. Others who follow it get honey.", image: "/mobile/4-Market/LuckyChest/Bee-Witched.jpg", isCustom: false },
+      { name: "Special Buzz Off", quote: "You’re too cool for chores today.", effect: "➡ Skip all tasks today.", image: "/mobile/4-Market/LuckyChest/Special.jpg", isCustom: false }
+    ];
+
+    const rewardOptions = [
+      "The Key",
+      "Double Trouble",
+      "Dance Party",
+      "Bee-Witched!",
+      "Special Buzz Off",
+      "Honey (amount)"
+    ];
+
+    const defaultChestImage = "/mobile/4-Market/LuckyChest/default.png";
+
+    const chestContainer = document.getElementById("chestContainer");
+    const assignModal = document.getElementById("assignModal");
+    const diceModal = document.getElementById("diceModal");
+    const newChestModal = document.getElementById("newChestModal");
+    const openNewChestModalBtn = document.getElementById("openNewChestModal");
+    const modalTitle = document.getElementById("modalTitle");
+    const selectUserBtn = document.getElementById("selectUserBtn");
+    const selectedUserInput = document.getElementById("selectedUser");
+    const userListEl = document.getElementById("userList");
+    const diceUserSelect = document.getElementById("diceUserSelect");
+    const diceRewards = document.getElementById("diceRewards");
+    const deleteChestBtn = document.getElementById("deleteChestBtn");
+
+    let selectedChest = null;
+
+    function createChestCard(chest) {
+      console.log(`Creating card for chest: ${chest.name}, isCustom: ${chest.isCustom}`);
+      const card = document.createElement("div");
+      card.className = "chest-card";
+      card.innerHTML = `
+        <img src="${chest.image}" alt="${chest.name}" />
+        <h4>${chest.name}</h4>
+        <div class="quote">"${chest.quote || 'No quote provided'}"</div>
+        <div class="effect">${chest.effect || 'No effect provided'}</div>
+        ${chest.honey !== undefined && chest.honey !== "" ? `<div class="honey">Honey: ${chest.honey}</div>` : ''}
+      `;
+      card.addEventListener("click", () => {
+        console.log(`Card clicked for ${chest.name}, opening modal`);
+        selectedChest = chest;
+        chest.name === "Roll the Dice" ? openDiceModal() : openAssignModal();
+      });
+      return card;
+    }
+
+    function loadChests() {
+      console.log("Loading chests:", chests);
+      chestContainer.innerHTML = "";
+      chests.forEach(chest => {
+        chestContainer.appendChild(createChestCard(chest));
+      });
+    }
+
+    function deleteChest(chestName) {
+      console.log(`Attempting to delete chest: ${chestName}`);
+      chests = chests.filter(chest => chest.name !== chestName);
+      try {
+        localStorage.setItem("customChests", JSON.stringify(chests));
+        console.log("Successfully updated localStorage");
+        loadChests();
+        assignModal.classList.remove("show");
+        alert("Chest deleted successfully!");
+      } catch (e) {
+        console.error("Error deleting chest from localStorage:", e);
+        alert("Failed to delete chest. Please try again.");
+        chests = JSON.parse(localStorage.getItem("customChests")) || chests;
+      }
+    }
+
+    function openAssignModal() {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      userListEl.innerHTML = "";
+      selectUserBtn.textContent = "Select User";
+      selectedUserInput.value = "";
+      modalTitle.textContent = `Assign "${selectedChest.name}"`;
+      users.forEach(user => {
+        const li = document.createElement("li");
+        li.textContent = user;
+        li.addEventListener("click", () => {
+          selectedUserInput.value = user;
+          selectUserBtn.textContent = "Selected: " + user;
+          userListEl.style.display = "none";
+        });
+        userListEl.appendChild(li);
+      });
+      deleteChestBtn.style.display = selectedChest.isCustom ? "block" : "none";
+      if (selectedChest.isCustom) {
+        deleteChestBtn.onclick = () => deleteChest(selectedChest.name);
+      }
+      assignModal.classList.add("show");
+    }
+
+    function assignChest() {
+      const user = selectedUserInput.value;
+      const points = parseInt(document.getElementById("requiredPoints").value);
+      if (!user || !points || points <= 0) return alert("Please complete all fields.");
+      const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+      if (!allChests[user]) allChests[user] = [];
+      allChests[user].push({ ...selectedChest, requiredPoints: points, progress: 0 });
+      localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+      assignModal.classList.remove("show");
+      alert(`"${selectedChest.name}" assigned to ${user}!`);
+      window.location.href = "market.html";
+    }
+
+    function openDiceModal() {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      diceUserSelect.innerHTML = users.map(u => `<option value="${u}">${u}</option>`).join("");
+      diceRewards.innerHTML = "";
+      for (let i = 1; i <= 6; i++) {
+        const defaultReward = rewardOptions[i - 1];
+        diceRewards.innerHTML += `
+          <div class="form-group">
+            <label>Reward for ${i}:</label>
+            <select onchange="toggleExtraInput(this, ${i})" id="rewardSelect${i}">
+              ${rewardOptions.map(opt => `
+                <option value="${opt}" ${opt === defaultReward ? 'selected' : ''}>${opt}</option>
+              `).join("")}
+            </select>
+            <input type="text" id="extraInput${i}" placeholder="Enter value..." style="display:${defaultReward === 'Honey (amount)' ? 'block' : 'none'}; margin-top:5px;" />
+          </div>
+        `;
+      }
+      diceModal.classList.add("show");
+    }
+
+    function toggleExtraInput(selectEl, index) {
+      const extraInput = document.getElementById("extraInput" + index);
+      extraInput.style.display = (selectEl.value === "Honey (amount)" || selectEl.value === "Custom") ? "block" : "none";
+      if (extraInput.style.display === "none") extraInput.value = "";
+    }
+
+    function saveDiceChest() {
+  const user = diceUserSelect.value;
+  if (!user) return alert("Select a user");
+
+  // Get required points
+  const requiredPoints = parseInt(document.getElementById("diceRequiredPoints").value);
+  if (isNaN(requiredPoints) || requiredPoints <= 0) {
+    return alert("Please enter a valid point requirement.");
+  }
+
+  // Get dice outcomes
+  const outcomes = [];
+  for (let i = 1; i <= 6; i++) {
+    const type = document.getElementById(`rewardSelect${i}`).value;
+    const value = document.getElementById(`extraInput${i}`).value;
+    if ((type === "Honey (amount)" || type === "Custom") && !value) {
+      return alert(`Please fill in value for dice ${i}`);
+    }
+    outcomes.push({ type, value: value || null });
+  }
+
+  // Save to localStorage
+  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+  if (!allChests[user]) allChests[user] = [];
+
+  allChests[user].push({
+    name: "Roll the Dice",
+    type: "dice",
+    image: "/mobile/4-Market/LuckyChest/dice.gif",
+    outcomes,
+    progress: 0,
+    requiredPoints
+  });
+
+  localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+  diceModal.classList.remove("show");
+  alert("Dice Chest assigned!");
+  window.location.href = "market.html";
+}
+
+
+    openNewChestModalBtn.addEventListener("click", () => {
+      newChestModal.classList.add("show");
+      document.getElementById("newChestName").value = "";
+      document.getElementById("newChestQuote").value = "";
+      document.getElementById("newChestEffect").value = "";
+      document.getElementById("newChestHoney").value = "";
+      document.getElementById("newChestImage").value = "";
+    });
+
+    function createNewChest() {
+      let name = document.getElementById("newChestName").value.trim();
+      const quote = document.getElementById("newChestQuote").value.trim();
+      const effect = document.getElementById("newChestEffect").value.trim();
+      const honey = document.getElementById("newChestHoney").value.trim();
+      let image = document.getElementById("newChestImage").value.trim();
+
+      const honeyValue = honey ? parseInt(honey) : ""; // Convert to number if provided, else empty string
+      if (honey && (isNaN(honeyValue) || honeyValue < 0)) {
+        alert("Honey must be a non-negative number");
+        return;
+      }
+
+      // If name is empty but honey is provided, use honey as the name
+      if (!name && honeyValue !== "") {
+        name = honeyValue.toString();
+      }
+
+      // Require at least name or honey to proceed
+      if (!name) {
+        alert("Please provide at least a Name or a Honey amount");
+        return;
+      }
+
+      if (chests.some(chest => chest.name === name)) {
+        alert("A chest with this name already exists");
+        return;
+      }
+
+      if (!image) {
+        image = defaultChestImage;
+      }
+
+      const newChest = { 
+        name, 
+        quote: quote || "", 
+        effect: effect || "", 
+        honey: honeyValue, // Store as number or empty string
+        image,
+        isCustom: true 
+      };
+      chests.push(newChest);
+      localStorage.setItem("customChests", JSON.stringify(chests));
+      chestContainer.appendChild(createChestCard(newChest));
+      newChestModal.classList.remove("show");
+      alert("New chest created successfully!");
+    }
+
+    selectUserBtn.addEventListener("click", () => {
+      userListEl.style.display = userListEl.style.display === "none" ? "block" : "none";
+    });
+
+    window.addEventListener("click", e => {
+      if (e.target.classList.contains("modal")) {
+        e.target.classList.remove("show");
+        userListEl.style.display = "none";
+      }
+    });
+
+    document.querySelectorAll('.footer a').forEach(link => {
+      const currentPath = window.location.pathname.replace(/\/$/, '');
+      const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
+      if (linkPath === "/mobile/4-Market/market.html" && currentPath.startsWith("/mobile/4-Market/")) {
+        link.classList.add('active');
+      } else if (currentPath === linkPath) {
+        link.classList.add('active');
+      } else {
+        link.classList.remove('active');
+      }
+    });
+
+    loadChests();
+  </script>
+</body>
+</html>

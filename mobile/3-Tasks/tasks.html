@@ -15,13 +15,14 @@
             --primary-color: #FFC107;
             --secondary-color: #212121;
             --accent-color: #FFFFFF;
-            --light-bg: #FFF8E1;
-            --text-color: #212121;
+            --light-bg: #1E1F26;
+            --text-color: #FFFFFF;
             --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
             --header-height: 58px; /* 15px padding * 2 + 24px font + 4px buffer */
             --footer-height: 70px;
             --add-btn-height: 80px; /* 60px button + 20px buffer */
+            --border-dark: #444754; /* same as in addtasks.html */
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -61,55 +62,82 @@
         }
         .content {
             position: absolute;
-    top: calc(var(--header-height) + 115px); /* 58px header + ~42px date header */
+            top: 115px; /* remove header offset */
             bottom: calc(var(--footer-height) + var(--add-btn-height)); /* Reserve space for button */
             width: 100%;
             padding: 20px;
             overflow-y: auto; /* Scroll only when needed */
-            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
         }
         .task-item {
-            padding: 15px;
-            background: var(--accent-color);
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .task-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
+    padding: 16px;
+    background: #2A2B32;
+    color: #FFFFFF;
+    border: 2px solid var(--border-dark); /* updated from primary-color */
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.task-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.3);
+}
         .footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            background: linear-gradient(135deg, var(--primary-color), #FFB300);
-            padding: 10px 0;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 100;
-            height: var(--footer-height);
-        }
-        .footer a {
-            text-decoration: none;
-            color: var(--secondary-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: var(--secondary-color); /* Changed to black */
+    padding: 10px 0;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    height: var(--footer-height);
+}
+.footer a {
+    text-decoration: none;
+    color: var(--accent-color); /* Changed to white for text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
         .footer a:hover {
             transform: scale(1.1);
         }
+
+
+
+
+
+
+
         .footer-icon img {
-            width: 40px;
-            height: 40px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
+    width: 40px;
+    height: 40px;
+    filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* Default: white */
+}
+
+.footer a.active img {
+    filter: none;
+    filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg) brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+}
+
+
+
+.footer a.active span {
+    color: var(--primary-color);
+}
+
+
+
+
+
+
+
+
         .footer-icon span {
             font-size: 12px;
             margin-top: 5px;
@@ -159,13 +187,13 @@
             100% { opacity: 1; }
         }
         .modal-content {
-            background: var(--accent-color);
+            background: #2A2B32; /* Dark card style to match body */
             padding: 25px;
             border-radius: 15px;
             width: 85%;
             max-width: 400px;
             text-align: left;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6); /* Soft dark shadow */
             border: 2px solid var(--primary-color);
             animation: modalFadeIn 0.5s ease-out;
         }
@@ -226,9 +254,9 @@
 
 
         .date-header {
-    background: linear-gradient(135deg, var(--primary-color), #FFB300); /* 🌟 Full yellow */
+            background: var(--secondary-color); /* black like footer */
     position: sticky;
-    top: var(--header-height); 
+    top: 0;
     z-index: 50;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     padding-bottom: 5px;
@@ -242,21 +270,27 @@
     padding: 4px 0;
     font-weight: bold;
     font-size: 18px;
-    color: var(--secondary-color);
+    color: var(--accent-color); /* white text */
     background: transparent; /* ✅ Remove extra background */
 }
 
 
 .month-nav button {
-    background: var(--accent-color);
+    background: var(--secondary-color); /* black */
     border: none;
-    color: var(--secondary-color);
+    color: var(--accent-color); /* white */
     padding: 4px 10px;
     font-size: 16px;
     border-radius: 8px;
     margin: 0 8px;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.month-nav button:hover {
+    background: var(--primary-color); /* yellow hover */
+    color: var(--secondary-color); /* black text */
 }
 
 .day-scroll {
@@ -278,8 +312,8 @@
     line-height: 38px;
     text-align: center;
     border-radius: 50%;
-    background: var(--accent-color);
-    color: var(--secondary-color);
+    background: var(--secondary-color); /* black bubble */
+    color: var(--accent-color); /* white text */
     font-weight: bold;
     cursor: pointer;
     flex-shrink: 0;
@@ -293,8 +327,9 @@
 }
 
 .day.selected {
-    background: var(--secondary-color);
-    color: var(--accent-color);
+    background: var(--primary-color); /* yellow when selected */
+    color: var(--secondary-color); /* black text */
+    border-color: var(--accent-color); /* optional white ring */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -329,9 +364,9 @@
 
 
 .scroll-btn {
-    background: var(--primary-color);
+    background: var(--secondary-color);
     border: none;
-    color: var(--secondary-color);
+     color: var(--accent-color);
     font-size: 20px;
     font-weight: bold;
     padding: 5px 10px;
@@ -343,7 +378,8 @@
 }
 
 .scroll-btn:hover {
-    background: #FFB300;
+    background: var(--primary-color);
+    color: var(--secondary-color);
 }
 
         
@@ -351,11 +387,6 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="header">
-        <i class="fas fa-bars menu-icon" aria-label="Menu"></i>
-        <div class="title">Tasks</div>
-    </div>
-
     <div class="date-header">
         <div class="month-nav">
             <button id="prevMonth">&lt;</button>
@@ -378,7 +409,8 @@
         <!-- Tasks will be loaded dynamically here -->
     </div>
 
-    <a href="/mobile/3-Tasks/addtasks.html" class="add-task-btn" aria-label="Add Task">+</a>
+    <a href="/mobile/3-Tasks/addtasks.html" class="add-task-btn" aria-label="Add Task" onclick="localStorage.removeItem('familyApp_editTask'); localStorage.removeItem('familyApp_editTask_index');">+</a>
+
 
     <div class="footer">
         <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
@@ -404,10 +436,31 @@
 
 
 
+        // Dynamically highlight the active footer icon
+        document.querySelectorAll('.footer a').forEach(link => {
+        // Normalize both paths (remove trailing slashes)
+        const currentPath = window.location.pathname.replace(/\/$/, '');
+        const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
+
+        if (currentPath === linkPath) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
 
 
 
-  function loadTasksForDate(selectedDate) {
+
+
+
+
+
+
+
+
+
+    function loadTasksForDate(selectedDate) {
     const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
     const taskList = document.getElementById("taskList");
     taskList.innerHTML = "";
@@ -431,38 +484,48 @@
         return;
     }
 
-    // This line replaces the previous "today" variable
-const today = selectedDate;
-
+    const today = selectedDate;
 
     visibleTasks.forEach((task, index) => {
         const taskDiv = document.createElement("div");
         taskDiv.className = "task-item";
 
+        // Determine repeat count
         let repeatLimit = 1;
         if (task.repeat === "Daily") repeatLimit = task.timesPerDay || 1;
         if (task.repeat === "Weekly") repeatLimit = task.timesPerWeek || 1;
         if (task.repeat === "Monthly") repeatLimit = task.timesPerMonth || 1;
 
-        const completedUsers = task.completions?.[today] || [];
-const completedCount = Array.isArray(completedUsers) ? completedUsers.length : completedUsers;
-
+        // Get completed users on this date
+        const completedUsers = Array.isArray(task.completions?.[today]) ? task.completions[today] : [];
+        const completedCount = completedUsers.length;
         const isCompleted = completedCount >= repeatLimit;
 
-        const currentTurn = task.turn || task.users[0];
-        const nextIndex = (task.users.indexOf(currentTurn) + 1) % task.users.length;
-        const nextTurn = task.users.slice(nextIndex).concat(task.users.slice(0, nextIndex));
+        // Handle currentTurn with delegation
+        let currentTurn = task.tempTurnReplacement?.replacement || task.turn || task.users[0];
+
+        // Use original user order
+        const userOrder = [...task.users];
+        const originalCurrentIndex = userOrder.indexOf(task.tempTurnReplacement?.original || currentTurn);
+        const nextTurn = [];
+        const remainingTurns = repeatLimit - completedCount;
+
+        if (originalCurrentIndex !== -1) {
+            let index = originalCurrentIndex;
+            for (let i = 0; i < remainingTurns; i++) {
+                index = (index + 1) % userOrder.length;
+                nextTurn.push(userOrder[index]);
+            }
+        }
 
         taskDiv.innerHTML = `
-    <strong>${task.title}</strong><br>
-    Turn: ${currentTurn}<br>
-    Completed: ${repeatLimit > 1 ? `${completedCount}/${repeatLimit}<br>` : ""}
-    ${isCompleted ? `<span style="color: green; font-weight: bold;">Completed</span><br>` : ""}
-`;
+            <strong>${task.title}</strong><br>
+            Turn: ${currentTurn}<br>
+            ${repeatLimit > 1 ? `Completed: ${completedCount}/${repeatLimit}<br>` : ""}
+            ${isCompleted ? `<span style="color: green; font-weight: bold;">Completed</span><br>` : ""}
+        `;
 
-
-
-        // Add delete button
+        // Delete Button
         const deleteButton = document.createElement("button");
         deleteButton.className = "delete-btn";
         deleteButton.textContent = "Delete";
@@ -473,7 +536,7 @@ const completedCount = Array.isArray(completedUsers) ? completedUsers.length : c
         });
         taskDiv.appendChild(deleteButton);
 
-        // Swipe to delete logic
+        // Swipe support (unchanged)
         let startX = 0;
         let isDragging = false;
         let swipedLeft = false;
@@ -489,9 +552,7 @@ const completedCount = Array.isArray(completedUsers) ? completedUsers.length : c
             const currentX = e.type.includes("mouse") ? e.pageX : e.touches[0].pageX;
             const diffX = currentX - startX;
 
-            if (Math.abs(diffX) > 10) {
-                isDragging = true;
-            }
+            if (Math.abs(diffX) > 10) isDragging = true;
 
             if (diffX < -50 && !swipedLeft) {
                 taskDiv.classList.add("swiped-left");
@@ -509,7 +570,6 @@ const completedCount = Array.isArray(completedUsers) ? completedUsers.length : c
         taskDiv.addEventListener("touchstart", onStart);
         taskDiv.addEventListener("touchmove", onMove);
         taskDiv.addEventListener("touchend", onEnd);
-
         taskDiv.addEventListener("mousedown", onStart);
         taskDiv.addEventListener("mousemove", (e) => {
             if (e.buttons !== 1) return;
@@ -517,6 +577,7 @@ const completedCount = Array.isArray(completedUsers) ? completedUsers.length : c
         });
         taskDiv.addEventListener("mouseup", onEnd);
 
+        // Click opens details
         taskDiv.addEventListener("click", (e) => {
             const clickDuration = new Date().getTime() - clickStartTime;
             if (swipedLeft || isDragging || clickDuration > 300) return;
@@ -526,10 +587,6 @@ const completedCount = Array.isArray(completedUsers) ? completedUsers.length : c
         taskList.appendChild(taskDiv);
     });
 }
-
-
-
-
 
 
 
@@ -618,9 +675,25 @@ const completedRaw = task.completions?.[selectedDate] || [];
 
     taskDetails += `
         <br>
-        <button id="editTurnBtn" style="padding:6px 10px; border:none; background:var(--primary-color); color:var(--secondary-color); font-weight:bold; border-radius:6px; cursor:pointer;">Edit Turn Order</button>
+        <button id="editTurnBtn" style="
+    padding: 6px 10px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+">Edit Turn Order</button>
         &nbsp;
-        <button id="editTaskBtn" style="padding:6px 10px; border:none; background:var(--secondary-color); color:var(--accent-color); font-weight:bold; border-radius:6px; cursor:pointer;">Edit Task</button>
+        <button id="editTaskBtn" style="
+    padding: 6px 10px;
+    background: var(--secondary-color);
+    color: var(--accent-color);
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+">Edit Task</button>
     `;
 
     const modal = document.createElement("div");
@@ -668,55 +741,81 @@ if (editBtn) {
 
 
 
-
-
-
-
-
-
-
-function finishTask(task) {
-    const selectedDate = document.querySelector(".day.selected")?.dataset.date;
-    if (!selectedDate) return;
+function finishTask(userName, task, button, selectedDate) {
+    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+    const taskIndex = tasks.findIndex(t => t.title === task.title && t.date === task.date);
+    if (taskIndex === -1) return;
 
     const today = selectedDate;
-    const currentUser = task.turn || task.users[0];
 
+    // Repeat limits
+    const repeatLimit = task.repeat === "Daily" ? task.timesPerDay || 1 :
+                        task.repeat === "Weekly" ? task.timesPerWeek || 1 :
+                        task.repeat === "Monthly" ? task.timesPerMonth || 1 : 1;
+
+    // Init completions if needed
     if (!task.completions) task.completions = {};
-    if (!Array.isArray(task.completions[selectedDate])) task.completions[selectedDate] = [];
+    if (!Array.isArray(task.completions[today])) task.completions[today] = [];
 
-if (!task.completions[selectedDate].includes(currentUser)) {
-    task.completions[selectedDate].push(currentUser);
-}
+    // Check if user can still complete (up to repeatLimit)
+    const userCompletions = task.completions[today].filter(u => u === userName).length;
+    if (userCompletions >= repeatLimit) return;
 
+    // Add completion
+    task.completions[today].push(userName);
 
-    // Give honey reward
-    const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+    // Give reward to original user (if delegated)
     const rewardAmount = Number(task.reward) || 0;
-    if (!rewards[currentUser]) rewards[currentUser] = 0;
-    rewards[currentUser] += rewardAmount;
+    const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+    const originalUser = task.originalOwner?.[userName] || userName;
+    rewards[originalUser] = (rewards[originalUser] || 0) + rewardAmount;
     localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
 
-    // Rotate turn
-    const currentIndex = task.users.indexOf(currentUser);
-    const nextIndex = (currentIndex + 1) % task.users.length;
-    task.turn = task.users[nextIndex];
-
-    // Save task
-    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
-    const index = tasks.findIndex(t => t.title === task.title && t.date === task.date);
-    if (index !== -1) {
-        tasks[index] = task;
-        localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+    if (typeof updateLuckyChestProgress === "function") {
+        updateLuckyChestProgress(originalUser, rewardAmount);
     }
 
-    loadTasksForDate(selectedDate);
-    showTaskDetails(task);
+    const completedCount = task.completions[today].length;
+    const userList = task.users;
+    const currentTurn = task.tempTurnReplacement?.replacement || task.turn || userList[0];
+
+    // Handle turn rotation
+    if (task.tempTurnReplacement && userName === task.tempTurnReplacement.replacement) {
+        // Replacement user completed their turn; move to next in original order
+        const originalUser = task.tempTurnReplacement.original;
+        const originalIndex = userList.indexOf(originalUser);
+        const nextIndex = (originalIndex + 1) % userList.length;
+        task.turn = userList[nextIndex];
+
+        // Clean up temporary replacement
+        delete task.tempTurnReplacement;
+        if (task.originalOwner) delete task.originalOwner[userName];
+    } else {
+        // Normal rotation: move to next user who hasn’t completed fully
+        const userCompletionCounts = {};
+        task.completions[today].forEach(u => {
+            userCompletionCounts[u] = (userCompletionCounts[u] || 0) + 1;
+        });
+        const currentIndex = userList.indexOf(currentTurn);
+        let nextIndex = (currentIndex + 1) % userList.length;
+        let looped = false;
+
+        while ((userCompletionCounts[userList[nextIndex]] || 0) >= repeatLimit && !looped) {
+            nextIndex = (nextIndex + 1) % userList.length;
+            if (nextIndex === currentIndex) looped = true;
+        }
+
+        task.turn = looped ? userList[0] : userList[nextIndex];
+    }
+
+    tasks[taskIndex] = task;
+    localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+
+    if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
+    if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
+    if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
+    if (typeof loadUserReward === 'function') loadUserReward(userName);
 }
-
-
-
-
 
 
 
@@ -855,15 +954,16 @@ function showEditTurnModal(task) {
             .filter(user => user !== excludeUser)
             .map(user => `
                 <li draggable="true" style="
-                    padding: 8px 10px;
-                    margin: 4px 0;
-                    background: #fff8dc;
-                    border: 1px solid #ccc;
-                    border-radius: 6px;
-                    cursor: grab;
-                    transition: all 0.2s ease;
-                ">${user}</li>
-            `).join("");
+        padding: 8px 10px;
+        margin: 4px 0;
+        background: #2A2B32;
+        color: #FFFFFF;
+        border: 1px solid var(--primary-color);
+        border-radius: 6px;
+        cursor: grab;
+        transition: all 0.2s ease;
+    ">${user}</li>
+`).join("");
     };
 
     const currentTurn = task.turn || task.users[0];

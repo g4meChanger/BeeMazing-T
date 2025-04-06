@@ -13,13 +13,17 @@
         }
         :root {
             --primary-color: #FFC107;
-            --secondary-color: #212121;
-            --accent-color: #FFFFFF;
-            --light-bg: #FFF8E1;
-            --text-color: #212121;
-            --header-height: 58px;
-            --footer-height: 70px;
+    --secondary-color: #212121;
+    --accent-color: #FFFFFF;
+    --light-bg: #1E1F26; /* 🌑 dark background */
+    --text-color: #FFFFFF; /* white text */
+    --header-height: 58px;
+    --footer-height: 70px;
+    --border-dark: #444754;
+--card-bg: #2A2B32;
         }
+
+
         body {
             font-family: 'Poppins', Arial, sans-serif;
             background-color: var(--light-bg);
@@ -29,24 +33,26 @@
             height: 100vh;
             overflow-x: hidden;
         }
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), #FFB300);
-            padding: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: var(--header-height);
-            z-index: 100;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--secondary-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+       .header {
+        background: var(--secondary-color); /* dark background */
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: var(--header-height);
+    z-index: 100;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+    letter-spacing: 1px;
+}
         .content {
             position: absolute;
             top: var(--header-height);
@@ -54,7 +60,7 @@
             width: 100%;
             padding: 20px;
             overflow-y: auto;
-            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M20 0l10 5.77v11.54L20 23.08l-10-5.77V5.77L20 0zm0 2.31L11.54 7.08v9.84L20 21.69l8.46-4.77V7.08L20 2.31z" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
+            background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
         }
         .reward-list {
             list-style: none;
@@ -67,10 +73,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--accent-color);
+            background: var(--card-bg);
+            color: var(--accent-color);
             padding: 15px;
             margin: 10px 0;
-            border: 2px solid var(--primary-color);
+            border: 2px solid var(--border-dark);
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
@@ -79,7 +86,7 @@
             transform: translateY(-5px);
         }
         .reward-details strong {
-            color: var(--secondary-color);
+            color: var(--accent-color); /* white */
         }
         .get-it-btn {
             padding: 10px 20px;
@@ -103,33 +110,83 @@
             color: #666;
             cursor: not-allowed;
         }
+     
+
+
         .footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--primary-color), #FFB300);
-            padding: 10px 0;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
-            z-index: 100;
-            height: var(--footer-height);
-        }
-        .footer a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
-        .footer a:hover {
-            transform: scale(1.1);
-        }
-        .footer img {
-            width: 40px;
-            height: 40px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-        }
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: var(--secondary-color);
+    padding: 10px 0;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    height: var(--footer-height);
+}
+
+.footer a {
+    text-decoration: none;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.footer a:hover {
+    transform: scale(1.1);
+}
+
+.footer-icon img {
+    width: 40px;
+    height: 40px;
+    filter: invert(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.footer-icon span {
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+.footer a.active img {
+    filter: invert(77%) sepia(88%) saturate(900%) hue-rotate(0deg)
+        brightness(100%) contrast(100%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+}
+
+.footer a.active span {
+    color: var(--primary-color);
+}
+
+@media (max-width: 600px) {
+    .footer-icon img {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /* Reward Claim Animation */
         .reward-overlay {
             display: none;
@@ -217,10 +274,25 @@
     </div>
 
     <div class="footer">
-        <a href="#" id="backButton" aria-label="Back">
-            <img src="/mobile/1-Home/BackBtn.png" alt="Back" />
+        <a href="/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/mobile/1-Home/HomeBtn.png" alt="Home" />
+            <span>Home</span>
+        </a>
+        <a href="#" id="profileButton" class="footer-icon" aria-label="Profile">
+            <img src="/mobile/1-Home/ProfileBtn.png" alt="Profile" />
+            <span>Profile</span>
+        </a>
+        <a href="#" id="marketButton" class="footer-icon" aria-label="Market">
+            <img src="/mobile/1-Home/MarketBtn.png" alt="Market" />
+            <span>Market</span>
+        </a>
+        <a href="#" id="rewardsButton" class="footer-icon" aria-label="Rewards">
+            <img src="/mobile/1-Home/RewardsBtn.png" alt="Rewards" />
+            <span>Rewards</span>
         </a>
     </div>
+    
+    
 
     <!-- Reward Claim Overlay -->
     <div class="reward-overlay" id="rewardOverlay">
@@ -235,10 +307,30 @@
         const userName = urlParams.get('user');
 
         if (userName) {
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('backButton').href = `/mobile/2-UserProfiles/users.html?user=${userName}`;
-            loadRewards(userName);
-        }
+    document.getElementById('userName').textContent = userName;
+
+    document.getElementById('profileButton').href = `/mobile/2-UserProfiles/users.html?user=${userName}`;
+    document.getElementById('marketButton').href = `/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
+    document.getElementById('rewardsButton').href = `/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
+
+    loadRewards(userName);
+}
+
+
+
+
+document.querySelectorAll('.footer a').forEach(link => {
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
+
+    if (currentPath === linkPath) {
+        link.classList.add('active');
+    } else {
+        link.classList.remove('active');
+    }
+});
+
+
 
         function getUserDiamonds(userName) {
             const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
