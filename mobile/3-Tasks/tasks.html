@@ -84,9 +84,10 @@
     width: 100%;
     overflow-y: auto;
     background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
-    padding: 0 20px 100px; /* horizontal and bottom only */
+    padding: calc(var(--header-height) + 70px) 20px 100px; /* top + horizontal + bottom */
     height: calc(100vh - var(--footer-height));
 }
+
 
 
 
@@ -281,15 +282,15 @@
 
 
 
-        .date-header {
-            background: var(--secondary-color); /* black like footer */
+   .date-header {
+    background: var(--secondary-color);
     position: sticky;
     top: 0;
     z-index: 50;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    padding-bottom: 5px;
-    padding: 5px 0; /* tighter */
+    padding: 5px 0;
+    height: 70px; /* Ensure it's consistent */
 }
+
 
 .month-nav {
     display: flex;
@@ -1178,22 +1179,6 @@ document.getElementById("scrollRight").addEventListener("click", () => {
         left: 200,
         behavior: "smooth"
     });
-});
-
-
-
-
-
-
-
-
-
-window.addEventListener("load", () => {
-    const dateHeader = document.querySelector(".date-header");
-    const content = document.querySelector(".content");
-    const headerHeight = dateHeader.offsetHeight;
-
-    content.style.paddingTop = `${headerHeight + 12}px`; // add a little breathing room
 });
 
 
