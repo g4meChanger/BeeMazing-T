@@ -19,7 +19,7 @@
             --text-color: #FFFFFF;
             --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
-            --header-height: 58px; /* 15px padding * 2 + 24px font + 4px buffer */
+            --header-height: 100px; /* 15px padding * 2 + 24px font + 4px buffer */
             --footer-height: 70px;
             --add-btn-height: 80px; /* 60px button + 20px buffer */
             --border-dark: #444754; /* same as in addtasks.html */
@@ -84,10 +84,9 @@
     width: 100%;
     overflow-y: auto;
     background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
-    padding: calc(var(--header-height) + 70px) 20px 100px; /* top + horizontal + bottom */
+    padding: 0 20px 100px; /* horizontal and bottom only */
     height: calc(100vh - var(--footer-height));
 }
-
 
 
 
@@ -282,15 +281,15 @@
 
 
 
-   .date-header {
-    background: var(--secondary-color);
+        .date-header {
+            background: var(--secondary-color); /* black like footer */
     position: sticky;
     top: 0;
     z-index: 50;
-    padding: 5px 0;
-    height: 70px; /* Ensure it's consistent */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding-bottom: 5px;
+    padding: 5px 0; /* tighter */
 }
-
 
 .month-nav {
     display: flex;
