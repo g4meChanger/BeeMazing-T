@@ -1264,8 +1264,8 @@ function loadLuckyChests(userName) {
         if (isUnlocked) {
             card.style.cursor = "pointer";
             card.addEventListener("click", () => {
-                revealLuckyChestReward(userName, chest, index);
-            });
+    revealLuckyChestReward(userName, chest, index, true);
+});
         }
 
         container.appendChild(card);
@@ -1282,66 +1282,93 @@ function loadLuckyChests(userName) {
 
 
 
-function revealLuckyChestReward(userName, chest, chestIndex) {
+function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = false) {
     const overlay = document.getElementById("chestVideoOverlay");
     const video = document.getElementById("chestVideo");
 
-    // Show the overlay and play the video
     overlay.style.display = "flex";
     video.currentTime = 0;
-    video.play();
+
+    // ⛑️ Force mobile playback with fallback
+    const playPromise = video.play();
+
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                console.log("Video is playing");
+            })
+            .catch(error => {
+                console.warn("Video failed to autoplay:", error);
+                // ⛑️ Fallback if video fails
+                overlay.style.display = "none";
+                showLuckyChestRewardOverlay(userName, chest, chestIndex);
+            });
+    }
 
     video.onended = () => {
         overlay.style.display = "none";
-
-        // 1. Create and add flash effect
-        const flash = document.createElement("div");
-        flash.className = "flash-effect";
-        document.body.appendChild(flash);
-
-        // 2. After flash animation, show the reward modal inside a dark overlay
-        setTimeout(() => {
-            flash.remove();
-
-            const image = chest.image && chest.image.trim() !== ""
-                ? (chest.image.startsWith("/") ? chest.image : "/" + chest.image)
-                : "https://cdn-icons-png.flaticon.com/512/766/766544.png";
-
-            // Create dark background overlay
-            const rewardOverlay = document.createElement("div");
-            rewardOverlay.className = "reward-overlay"; // 👈 fully dark background
-
-            // Create reward modal content
-            const modal = document.createElement("div");
-            modal.className = "modal-content reward-reveal";
-            modal.innerHTML = `
-                <img src="${image}" alt="Reward" class="reward-image">
-                <h2 class="reward-title">${chest.name}</h2>
-                <p class="reward-description">${chest.description || "You unlocked a surprise!"}</p>
-                <button class="claim-button">Claim Reward</button>
-
-            `;
-
-            // Allow dismiss by clicking outside the modal
-            rewardOverlay.addEventListener("click", (e) => {
-                if (!e.target.closest(".modal-content")) {
-                    rewardOverlay.remove();
-                }
-            });
-
-            rewardOverlay.appendChild(modal);
-document.body.appendChild(rewardOverlay);
-
-// ✅ Add this to make the Claim button work
-modal.querySelector(".claim-button").addEventListener("click", () => {
-    claimLuckyChest(userName, chestIndex);
-    rewardOverlay.remove();
-});
-
-        }, 500); // match flash animation duration
+        showLuckyChestRewardOverlay(userName, chest, chestIndex);
     };
+
+    // ⏳ Optional timeout fallback (in case onended never fires on mobile)
+    setTimeout(() => {
+        if (!video.ended) {
+            overlay.style.display = "none";
+            showLuckyChestRewardOverlay(userName, chest, chestIndex);
+        }
+    }, 7000); // safety timeout in case mobile fails to fire onended
 }
 
+
+
+
+
+
+
+
+
+
+
+
+function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
+    const flash = document.createElement("div");
+    flash.className = "flash-effect";
+    document.body.appendChild(flash);
+
+    setTimeout(() => {
+        flash.remove();
+
+        const image = chest.image && chest.image.trim() !== ""
+            ? (chest.image.startsWith("/") ? chest.image : "/" + chest.image)
+            : "https://cdn-icons-png.flaticon.com/512/766/766544.png";
+
+        const rewardOverlay = document.createElement("div");
+        rewardOverlay.className = "reward-overlay";
+
+        const modal = document.createElement("div");
+        modal.className = "modal-content reward-reveal";
+        modal.innerHTML = `
+            <img src="${image}" alt="Reward" class="reward-image">
+            <h2 class="reward-title">${chest.name}</h2>
+            <p class="reward-description">${chest.description || "You unlocked a surprise!"}</p>
+            <button class="claim-button">Claim Reward</button>
+        `;
+
+        rewardOverlay.addEventListener("click", (e) => {
+            if (!e.target.closest(".modal-content")) {
+                rewardOverlay.remove();
+            }
+        });
+
+        rewardOverlay.appendChild(modal);
+        document.body.appendChild(rewardOverlay);
+
+        modal.querySelector(".claim-button").addEventListener("click", () => {
+            claimLuckyChest(userName, chestIndex);
+            rewardOverlay.remove();
+        });
+    }, 500);
+}
 
 
 
