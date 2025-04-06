@@ -985,19 +985,20 @@ function showEditTurnModal(task) {
 
     const generateUserList = (excludeUser) => {
         return task.users
-            .filter(user => user !== excludeUser)
-            .map(user => `
-                <li draggable="true" style="
-        padding: 8px 10px;
-        margin: 4px 0;
-        background: #2A2B32;
-        color: #FFFFFF;
-        border: 1px solid var(--primary-color);
-        border-radius: 6px;
-        cursor: grab;
-        transition: all 0.2s ease;
-    ">${user}</li>
-`).join("");
+    .filter(user => user !== excludeUser)
+    .map(user => `
+        <li style="
+            padding: 8px 10px;
+            margin: 4px 0;
+            background: #2A2B32;
+            color: #FFFFFF;
+            border: 1px solid var(--primary-color);
+            border-radius: 6px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            touch-action: none;
+        ">${user}</li>
+    `).join("");
     };
 
     const currentTurn = task.turn || task.users[0];
@@ -1025,33 +1026,54 @@ function showEditTurnModal(task) {
     const listContainer = () => modal.querySelector("#userOrderList");
 
     const enableDragAndDrop = () => {
-        let draggingItem = null;
-        const listItems = listContainer().querySelectorAll("li");
+    const list = listContainer();
+    let draggedItem = null;
+    let startY = 0;
+    let currentIndex = -1;
 
-        listItems.forEach((item) => {
-            item.addEventListener("dragstart", () => {
-                draggingItem = item;
-                item.style.opacity = "0.5";
-            });
-
-            item.addEventListener("dragend", () => {
-                item.style.opacity = "1";
-                draggingItem = null;
-            });
-
-            item.addEventListener("dragover", (e) => {
-                e.preventDefault();
-                const bounding = item.getBoundingClientRect();
-                const offset = e.clientY - bounding.top;
-
-                if (offset > bounding.height / 2) {
-                    item.after(draggingItem);
-                } else {
-                    item.before(draggingItem);
-                }
-            });
-        });
+    const handleStart = (e) => {
+        draggedItem = e.target.closest("li");
+        startY = e.touches ? e.touches[0].clientY : e.clientY;
+        currentIndex = Array.from(list.children).indexOf(draggedItem);
+        draggedItem.style.opacity = "0.5";
     };
+
+    const handleMove = (e) => {
+        if (!draggedItem) return;
+        const moveY = e.touches ? e.touches[0].clientY : e.clientY;
+        const delta = moveY - startY;
+        const targetIndex = Array.from(list.children).findIndex(child => {
+            const rect = child.getBoundingClientRect();
+            return moveY >= rect.top && moveY <= rect.bottom;
+        });
+
+        if (targetIndex !== -1 && targetIndex !== currentIndex) {
+            const movingUp = targetIndex < currentIndex;
+            list.insertBefore(draggedItem, movingUp ? list.children[targetIndex] : list.children[targetIndex].nextSibling);
+            currentIndex = targetIndex;
+        }
+    };
+
+    const handleEnd = () => {
+        if (draggedItem) {
+            draggedItem.style.opacity = "1";
+            draggedItem = null;
+        }
+    };
+
+    list.querySelectorAll("li").forEach((li) => {
+        li.addEventListener("touchstart", handleStart);
+        li.addEventListener("touchmove", handleMove);
+        li.addEventListener("touchend", handleEnd);
+
+        li.addEventListener("mousedown", handleStart);
+        li.addEventListener("mousemove", (e) => {
+            if (e.buttons === 1) handleMove(e);
+        });
+        li.addEventListener("mouseup", handleEnd);
+    });
+};
+
 
     enableDragAndDrop();
 
