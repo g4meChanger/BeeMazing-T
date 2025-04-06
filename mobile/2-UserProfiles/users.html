@@ -55,7 +55,7 @@
 
 .content {
     position: absolute;
-    top: calc(var(--header-height) + 45px); /* was 110px — now much tighter */
+    top: calc(var(--header-height) + 100px); /* safer buffer */
     bottom: var(--footer-height);
     width: 100%;
     padding: 20px;
@@ -66,7 +66,6 @@
 }
 
         .profile-card {
-            top: calc(var(--header-height) + 45px); /* was 110px — now much tighter */
             background: var(--card-bg); /* dark card background like task items */
             border: 2px solid var(--border-dark); /* dark border like tasks */
             border-radius: 12px;
@@ -1386,6 +1385,18 @@ function claimLuckyChest(userName, chestIndex) {
 
 
 
+function adjustContentTop() {
+    const header = document.querySelector(".date-header");
+    const content = document.querySelector(".content");
+
+    if (header && content) {
+        const headerHeight = header.offsetHeight;
+        content.style.top = `${headerHeight}px`;
+    }
+}
+
+window.addEventListener("resize", adjustContentTop);
+window.addEventListener("load", adjustContentTop);
 
 
 
