@@ -1287,7 +1287,7 @@ function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = fals
     const video = document.getElementById("chestVideo");
 
     overlay.style.display = "flex";
-    video.currentTime = 0;
+    video.currentTime = 1.5;
 
     // ⛑️ Force mobile playback with fallback
     const playPromise = video.play();
