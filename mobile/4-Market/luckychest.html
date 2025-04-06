@@ -116,6 +116,7 @@
       justify-content: center;
       align-items: center;
       z-index: 999;
+      -webkit-overflow-scrolling: touch;
     }
 
     .modal.show {
@@ -123,14 +124,18 @@
     }
 
     .modal-content {
-      background: var(--accent-color);
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      border: 2px solid var(--primary-color);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
+  background: var(--accent-color);
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  border: 2px solid var(--primary-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 
     .form-group {
       margin-bottom: 15px;
@@ -351,6 +356,7 @@
       </div>
       <div id="diceRewards"></div>
       <button class="btn" onclick="saveDiceChest()">Assign Dice Chest</button>
+      <div style="height: 20px;"></div>
     </div>
   </div>
   
