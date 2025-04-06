@@ -659,9 +659,7 @@
 
 
 
-#chestVideoOverlay {
-    background-color: #000 !important;
-}
+
 
 
 
@@ -1282,42 +1280,30 @@ function loadLuckyChests(userName) {
 
 
 
-
-
-
 function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = false) {
     const overlay = document.getElementById("chestVideoOverlay");
     const video = document.getElementById("chestVideo");
 
     overlay.style.display = "flex";
+    video.currentTime = 0;
+    video.play();
 
-    // ⛑️ Force mobile playback with fallback
-    const playPromise = video.play();
+    let skipped = false;
 
+    const skipVideo = () => {
+        if (skipped) return;
+        skipped = true;
 
-    video.onplay = () => {
-    console.log("Video started");
-};
-
-
-
-    if (playPromise !== undefined) {
-        playPromise
-            .then(() => {
-                console.log("Video is playing");
-            })
-            .catch(error => {
-                console.warn("Video failed to autoplay:", error);
-                // ⛑️ Fallback if video fails
-                overlay.style.display = "none";
-                showLuckyChestRewardOverlay(userName, chest, chestIndex);
-            });
-    }
-
-    video.onended = () => {
+        video.pause();
         overlay.style.display = "none";
         showLuckyChestRewardOverlay(userName, chest, chestIndex);
     };
+
+    // Skip on tap/click
+    overlay.addEventListener("click", skipVideo, { once: true });
+
+    video.onended = () => skipVideo();
+    video.onerror = () => skipVideo();
 }
 
 
@@ -1439,7 +1425,8 @@ window.addEventListener("load", adjustContentTop);
     position:fixed;
     top:0; left:0;
     width:100%; height:100%;
-    background: #000000;
+    background: rgba(20, 20, 20, 0.85);
+backdrop-filter: blur(4px);
     z-index:2000;
     justify-content:center;
     align-items:center;
@@ -1460,18 +1447,6 @@ style="
 <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
 Your browser does not support the video tag.
 </video>
-
-
-<div id="videoFallbackMessage" style="
-    color: white;
-    font-size: 16px;
-    text-align: center;
-    margin-top: 10px;
-    display: none;
-">
-    If nothing happens, tap again to continue.
-</div>
-
 
 
 </div>
