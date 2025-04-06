@@ -55,7 +55,7 @@
 
 .content {
     position: absolute;
-    top: 115px;
+    top: calc(var(--header-height) + 45px); /* was 110px — now much tighter */
     bottom: var(--footer-height);
     width: 100%;
     padding: 20px;
