@@ -663,6 +663,48 @@
 
 
 
+
+
+
+
+
+
+
+@keyframes chestZoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+
+
+
+
+#chestVideoOverlay video {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(255, 193, 7, 0.6);
+  background: #1a1a1a;
+  display: block;
+  animation: chestZoomIn 0.4s ease-out;
+}
+
+
+
+
+
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -1425,7 +1467,7 @@ window.addEventListener("load", adjustContentTop);
     position:fixed;
     top:0; left:0;
     width:100%; height:100%;
-    background: rgba(10, 10, 10, 0.92); /* darkened more */
+    background: rgba(10, 10, 10, 0.959); /* darkened more */
 backdrop-filter: blur(5px);
     z-index:2000;
     justify-content:center;
