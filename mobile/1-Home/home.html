@@ -378,6 +378,16 @@ body {
             link.classList.remove('active');
         }
     });
+
+
+    window.addEventListener("load", () => {
+    const dateHeader = document.querySelector(".date-header");
+    const content = document.querySelector(".content");
+    const headerHeight = dateHeader.offsetHeight;
+
+    content.style.paddingTop = `${headerHeight + 12}px`; // add a little breathing room
+});
+
     </script>
     
 
