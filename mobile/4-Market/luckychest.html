@@ -125,7 +125,8 @@
 
     .modal-content {
   background: var(--accent-color);
-  padding: 20px;
+  padding: 20px 20px 30px; /* Top, left/right, bottom */
+  padding-bottom: 30px; /* <-- Add this */
   border-radius: 10px;
   width: 90%;
   max-width: 400px;
@@ -334,7 +335,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest 1</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest 2</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -368,7 +369,6 @@
       </div>
       <div id="diceRewards"></div>
       <button class="btn" onclick="saveDiceChest()">Assign Dice Chest</button>
-      <div style="height: 20px;"></div>
     </div>
   </div>
   
