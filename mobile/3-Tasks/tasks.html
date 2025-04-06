@@ -19,7 +19,6 @@
             --text-color: #FFFFFF;
             --danger-color: #D32F2F;
             --modal-bg: rgba(33, 33, 33, 0.7);
-            --header-height: 100px; /* 15px padding * 2 + 24px font + 4px buffer */
             --footer-height: 70px;
             --add-btn-height: 80px; /* 60px button + 20px buffer */
             --border-dark: #444754; /* same as in addtasks.html */
@@ -81,13 +80,14 @@
 
         .content {
     position: relative;
-    padding: 0 20px 100px;
     width: 100%;
     overflow-y: auto;
+    padding: 0 20px 100px;
     background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="" fill="%23FFC107" fill-opacity="0.1"/%3E%3C/svg%3E') repeat;
-    padding: 0 20px 100px; /* horizontal and bottom only */
-    height: calc(100vh - var(--footer-height) - 100px); /* adjust here */
+    /* Let it fill naturally with flexbox layout */
+    flex: 1;
 }
+
 
 
 
