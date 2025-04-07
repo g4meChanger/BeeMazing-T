@@ -699,6 +699,11 @@
 
 
 
+@keyframes pop-fade {
+  0% { transform: translate(-50%, 0) scale(0.9); opacity: 0; }
+  30% { transform: translate(-50%, -20px) scale(1.1); opacity: 1; }
+  100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
+}
 
 
 
@@ -1518,6 +1523,55 @@ if (!isNaN(pointsToAdd) && pointsToAdd > 0 && userName) {
 }
 
 
+
+
+
+
+function checkForPointBonus() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const user = urlParams.get("user");
+    const addPoints = parseInt(urlParams.get("addPoints"));
+
+    if (user && addPoints && !isNaN(addPoints)) {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const targetUser = users.find(u => u.name === user);
+
+        if (targetUser) {
+            targetUser.points = (targetUser.points || 0) + addPoints;
+            localStorage.setItem("users", JSON.stringify(users));
+
+            // Animate reward
+            const container = document.querySelector(`[data-username="${user}"]`);
+            if (container) {
+                const anim = document.createElement("div");
+                anim.className = "honey-reward";
+                anim.textContent = `+${addPoints} Points 🍯`;
+                anim.style.position = "absolute";
+                anim.style.left = "50%";
+                anim.style.top = "30%";
+                anim.style.transform = "translate(-50%, 0)";
+                anim.style.background = "#FFC107";
+                anim.style.color = "#000";
+                anim.style.padding = "12px 20px";
+                anim.style.borderRadius = "16px";
+                anim.style.fontWeight = "bold";
+                anim.style.fontSize = "18px";
+                anim.style.boxShadow = "0 4px 15px rgba(0,0,0,0.4)";
+                anim.style.zIndex = "999";
+                anim.style.animation = "pop-fade 2s ease-out forwards";
+                container.appendChild(anim);
+
+                setTimeout(() => anim.remove(), 2000);
+            }
+
+            // Clean up URL so it doesn't repeat on refresh
+            const cleanUrl = window.location.pathname + `?user=${encodeURIComponent(user)}`;
+            window.history.replaceState({}, document.title, cleanUrl);
+        }
+    }
+}
+
+window.addEventListener("load", checkForPointBonus);
 
 
     </script>
