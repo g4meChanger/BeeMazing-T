@@ -1669,17 +1669,18 @@ window.addEventListener("load", adjustContentTop);
 
 
 
-
 function showAdminControlsIfNeeded() {
     const urlParams = new URLSearchParams(window.location.search);
     const currentUser = urlParams.get('user');
 
     const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
-    const isAdmin = userPermissions[currentUser] === "Admin";
+    const isUserAdmin = userPermissions[currentUser] === "Admin"; // Check if this user is an admin in permissions
+    const isLoggedInAsAdmin = localStorage.getItem("isAdmin") === "true"; // Check if logged in as admin
 
     const changePasswordBtn = document.getElementById("changePasswordBtn");
 
-    if (isAdmin && changePasswordBtn.style.display !== "inline-block") {
+    // Only show the button if the user is both an admin in permissions AND logged in as admin
+    if (isUserAdmin && isLoggedInAsAdmin && changePasswordBtn.style.display !== "inline-block") {
         changePasswordBtn.style.display = "inline-block";
 
         changePasswordBtn.addEventListener("click", () => {
@@ -1707,10 +1708,22 @@ function showAdminControlsIfNeeded() {
         });
     } else {
         if (changePasswordBtn) {
-            changePasswordBtn.style.display = "none"; // hide if not admin
+            changePasswordBtn.style.display = "none"; // Hide if either condition fails
         }
     }
 }
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", () => {
+    showAdminControlsIfNeeded();
+});
+
+// Listen for changes to isAdmin across tabs
+window.addEventListener("storage", (event) => {
+    if (event.key === "isAdmin" || event.key === "userPermissions") {
+        showAdminControlsIfNeeded();
+    }
+});
 
 
 
