@@ -337,7 +337,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest 1</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest 1A</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -460,23 +460,22 @@
     let selectedChest = null;
 
     function createChestCard(chest) {
-      console.log(`Creating card for chest: ${chest.name}, isCustom: ${chest.isCustom}`);
-      const card = document.createElement("div");
-      card.className = "chest-card";
-      card.innerHTML = `
+    console.log(`Creating card for chest: ${chest.name}, isCustom: ${chest.isCustom}`);
+    const card = document.createElement("div");
+    card.className = "chest-card";
+    card.innerHTML = `
         <img src="${chest.image}" alt="${chest.name}" />
-        <h4>${chest.name}</h4>
+        <h4>${chest.name}${chest.honey !== undefined ? ` + ${chest.honey} Honey` : ''}</h4>
         <div class="quote">"${chest.quote || 'No quote provided'}"</div>
         <div class="effect">${chest.effect || 'No effect provided'}</div>
-        ${chest.honey !== undefined && chest.honey !== "" ? `<div class="honey">Honey: ${chest.honey}</div>` : ''}
-      `;
-      card.addEventListener("click", () => {
+    `;
+    card.addEventListener("click", () => {
         console.log(`Card clicked for ${chest.name}, opening modal`);
         selectedChest = chest;
         chest.name === "Roll the Dice" ? openDiceModal() : openAssignModal();
-      });
-      return card;
-    }
+    });
+    return card;
+}
 
     function loadChests() {
       console.log("Loading chests:", chests);
@@ -532,7 +531,7 @@
     const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
     if (!allChests[user]) allChests[user] = [];
     allChests[user].push({
-        ...selectedChest, // Copy all properties (name, quote, effect, honey, image)
+        ...selectedChest, // Copies name, quote, effect, honey, image
         requiredPoints: points,
         progress: 0
     });
@@ -619,6 +618,17 @@
       document.getElementById("newChestImage").value = "";
     });
 
+
+
+
+
+
+
+
+
+
+
+
     function createNewChest() {
     let name = document.getElementById("newChestName").value.trim();
     const quote = document.getElementById("newChestQuote").value.trim();
@@ -638,55 +648,36 @@
         return;
     }
 
+    // If name is empty but honey is provided, use honey as the name
+    if (!name && honeyValue !== "") {
+        name = `${honeyValue} Honey`;
+    }
+
+    if (chests.some(chest => chest.name === name)) {
+        alert("A chest with this name already exists");
+        return;
+    }
+
     if (!image) {
         image = defaultChestImage;
     }
 
-    // Array to store new chests (could be 1 or 2)
-    const newChests = [];
+    const newChest = {
+        name,
+        quote: quote || "",
+        effect: effect || "",
+        honey: honeyValue !== "" ? honeyValue : undefined, // Store honey only if provided
+        image,
+        isCustom: true
+    };
 
-    // If there's a name (custom reward), create a chest for it
-    if (name) {
-        if (chests.some(chest => chest.name === name && !chest.honey)) {
-            alert("A chest with this name already exists");
-            return;
-        }
-        const customChest = {
-            name,
-            quote: quote || "",
-            effect: effect || "",
-            image,
-            isCustom: true
-        };
-        newChests.push(customChest);
-    }
-
-    // If there's a honey amount, create a separate chest for it
-    if (honeyValue !== "" && honeyValue > 0) {
-        const honeyChestName = `${honeyValue} Honey`;
-        if (chests.some(chest => chest.name === honeyChestName && chest.honey === honeyValue)) {
-            alert("A honey chest with this amount already exists");
-            return;
-        }
-        const honeyChest = {
-            name: honeyChestName,
-            quote: quote || "", // Use same quote if provided
-            effect: effect || "", // Use same effect if provided
-            honey: honeyValue,
-            image: image || defaultChestImage,
-            isCustom: true
-        };
-        newChests.push(honeyChest);
-    }
-
-    // Add new chests to the list and update UI/storage
-    newChests.forEach(newChest => {
-        chests.push(newChest);
-        chestContainer.appendChild(createChestCard(newChest));
-    });
+    chests.push(newChest);
     localStorage.setItem("customChests", JSON.stringify(chests));
+    chestContainer.appendChild(createChestCard(newChest));
     newChestModal.classList.remove("show");
 }
+
+
 
 
 

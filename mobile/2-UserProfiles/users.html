@@ -1321,10 +1321,14 @@ function loadLuckyChests(userName) {
 
     userChests.forEach((chest, index) => {
         const isUnlocked = chest.progress >= chest.requiredPoints;
+        const hasHoney = chest.honey !== undefined && chest.honey > 0;
+        const hasCustomReward = !chest.onlyHoney; // If not marked as honey-only
 
         const chestImage = isUnlocked
             ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
             : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
+
+        const displayName = hasCustomReward ? chest.name : `${chest.honey} Honey`;
 
         const card = document.createElement("div");
         card.className = "lucky-chest-card";
@@ -1333,7 +1337,7 @@ function loadLuckyChests(userName) {
         card.innerHTML = `
             <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
             <div class="info">
-                <h4></h4>
+                <h4>${displayName}</h4>
                 <p>Unlock to reveal your reward!</p>
                 <div class="lucky-chest-progress">
                     Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
@@ -1344,15 +1348,13 @@ function loadLuckyChests(userName) {
         if (isUnlocked) {
             card.style.cursor = "pointer";
             card.addEventListener("click", () => {
-    revealLuckyChestReward(userName, chest, index, true);
-});
+                revealLuckyChestReward(userName, chest, index, true);
+            });
         }
 
         container.appendChild(card);
     });
 }
-
-
 
 
 
@@ -1378,23 +1380,10 @@ function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = fals
         showLuckyChestRewardOverlay(userName, chest, chestIndex);
     };
 
-    // Skip on tap/click
     overlay.addEventListener("click", skipVideo, { once: true });
-
     video.onended = () => skipVideo();
     video.onerror = () => skipVideo();
 }
-
-
-
-
-
-
-
-
-
-
-
 
 function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
     const flash = document.createElement("div");
@@ -1404,9 +1393,31 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
     setTimeout(() => {
         flash.remove();
 
-        const image = chest.image && chest.image.trim() !== ""
-            ? (chest.image.startsWith("/") ? chest.image : "/" + chest.image)
-            : "https://cdn-icons-png.flaticon.com/512/766/766544.png";
+        const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+        const userChests = allChests[userName] || [];
+        const currentChest = userChests[chestIndex];
+
+        let rewardToShow;
+        const hasHoney = currentChest.honey !== undefined && currentChest.honey > 0;
+        const hasCustomReward = !currentChest.onlyHoney;
+
+        if (hasCustomReward) {
+            // Show custom reward first
+            rewardToShow = {
+                name: currentChest.name,
+                quote: currentChest.quote || "",
+                effect: currentChest.effect || "",
+                image: currentChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+            };
+        } else if (hasHoney) {
+            // Show honey second
+            rewardToShow = {
+                name: `${currentChest.honey} Honey`,
+                quote: currentChest.quote || "",
+                effect: currentChest.effect || "",
+                image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+            };
+        }
 
         const rewardOverlay = document.createElement("div");
         rewardOverlay.className = "reward-overlay";
@@ -1414,13 +1425,12 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
         const modal = document.createElement("div");
         modal.className = "modal-content reward-reveal";
         modal.innerHTML = `
-            <img src="${image}" alt="Reward" class="reward-image">
-            <h2 class="reward-title">${chest.name}</h2>
+            <img src="${rewardToShow.image}" alt="Reward" class="reward-image">
+            <h2 class="reward-title">${rewardToShow.name}</h2>
             <p class="reward-description">
-  ${chest.quote ? `<em>"${chest.quote}"</em><br>` : ""}
-  ${chest.effect || "You unlocked a surprise!"}
-</p>
-
+                ${rewardToShow.quote ? `<em>"${rewardToShow.quote}"</em><br>` : ""}
+                ${rewardToShow.effect || "You unlocked a surprise!"}
+            </p>
             <button class="claim-button">Claim Reward</button>
         `;
 
@@ -1440,12 +1450,6 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
     }, 500);
 }
 
-
-
-
-
-
-
 function claimLuckyChest(userName, chestIndex) {
     const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
     const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
@@ -1457,16 +1461,11 @@ function claimLuckyChest(userName, chestIndex) {
     if (!rewards[userName]) rewards[userName] = [];
     const now = new Date();
 
-    if (claimedChest.hasOwnProperty("honey") && claimedChest.honey > 0) {
-        // Handle Honey reward
-        rewards[userName].push({
-            name: `${claimedChest.honey} Honey`,
-            type: "Honey",
-            amount: claimedChest.honey,
-            date: now.toLocaleDateString()
-        });
-    } else {
-        // Handle custom reward (e.g., Cinema Ticket)
+    const hasHoney = claimedChest.honey !== undefined && claimedChest.honey > 0;
+    const hasCustomReward = !claimedChest.onlyHoney;
+
+    if (hasCustomReward) {
+        // Claim custom reward first
         rewards[userName].push({
             name: claimedChest.name,
             quote: claimedChest.quote || "",
@@ -1476,17 +1475,38 @@ function claimLuckyChest(userName, chestIndex) {
             claimedAt: now.toISOString(),
             type: "normal"
         });
+
+        if (hasHoney) {
+            // Modify chest to be honey-only for second opening
+            userChests[chestIndex] = {
+                name: `${claimedChest.honey} Honey`,
+                quote: claimedChest.quote || "",
+                effect: claimedChest.effect || "",
+                honey: claimedChest.honey,
+                image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
+                requiredPoints: claimedChest.requiredPoints,
+                progress: claimedChest.progress,
+                onlyHoney: true
+            };
+        } else {
+            // No honey left, remove the chest
+            userChests.splice(chestIndex, 1);
+        }
+    } else if (hasHoney) {
+        // Claim honey on second opening
+        rewards[userName].push({
+            name: `${claimedChest.honey} Honey`,
+            type: "Honey",
+            amount: claimedChest.honey,
+            date: now.toLocaleDateString()
+        });
+        userChests.splice(chestIndex, 1); // Remove chest after honey is claimed
     }
 
-    // Remove the chest after claiming
-    userChests.splice(chestIndex, 1);
     allChests[userName] = userChests;
-
-    // Save updated data
     localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
 
-    // Refresh UI
     loadLuckyChests(userName);
 }
 
