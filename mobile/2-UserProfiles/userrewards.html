@@ -265,77 +265,67 @@ let keyTransferData = null;
 
 
     function loadUserRewards(userName) {
-    const userRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
-    const rewards = userRewards[userName] || [];
-    const rewardList = document.getElementById("rewardList");
+    const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+    const userRewards = rewards[userName] || [];
 
-    rewardList.innerHTML = "";
-    if (rewards.length === 0) {
-        rewardList.innerHTML = "<p>No rewards in the hive yet.</p>";
+    const container = document.getElementById("rewardList");
+    container.innerHTML = "";
+
+    if (userRewards.length === 0) {
+        container.innerHTML = "<p>No rewards yet.</p>";
         return;
     }
 
-    const reversedRewards = [...rewards].reverse();
+    userRewards.forEach((reward, index) => {
+        const card = document.createElement("div");
+        card.className = "reward-card";
 
-    reversedRewards.forEach((reward, index) => {
-        const actualIndex = rewards.length - 1 - index;
+        const img = document.createElement("img");
+        img.src = reward.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png";
+        img.alt = "Reward";
+        img.className = "reward-icon";
 
-        const rewardItem = document.createElement("li");
-        rewardItem.className = "reward-item";
+        const info = document.createElement("div");
+        info.className = "reward-info";
 
-        const isTheKey = reward.name === "The Key";
-        const isDiceChest = reward.type === "dice";
+        const title = document.createElement("h3");
+        title.textContent = reward.name || "Surprise Reward";
 
+        const desc = document.createElement("p");
+        desc.innerHTML = reward.description || reward.effect || "You earned a cool reward!";
 
-        // Replace with dynamic creation instead of innerHTML
-const rewardDetails = document.createElement("div");
-rewardDetails.className = "reward-details";
-rewardDetails.innerHTML = `<strong>${reward.name}</strong><br>Collected on: ${reward.date}`;
-rewardItem.appendChild(rewardDetails);
+        info.appendChild(title);
+        info.appendChild(desc);
 
-const button = document.createElement("button");
-button.className = "redeem-btn";
+        const button = document.createElement("button");
+        button.className = "received-btn";
 
-// Honey reward = show "Get it"
-if (reward.type === "Honey") {
-    button.textContent = "Get it";
-    button.onclick = () => {
-        // Move to history
-        const userRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
-        const rewardHistory = JSON.parse(localStorage.getItem("familyApp_reward_history")) || {};
+        if (reward.type === "Honey") {
+            button.textContent = "Get it";
+            button.addEventListener("click", () => {
+                const amount = reward.amount || parseInt(reward.name);
+                const encodedUser = encodeURIComponent(userName);
+                const encodedHoney = encodeURIComponent(amount);
+                const rewardIndex = index;
+                window.location.href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${encodedUser}&addPoints=${encodedHoney}&removeReward=${rewardIndex}`;
+            });
+        } else if (reward.type === "dice") {
+            button.textContent = "Use it";
+            const encoded = encodeURIComponent(btoa(JSON.stringify(reward)));
+            button.addEventListener("click", () => {
+                window.location.href = `/BeeMazing-Y1/mobile/4-Market/LuckyChest/rollthedice.html?user=${encodeURIComponent(userName)}&data=${encoded}`;
+            });
+        } else {
+            button.textContent = "Received";
+            button.addEventListener("click", () => {
+                markRewardAsReceived(userName, index);
+            });
+        }
 
-        const rewards = userRewards[userName] || [];
-        if (rewards.length <= actualIndex) return;
-
-        const receivedReward = rewards.splice(actualIndex, 1)[0];
-        receivedReward.receivedDate = new Date().toLocaleString();
-
-        if (!rewardHistory[userName]) rewardHistory[userName] = [];
-        rewardHistory[userName].push(receivedReward);
-
-        userRewards[userName] = rewards;
-        localStorage.setItem("familyApp_user_rewards", JSON.stringify(userRewards));
-        localStorage.setItem("familyApp_reward_history", JSON.stringify(rewardHistory));
-
-        // Redirect with points
-        const encodedUser = encodeURIComponent(userName);
-        window.location.href = `users.html?addPoints=${reward.amount}&user=${encodedUser}`;
-    };
-} else if (isTheKey) {
-    button.textContent = "Use it";
-    button.onclick = () => useTheKey(userName, actualIndex);
-} else if (isDiceChest) {
-    button.textContent = "Use it";
-    button.onclick = () => useDiceChest(userName, actualIndex);
-} else {
-    button.textContent = "Received";
-    button.onclick = () => redeemReward(userName, actualIndex);
-}
-
-rewardItem.appendChild(button);
-
-
-        rewardList.appendChild(rewardItem);
+        card.appendChild(img);
+        card.appendChild(info);
+        card.appendChild(button);
+        container.appendChild(card);
     });
 }
 
