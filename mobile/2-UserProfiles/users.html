@@ -915,11 +915,13 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        
             const urlParams = new URLSearchParams(window.location.search);
             const userName = urlParams.get('user');
             const addPoints = Number(urlParams.get('addPoints')) || 0;
         
+
+            document.addEventListener("DOMContentLoaded", () => {
             if (userName) {
                 document.getElementById('profileName').textContent = userName;
                 document.getElementById('userName').textContent = userName;
