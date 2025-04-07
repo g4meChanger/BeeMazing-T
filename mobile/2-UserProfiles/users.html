@@ -759,7 +759,72 @@
 
 
 
+#changePasswordBtn {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
 
+#changePasswordBtn:hover {
+    background-color: #FFD54F;
+}
+
+
+
+
+#newAdminPassword {
+    padding: 16px;
+    font-size: 20px;
+    width: 100%;
+    margin-top: 18px;
+    margin-bottom: 22px;
+    border-radius: 10px;
+    border: 2px solid var(--primary-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+
+
+
+
+
+
+#confirmChangePasswordBtn {
+    background: var(--secondary-color);
+    color: var(--accent-color);
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+#confirmChangePasswordBtn:hover {
+    background: #424242;
+}
+
+
+
+.modal-content {
+    animation: zoomIn 0.3s ease-out;
+}
+
+@keyframes zoomIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 
 
     </style>
@@ -783,7 +848,7 @@
     <div class="content">
         <div class="profile-card">
 
-            <button id="changePasswordBtn" style="display: none; margin-bottom: 20px;">
+            <button id="changePasswordBtn" class="change-password-btn" style="display: none; margin-bottom: 20px;">
                 Change Admin Password
             </button>
 
