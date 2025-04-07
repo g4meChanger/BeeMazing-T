@@ -1469,7 +1469,19 @@ function claimLuckyChest(userName, chestIndex) {
     const hasCustomReward = !claimedChest.onlyHoney;
     const isHoneyOnlyName = !hasHoney && claimedChest.name.endsWith(" Honey");
 
-    if (hasCustomReward && !isHoneyOnlyName) {
+    if (claimedChest.type === "dice") {
+        console.log("Claiming dice chest");
+        rewards[userName].push({
+            name: claimedChest.name,
+            type: "dice",
+            outcomes: claimedChest.outcomes,
+            date: now.toLocaleDateString(),
+            claimedAt: now.toISOString()
+        });
+        userChests.splice(chestIndex, 1);
+        allChests[userName] = userChests;
+        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    } else if (hasCustomReward && !isHoneyOnlyName) {
         console.log("Claiming custom reward, hasHoney:", hasHoney);
         rewards[userName].push({
             name: claimedChest.name,
