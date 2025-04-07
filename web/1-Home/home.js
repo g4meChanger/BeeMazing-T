@@ -10,6 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Determine if this user is admin
     const isAdmin = localStorage.getItem("isAdmin") === "true";
 
+    const footer = document.getElementById("footer");
+if (!isAdmin && footer) {
+    footer.style.display = "none";
+}
+
+
     const addUserBtn = document.getElementById("addUserBtn");
     if (!isAdmin && addUserBtn) {
         addUserBtn.style.display = "none";
