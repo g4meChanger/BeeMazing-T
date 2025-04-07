@@ -1143,6 +1143,13 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
         }
 
         function triggerHoneyRain(rewardAmount) {
+
+            const audio = document.getElementById("finishTaskSound");
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(err => console.warn("Finish task sound playback failed", err));
+    }
+    
             for (let i = 0; i < 50; i++) {
                 const drop = document.createElement("div");
                 drop.className = "honey-drop";
@@ -1648,6 +1655,12 @@ Your browser does not support the video tag.
     <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestUnlock.mp3" type="audio/mp3" />
     Your browser does not support the audio element.
 </audio>
+
+<audio id="finishTaskSound" preload="auto">
+    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/FinishTask.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
+  
 
 
 </div>
