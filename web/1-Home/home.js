@@ -210,6 +210,23 @@ document.getElementById("confirmNoBtn").addEventListener("click", () => {
 });
 
 
+
+
+
+const logoutBtn = document.getElementById("logoutBtn");
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("isAdmin");
+        window.location.href = "/BeeMazing-Y1/login.html";
+    });
+}
+
+
+
+
+
+
+
 });
 
 
