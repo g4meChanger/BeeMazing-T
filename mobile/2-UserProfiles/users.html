@@ -1672,46 +1672,73 @@ window.addEventListener("load", adjustContentTop);
 function showAdminControlsIfNeeded() {
     const urlParams = new URLSearchParams(window.location.search);
     const currentUser = urlParams.get('user');
+    console.log("Current User from URL:", currentUser);
 
     const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
-    const isUserAdmin = userPermissions[currentUser] === "Admin"; // Check if this user is an admin in permissions
-    const isLoggedInAsAdmin = localStorage.getItem("isAdmin") === "true"; // Check if logged in as admin
+    const isUserAdmin = userPermissions[currentUser] === "Admin";
+    console.log("User Permissions:", userPermissions);
+    console.log("Is User Admin?", isUserAdmin);
+
+    const isLoggedInAsAdmin = localStorage.getItem("isAdmin") === "true";
+    console.log("Is Logged In As Admin?", isLoggedInAsAdmin);
 
     const changePasswordBtn = document.getElementById("changePasswordBtn");
+    console.log("Change Password Button Element:", changePasswordBtn);
 
-    // Only show the button if the user is both an admin in permissions AND logged in as admin
-    if (isUserAdmin && isLoggedInAsAdmin && changePasswordBtn.style.display !== "inline-block") {
+    // Show button only if user is an admin in permissions AND logged in as admin
+    if (isUserAdmin && isLoggedInAsAdmin) {
+        console.log("Conditions met, showing Change Admin Password button");
         changePasswordBtn.style.display = "inline-block";
 
-        changePasswordBtn.addEventListener("click", () => {
-            const modal = document.getElementById("changePasswordModal");
-            modal.style.display = "flex";
-            document.getElementById("newAdminPassword").value = "";
-            document.getElementById("newAdminPassword").focus();
-        });
+        // Add event listeners only once
+        if (!changePasswordBtn.dataset.listenersAdded) {
+            changePasswordBtn.addEventListener("click", () => {
+                const modal = document.getElementById("changePasswordModal");
+                modal.style.display = "flex";
+                document.getElementById("newAdminPassword").value = "";
+                document.getElementById("newAdminPassword").focus();
+            });
 
-        document.getElementById("confirmChangePasswordBtn").addEventListener("click", () => {
-            const newPassword = document.getElementById("newAdminPassword").value.trim();
-            if (newPassword.length < 4) {
-                alert("Password must be at least 4 characters.");
-                return;
-            }
-            localStorage.setItem("adminPassword", newPassword);
-            alert("Admin password updated!");
-            document.getElementById("changePasswordModal").style.display = "none";
-        });
-
-        document.getElementById("changePasswordModal").addEventListener("click", (e) => {
-            if (e.target.id === "changePasswordModal") {
+            document.getElementById("confirmChangePasswordBtn").addEventListener("click", () => {
+                const newPassword = document.getElementById("newAdminPassword").value.trim();
+                if (newPassword.length < 4) {
+                    alert("Password must be at least 4 characters.");
+                    return;
+                }
+                localStorage.setItem("adminPassword", newPassword);
+                alert("Admin password updated!");
                 document.getElementById("changePasswordModal").style.display = "none";
-            }
-        });
+            });
+
+            document.getElementById("changePasswordModal").addEventListener("click", (e) => {
+                if (e.target.id === "changePasswordModal") {
+                    document.getElementById("changePasswordModal").style.display = "none";
+                }
+            });
+
+            changePasswordBtn.dataset.listenersAdded = "true"; // Flag to prevent duplicate listeners
+        }
     } else {
+        console.log("Conditions not met, hiding Change Admin Password button");
         if (changePasswordBtn) {
-            changePasswordBtn.style.display = "none"; // Hide if either condition fails
+            changePasswordBtn.style.display = "none";
         }
     }
 }
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Page loaded, running showAdminControlsIfNeeded");
+    showAdminControlsIfNeeded();
+});
+
+// Listen for changes to isAdmin or userPermissions across tabs
+window.addEventListener("storage", (event) => {
+    if (event.key === "isAdmin" || event.key === "userPermissions") {
+        console.log("Storage event detected for key:", event.key);
+        showAdminControlsIfNeeded();
+    }
+});
 
 // Run on page load
 document.addEventListener("DOMContentLoaded", () => {
