@@ -337,7 +337,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest 5</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest 1</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -526,17 +526,21 @@
     }
 
     function assignChest() {
-      const user = selectedUserInput.value;
-      const points = parseInt(document.getElementById("requiredPoints").value);
-      if (!user || !points || points <= 0) return alert("Please complete all fields.");
-      const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-      if (!allChests[user]) allChests[user] = [];
-      allChests[user].push({ ...selectedChest, requiredPoints: points, progress: 0 });
-      localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-      assignModal.classList.remove("show");
-      alert(`"${selectedChest.name}" assigned to ${user}!`);
-      window.location.href = "market.html";
-    }
+    const user = selectedUserInput.value;
+    const points = parseInt(document.getElementById("requiredPoints").value);
+    if (!user || !points || points <= 0) return alert("Please complete all fields.");
+    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+    if (!allChests[user]) allChests[user] = [];
+    allChests[user].push({
+        ...selectedChest, // Copy all properties (name, quote, effect, honey, image)
+        requiredPoints: points,
+        progress: 0
+    });
+    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    assignModal.classList.remove("show");
+    alert(`"${selectedChest.name}" assigned to ${user}!`);
+    window.location.href = "market.html";
+}
 
     function openDiceModal() {
       const users = JSON.parse(localStorage.getItem("users")) || [];
@@ -616,52 +620,84 @@
     });
 
     function createNewChest() {
-      let name = document.getElementById("newChestName").value.trim();
-      const quote = document.getElementById("newChestQuote").value.trim();
-      const effect = document.getElementById("newChestEffect").value.trim();
-      const honey = document.getElementById("newChestHoney").value.trim();
-      let image = document.getElementById("newChestImage").value.trim();
+    let name = document.getElementById("newChestName").value.trim();
+    const quote = document.getElementById("newChestQuote").value.trim();
+    const effect = document.getElementById("newChestEffect").value.trim();
+    const honey = document.getElementById("newChestHoney").value.trim();
+    let image = document.getElementById("newChestImage").value.trim();
 
-      const honeyValue = honey ? parseInt(honey) : ""; // Convert to number if provided, else empty string
-      if (honey && (isNaN(honeyValue) || honeyValue < 0)) {
+    const honeyValue = honey ? parseInt(honey) : ""; // Convert to number if provided, else empty string
+    if (honey && (isNaN(honeyValue) || honeyValue < 0)) {
         alert("Honey must be a non-negative number");
         return;
-      }
+    }
 
-      // If name is empty but honey is provided, use honey as the name
-      if (!name && honeyValue !== "") {
-        name = honeyValue.toString();
-      }
-
-      // Require at least name or honey to proceed
-      if (!name) {
+    // Require at least name or honey to proceed
+    if (!name && honeyValue === "") {
         alert("Please provide at least a Name or a Honey amount");
         return;
-      }
-
-      if (chests.some(chest => chest.name === name)) {
-        alert("A chest with this name already exists");
-        return;
-      }
-
-      if (!image) {
-        image = defaultChestImage;
-      }
-
-      const newChest = { 
-        name, 
-        quote: quote || "", 
-        effect: effect || "", 
-        honey: honeyValue, // Store as number or empty string
-        image,
-        isCustom: true 
-      };
-      chests.push(newChest);
-      localStorage.setItem("customChests", JSON.stringify(chests));
-      chestContainer.appendChild(createChestCard(newChest));
-      newChestModal.classList.remove("show");
-      alert("New chest created successfully!");
     }
+
+    if (!image) {
+        image = defaultChestImage;
+    }
+
+    // Array to store new chests (could be 1 or 2)
+    const newChests = [];
+
+    // If there's a name (custom reward), create a chest for it
+    if (name) {
+        if (chests.some(chest => chest.name === name && !chest.honey)) {
+            alert("A chest with this name already exists");
+            return;
+        }
+        const customChest = {
+            name,
+            quote: quote || "",
+            effect: effect || "",
+            image,
+            isCustom: true
+        };
+        newChests.push(customChest);
+    }
+
+    // If there's a honey amount, create a separate chest for it
+    if (honeyValue !== "" && honeyValue > 0) {
+        const honeyChestName = `${honeyValue} Honey`;
+        if (chests.some(chest => chest.name === honeyChestName && chest.honey === honeyValue)) {
+            alert("A honey chest with this amount already exists");
+            return;
+        }
+        const honeyChest = {
+            name: honeyChestName,
+            quote: quote || "", // Use same quote if provided
+            effect: effect || "", // Use same effect if provided
+            honey: honeyValue,
+            image: image || defaultChestImage,
+            isCustom: true
+        };
+        newChests.push(honeyChest);
+    }
+
+    // Add new chests to the list and update UI/storage
+    newChests.forEach(newChest => {
+        chests.push(newChest);
+        chestContainer.appendChild(createChestCard(newChest));
+    });
+    localStorage.setItem("customChests", JSON.stringify(chests));
+    newChestModal.classList.remove("show");
+}
+
+
+
+
+
+
+
+
+
+
+
 
     selectUserBtn.addEventListener("click", () => {
       userListEl.style.display = userListEl.style.display === "none" ? "block" : "none";

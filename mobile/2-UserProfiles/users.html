@@ -1457,7 +1457,7 @@ function claimLuckyChest(userName, chestIndex) {
     if (!rewards[userName]) rewards[userName] = [];
     const now = new Date();
 
-    if (claimedChest.hasOwnProperty("honey")) {
+    if (claimedChest.hasOwnProperty("honey") && claimedChest.honey > 0) {
         // Handle Honey reward
         rewards[userName].push({
             name: `${claimedChest.honey} Honey`,
@@ -1466,15 +1466,15 @@ function claimLuckyChest(userName, chestIndex) {
             date: now.toLocaleDateString()
         });
     } else {
-        // Handle other rewards
+        // Handle custom reward (e.g., Cinema Ticket)
         rewards[userName].push({
             name: claimedChest.name,
-            description: claimedChest.description || "",
+            quote: claimedChest.quote || "",
+            effect: claimedChest.effect || "",
             image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
             date: now.toLocaleDateString(),
             claimedAt: now.toISOString(),
-            type: claimedChest.type || "normal",
-            outcomes: claimedChest.outcomes || []
+            type: "normal"
         });
     }
 
