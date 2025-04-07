@@ -123,7 +123,7 @@ userInfo.style.gap = "6px";
 // Optional blue check
 if (isThisUserAdmin) {
     const checkIcon = document.createElement("img");
-    checkIcon.src = "/BeeMazing-Y1/mobile/1-Home/check.png";
+    checkIcon.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Blue_check.svg/1024px-Blue_check.svg.png";
     checkIcon.alt = "Admin";
     checkIcon.style.width = "18px";
     checkIcon.style.height = "18px";
