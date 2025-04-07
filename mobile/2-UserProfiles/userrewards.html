@@ -516,30 +516,26 @@ function confirmKeyTransfer() {
     document.getElementById("sendTaskBtn").addEventListener("click", () => {
     const sound = document.getElementById("headshotSound");
 
-    // 1. Play sound IMMEDIATELY and WAIT for it to start before doing anything else
+    // 1. Play sound IMMEDIATELY and do NOT wait on `.then`
     if (sound) {
-        sound.currentTime = 0;
-        sound.play().then(() => {
-            // 2. After sound has definitely started, continue
-            requestAnimationFrame(() => {
-                // Hide popup
-                document.getElementById("keyPopup").style.display = "none";
-
-                // Continue logic
-                confirmKeyTransfer();
+        try {
+            sound.pause();
+            sound.currentTime = 0;
+            sound.play().catch(err => {
+                console.warn("Playback error:", err);
             });
-        }).catch(err => {
-            console.warn("Playback failed or blocked:", err);
-            // Even if sound fails, still continue
-            document.getElementById("keyPopup").style.display = "none";
-            confirmKeyTransfer();
-        });
-    } else {
-        // If no sound element, proceed as fallback
+        } catch (e) {
+            console.warn("Sound error:", e);
+        }
+    }
+
+    // 2. Use setTimeout(0) to give the browser one frame before layout DOM update
+    setTimeout(() => {
         document.getElementById("keyPopup").style.display = "none";
         confirmKeyTransfer();
-    }
+    }, 0); // zero milliseconds — forces layout deferral
 });
+
 
 
 
@@ -562,7 +558,8 @@ function confirmKeyTransfer() {
   
 
 
-<audio id="headshotSound" src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/headshot.mp3" preload="auto"></audio>
+<audio id="headshotSound" src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/headshot.mp3" preload="auto" playsinline></audio>
+
 
 
 
