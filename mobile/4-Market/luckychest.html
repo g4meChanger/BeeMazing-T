@@ -337,7 +337,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest 5A</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest 7A</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -648,9 +648,14 @@
         return;
     }
 
-    // If name is empty but honey is provided, use honey as the name
+    // If name is empty but honey is provided, use honey as the name and don’t set honey property
     if (!name && honeyValue !== "") {
         name = `${honeyValue} Honey`;
+    } else if (name && honeyValue !== "") {
+        // If both name and honey are provided, keep honey as a separate property
+        // This ensures "Cinema + 100 Honey" works correctly
+    } else {
+        // If only name, just use the name
     }
 
     if (chests.some(chest => chest.name === name)) {
@@ -666,10 +671,14 @@
         name,
         quote: quote || "",
         effect: effect || "",
-        honey: honeyValue !== "" ? honeyValue : undefined, // Store honey only if provided
         image,
         isCustom: true
     };
+
+    // Only add honey property if a custom name is provided alongside honey
+    if (name !== `${honeyValue} Honey` && honeyValue !== "") {
+        newChest.honey = honeyValue;
+    }
 
     chests.push(newChest);
     localStorage.setItem("customChests", JSON.stringify(chests));

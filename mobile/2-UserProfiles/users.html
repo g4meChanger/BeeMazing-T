@@ -1468,10 +1468,10 @@ function claimLuckyChest(userName, chestIndex) {
 
     const hasHoney = claimedChest.honey !== undefined && claimedChest.honey > 0;
     const hasCustomReward = !claimedChest.onlyHoney;
+    const isHoneyOnlyName = !hasHoney && claimedChest.name.endsWith(" Honey");
 
-    if (hasCustomReward) {
+    if (hasCustomReward && !isHoneyOnlyName) {
         console.log("Claiming custom reward, hasHoney:", hasHoney);
-        // First opening: Claim the custom reward (e.g., "Cinema")
         rewards[userName].push({
             name: claimedChest.name,
             quote: claimedChest.quote || "",
@@ -1483,7 +1483,6 @@ function claimLuckyChest(userName, chestIndex) {
         });
 
         if (hasHoney) {
-            // Update chest to honey-only for second opening
             const updatedChest = {
                 name: `${claimedChest.honey} Honey`,
                 quote: claimedChest.quote || "",
@@ -1499,32 +1498,29 @@ function claimLuckyChest(userName, chestIndex) {
             console.log("Updated chest to honey-only:", updatedChest);
             localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
         } else {
-            // No honey, remove the chest
             userChests.splice(chestIndex, 1);
             allChests[userName] = userChests;
             console.log("No honey, removed chest");
             localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
         }
-    } else if (hasHoney) {
+    } else if (hasHoney || isHoneyOnlyName) {
         console.log("Claiming honey reward");
-        // Second opening: Claim the honey reward
+        const honeyAmount = hasHoney ? claimedChest.honey : parseInt(claimedChest.name.split(" ")[0]);
         rewards[userName].push({
-            name: `${claimedChest.honey} Honey`,
+            name: `${honeyAmount} Honey`,
             type: "Honey",
-            amount: claimedChest.honey,
+            amount: honeyAmount,
             date: now.toLocaleDateString()
         });
-        userChests.splice(chestIndex, 1); // Remove chest after honey is claimed
+        userChests.splice(chestIndex, 1);
         allChests[userName] = userChests;
         console.log("Removed chest after honey claim");
         localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
     }
 
-    // Save rewards
     console.log("Saving rewards:", rewards[userName]);
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
 
-    // Refresh UI
     loadLuckyChests(userName);
 }
 
