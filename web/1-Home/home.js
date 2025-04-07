@@ -276,6 +276,41 @@ permissionModal.addEventListener("click", (e) => {
 
 
 
+// Show change password button only for logged in admins
+const changePasswordBtn = document.getElementById("changePasswordBtn");
+if (isAdmin && changePasswordBtn) {
+  changePasswordBtn.style.display = "inline-block";
+
+  changePasswordBtn.addEventListener("click", () => {
+    document.getElementById("changePasswordModal").classList.add("show");
+    document.getElementById("newAdminPassword").value = "";
+    document.getElementById("newAdminPassword").focus();
+  });
+}
+
+// Confirm new password
+const confirmChangePasswordBtn = document.getElementById("confirmChangePasswordBtn");
+confirmChangePasswordBtn.addEventListener("click", () => {
+  const newPassword = document.getElementById("newAdminPassword").value.trim();
+  if (newPassword.length < 4) {
+    alert("Password must be at least 4 characters.");
+    return;
+  }
+  localStorage.setItem("adminPassword", newPassword);
+  alert("Admin password updated!");
+  document.getElementById("changePasswordModal").classList.remove("show");
+});
+
+// Close modal on outside click
+document.getElementById("changePasswordModal").addEventListener("click", (e) => {
+  if (e.target.id === "changePasswordModal") {
+    document.getElementById("changePasswordModal").classList.remove("show");
+    document.getElementById("newAdminPassword").value = "";
+  }
+});
+
+
+
 });
 
 
