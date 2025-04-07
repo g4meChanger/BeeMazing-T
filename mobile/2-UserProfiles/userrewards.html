@@ -410,7 +410,6 @@ function useTheKey(userName, rewardIndex) {
 
 
 function confirmKeyTransfer() {
-
     const { userName, rewardIndex } = keyTransferData;
     const selectedTask = document.getElementById("taskSelect").value;
     const selectedUser = document.getElementById("userSelect").value;
@@ -449,8 +448,7 @@ function confirmKeyTransfer() {
     loadUserRewards(userName);
     document.getElementById("keyPopup").style.display = "none";
 
-    showToast(`You delegated "${selectedTask}" to ${selectedUser}!`);
-
+    alert(`You delegated "${selectedTask}" to ${selectedUser}!`);
 }
 
 
@@ -496,7 +494,7 @@ function confirmKeyTransfer() {
       <select id="taskSelect" style="width: 100%; padding: 8px; margin-bottom: 10px;"></select>
       <label>Select user:</label>
       <select id="userSelect" style="width: 100%; padding: 8px; margin-bottom: 15px;"></select>
-      <button class="redeem-btn" id="sendTaskBtn">Send Task</button>
+      <button class="redeem-btn" onclick="confirmKeyTransfer()">Send Task</button>
     </div>
   </div>
 
@@ -511,110 +509,8 @@ function confirmKeyTransfer() {
     });
     
     
-
-
-    document.getElementById("sendTaskBtn").addEventListener("click", () => {
-    const sound = document.getElementById("headshotSound");
-
-    // 1. Play sound IMMEDIATELY and do NOT wait on `.then`
-    if (sound) {
-        try {
-            sound.pause();
-            sound.currentTime = 0;
-            sound.play().catch(err => {
-                console.warn("Playback error:", err);
-            });
-        } catch (e) {
-            console.warn("Sound error:", e);
-        }
-    }
-
-    // 2. Use setTimeout(0) to give the browser one frame before layout DOM update
-    setTimeout(() => {
-        document.getElementById("keyPopup").style.display = "none";
-        confirmKeyTransfer();
-    }, 0); // zero milliseconds — forces layout deferral
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     </script>
 
   
-
-
-<audio id="headshotSound" src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/headshot.mp3" preload="auto" playsinline></audio>
-
-
-
-
-
-
-
-<div id="toast" style="
-  position: fixed;
-  bottom: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primary-color);
-  color: var(--secondary-color);
-  padding: 12px 20px;
-  border-radius: 30px;
-  font-weight: 600;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  z-index: 9999;
-  display: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-"></div>
-
-<script>
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.style.display = "block";
-  setTimeout(() => toast.style.opacity = "1", 10);
-
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    setTimeout(() => toast.style.display = "none", 300);
-  }, 3000);
-}
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    const sound = document.getElementById("headshotSound");
-    if (sound) {
-        // Unlock sound by silent interaction (satisfies autoplay policies)
-        document.body.addEventListener("click", () => {
-            sound.play().then(() => sound.pause()).catch(() => {});
-        }, { once: true });
-    }
-});
-
-
-</script>
-
-
-
-
-
-
 </body>
 </html>

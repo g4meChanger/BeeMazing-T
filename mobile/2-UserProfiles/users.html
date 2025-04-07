@@ -1115,11 +1115,7 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
     tasks[taskIndex] = task;
     localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
 
-    playFinishTaskSound();
-
-
-if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
-
+    if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
     if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
     if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
     if (typeof loadUserReward === 'function') loadUserReward(userName);
@@ -1147,34 +1143,27 @@ if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
         }
 
         function triggerHoneyRain(rewardAmount) {
-    // ✅ Use the new Web Audio API version of the sound
-    playFinishTaskSound();
-
-    for (let i = 0; i < 50; i++) {
-        const drop = document.createElement("div");
-        drop.className = "honey-drop";
-        drop.style.left = `${Math.random() * 100}vw`;
-        drop.style.animationDelay = `${Math.random() * 0.5}s`;
-        document.body.appendChild(drop);
-        setTimeout(() => drop.remove(), 2000);
-    }
-
-    const popup = document.createElement("div");
-    popup.className = "reward-popup";
-    popup.textContent = `+${rewardAmount} 🍯`;
-    document.body.appendChild(popup);
-
-    setTimeout(() => {
-        const rewardElement = document.getElementById("rewardAmount");
-        rewardElement.classList.add("pulse");
-        setTimeout(() => {
-            rewardElement.classList.remove("pulse");
-            popup.remove();
-        }, 1000);
-    }, 1000);
-}
-
-
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement("div");
+                drop.className = "honey-drop";
+                drop.style.left = `${Math.random() * 100}vw`;
+                drop.style.animationDelay = `${Math.random() * 0.5}s`;
+                document.body.appendChild(drop);
+                setTimeout(() => drop.remove(), 2000);
+            }
+            const popup = document.createElement("div");
+            popup.className = "reward-popup";
+            popup.textContent = `+${rewardAmount} 🍯`;
+            document.body.appendChild(popup);
+            setTimeout(() => {
+                const rewardElement = document.getElementById("rewardAmount");
+                rewardElement.classList.add("pulse");
+                setTimeout(() => {
+                    rewardElement.classList.remove("pulse");
+                    popup.remove();
+                }, 1000);
+            }, 1000);
+        }
 
         function showTaskDetails(task) {
             const taskDetails = `
@@ -1660,104 +1649,9 @@ Your browser does not support the video tag.
     Your browser does not support the audio element.
 </audio>
 
-<audio id="finishTaskSound" preload="auto">
-    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/FinishTask.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
-  </audio>
+
 </div>
 
-
-<script>
-    let finishTaskBuffer = null;
-    let audioContext = null;
-    
-    async function initializeAudioContext() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            // Create a silent buffer to "unlock" the AudioContext on iOS
-            const silentBuffer = audioContext.createBuffer(1, 1, 22050);
-            const source = audioContext.createBufferSource();
-            source.buffer = silentBuffer;
-            source.connect(audioContext.destination);
-            source.start(0);
-            // Ensure the context is running
-            if (audioContext.state === 'suspended') {
-                await audioContext.resume();
-            }
-        }
-    }
-    
-    async function loadFinishTaskSound() {
-        try {
-            await initializeAudioContext(); // Ensure AudioContext is ready
-            const response = await fetch('/BeeMazing-Y1/mobile/4-Market/LuckyChest/FinishTask.mp3');
-            const arrayBuffer = await response.arrayBuffer();
-            finishTaskBuffer = await audioContext.decodeAudioData(arrayBuffer);
-            console.log("Finish Task sound preloaded successfully");
-        } catch (e) {
-            console.error("Failed to preload Finish Task sound:", e);
-        }
-    }
-    
-    function playFinishTaskSound() {
-        if (!audioContext || !finishTaskBuffer) {
-            console.warn("Audio not ready yet");
-            return;
-        }
-        
-        // Resume AudioContext if suspended (iOS requires this on user gesture)
-        if (audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                playSound();
-            });
-        } else {
-            playSound();
-        }
-    }
-    
-    function playSound() {
-        const source = audioContext.createBufferSource();
-        source.buffer = finishTaskBuffer;
-        source.connect(audioContext.destination);
-        source.start(0);
-    }
-    
-    // Start preloading the sound immediately
-    (async () => {
-        await loadFinishTaskSound();
-    })();
-    
-    // Unlock AudioContext on first user interaction with debug logs
-    document.addEventListener("touchstart", () => {
-        console.log("Touchstart event fired");
-        if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                console.log("AudioContext resumed on touch");
-            });
-        }
-    }, { once: true });
-    
-    // Preload the sound on page load (redundant now with IIFE, but kept as fallback)
-    window.addEventListener("load", () => {
-        loadFinishTaskSound();
-    });
-    
-    // Fallback for silent pre-playback using <audio> element
-    window.addEventListener("load", () => {
-        const finishAudio = document.getElementById("finishTaskSound");
-        if (finishAudio) {
-            finishAudio.volume = 0;
-            finishAudio.play().then(() => {
-                finishAudio.pause();
-                finishAudio.currentTime = 0;
-                finishAudio.volume = 1;
-                console.log("Silent pre-playback succeeded");
-            }).catch(err => {
-                console.warn("Silent pre-playback failed:", err);
-            });
-        }
-    });
-</script>
 
 </body>
 </html>
