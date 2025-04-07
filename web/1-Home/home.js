@@ -97,41 +97,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to render users in the main list
     function renderUsers() {
+        const isAdmin = localStorage.getItem("isAdmin") === "true"; // moved inside
         userList.innerHTML = "";
         users.forEach((username) => {
             const newUserItem = document.createElement("li");
             newUserItem.classList.add("user-list-item");
-
+    
             // Add user name
             const userNameSpan = document.createElement("span");
             userNameSpan.textContent = username;
-
+    
             // Make the entire user item clickable
             newUserItem.style.cursor = "pointer";
             newUserItem.addEventListener("click", function () {
                 window.location.href = `${basePath}/2-UserProfiles/users.html?user=${encodeURIComponent(username)}`;
             });
-
-            // Append username (no remove button for web version)
+    
+            // Append username
             newUserItem.appendChild(userNameSpan);
-
-            // Add remove button only for mobile version
-        if (isMobile && isAdmin) {
-    const removeBtn = document.createElement("button");
-    removeBtn.classList.add("remove-user-btn");
-    removeBtn.textContent = "X";
-    removeBtn.addEventListener("click", function (event) {
-        event.stopPropagation();
-        showConfirmModal(username);
-    });
-
-    newUserItem.appendChild(removeBtn);
-}
-
-
+    
+            // Show remove button only for mobile AND admin
+            if (isMobile && isAdmin) {
+                const removeBtn = document.createElement("button");
+                removeBtn.classList.add("remove-user-btn");
+                removeBtn.textContent = "X";
+                removeBtn.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    showConfirmModal(username);
+                });
+    
+                newUserItem.appendChild(removeBtn);
+            }
+    
             userList.appendChild(newUserItem);
         });
     }
+    
 
     // Function to render users in the manage members modal
     function renderManageMembers() {
