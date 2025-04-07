@@ -264,7 +264,7 @@ let keyTransferData = null;
 
 
 
-function loadUserRewards(userName) {
+    function loadUserRewards(userName) {
     const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
     const userRewards = rewards[userName] || [];
 
@@ -278,40 +278,33 @@ function loadUserRewards(userName) {
 
     userRewards.forEach((reward, index) => {
         const card = document.createElement("div");
-        card.className = "reward-item"; // corrected className for styling
-
-        const info = document.createElement("div");
-        info.className = "reward-details";
-
-        info.innerHTML = `
-            <strong>${reward.name || "Surprise Reward"}</strong><br>
-            ${reward.description || reward.effect || "You earned a cool reward!"}
+        card.className = "reward-card";
+        card.innerHTML = `
+            <img src="${reward.image || '/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png'}" alt="${reward.name}" class="reward-image">
+            <div class="reward-info">
+                <h3>${reward.name}</h3>
+                <p>${reward.description || reward.effect || ""}</p>
+                <p><em>${reward.date || ''}</em></p>
+                <button class="reward-btn">${reward.type === "Honey" ? "Get it" : "Received"}</button>
+            </div>
         `;
 
-        const button = document.createElement("button");
-        button.className = "redeem-btn";
+        const button = card.querySelector(".reward-btn");
 
         if (reward.type === "Honey") {
-            button.textContent = "Get it";
+            // 🎁 Redirect to users.html with honey
             button.addEventListener("click", () => {
-                const amount = reward.amount || parseInt(reward.name);
-                window.location.href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${encodeURIComponent(userName)}&addPoints=${amount}&removeReward=${index}`;
-            });
-        } else if (reward.type === "dice") {
-            button.textContent = "Use it";
-            const encoded = encodeURIComponent(btoa(JSON.stringify(reward)));
-            button.addEventListener("click", () => {
-                window.location.href = `/BeeMazing-Y1/mobile/4-Market/LuckyChest/rollthedice.html?user=${encodeURIComponent(userName)}&data=${encoded}`;
+                const amount = reward.amount || parseInt(reward.name) || 0;
+                const url = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${encodeURIComponent(userName)}&addPoints=${amount}`;
+                window.location.href = url;
             });
         } else {
-            button.textContent = "Received";
+            // ✅ Mark reward as received
             button.addEventListener("click", () => {
-                redeemReward(userName, index);
+                markRewardAsReceived(userName, index);
             });
         }
 
-        card.appendChild(info);
-        card.appendChild(button);
         container.appendChild(card);
     });
 }
