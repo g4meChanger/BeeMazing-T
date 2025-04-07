@@ -513,29 +513,33 @@ function confirmKeyTransfer() {
     
 
 
-
     document.getElementById("sendTaskBtn").addEventListener("click", () => {
     const sound = document.getElementById("headshotSound");
 
-    // Trigger sound right away
+    // 1. Play sound IMMEDIATELY and WAIT for it to start before doing anything else
     if (sound) {
         sound.currentTime = 0;
-        const playPromise = sound.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(err => {
-                console.warn("Playback blocked:", err);
+        sound.play().then(() => {
+            // 2. After sound has definitely started, continue
+            requestAnimationFrame(() => {
+                // Hide popup
+                document.getElementById("keyPopup").style.display = "none";
+
+                // Continue logic
+                confirmKeyTransfer();
             });
-        }
-    }
-
-    // Now delay just enough to keep sound smooth before layout shifts
-    setTimeout(() => {
-        confirmKeyTransfer(); // this updates localStorage, tasks, DOM
+        }).catch(err => {
+            console.warn("Playback failed or blocked:", err);
+            // Even if sound fails, still continue
+            document.getElementById("keyPopup").style.display = "none";
+            confirmKeyTransfer();
+        });
+    } else {
+        // If no sound element, proceed as fallback
         document.getElementById("keyPopup").style.display = "none";
-    }, 50); // slightly longer to be safer (~3 frames)
+        confirmKeyTransfer();
+    }
 });
-
-
 
 
 
