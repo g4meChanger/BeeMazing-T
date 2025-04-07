@@ -192,9 +192,10 @@
 
 
 
-
-
     function grantChestToUser(userName, reward) {
+  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+  if (!allChests[userName]) allChests[userName] = [];
+
   const allChestsList = JSON.parse(localStorage.getItem("customChests")) || [
     { name: "The Key", quote: "You hold the key to the path of others.", effect: "➡ Transfer one of your tasks to another user. You get the honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Keyy.gif" },
     { name: "Double Trouble", quote: "Today’s efforts are worth double.", effect: "➡ Next task = double honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/DoubleTrouble.png" },
@@ -204,25 +205,24 @@
     { name: "Special Buzz Off", quote: "You’re too cool for chores today.", effect: "➡ Skip all tasks today.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Special.jpg" }
   ];
 
-  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-  if (!allChests[userName]) allChests[userName] = [];
-
   let chest;
 
   if (reward.type === "Honey (amount)" || reward.type === "honey") {
     const honeyAmount = parseInt(reward.value || reward.amount);
 
+    // 🟡 Create a chest that holds Honey — don't reward yet!
     chest = {
       name: `${honeyAmount} Honey`,
       quote: "",
-      effect: `🍯 Open to collect ${honeyAmount} honey!`,
+      effect: `🍯 Collect ${honeyAmount} honey instantly!`,
       image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/honey.gif",
-      type: "Honey",
-      amount: honeyAmount,
+      honey: honeyAmount,
       requiredPoints: 0,
       progress: 0,
+      type: "normal",
       fromDiceChest: true
     };
+
   } else {
     const match = allChestsList.find(c => c.name === reward.type);
     chest = {
@@ -240,6 +240,7 @@
   allChests[userName].push(chest);
   localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
 }
+
 
 
 
