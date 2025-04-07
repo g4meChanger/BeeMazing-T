@@ -791,7 +791,7 @@
 // At the top of the script, after URL parameter parsing
 const urlParams = new URLSearchParams(window.location.search);
 const userName = urlParams.get('user');
-const addPoints = Number(urlParams.get('addPoints')); // Get honey amount from URL
+const addPoints = Number(urlParams.get('addPoints')) || 0;
 
 if (userName) {
     document.getElementById('profileName').textContent = userName;
@@ -803,17 +803,41 @@ if (userName) {
     loadUserTasks(userName);
     loadUserReward(userName);
 
-    // Trigger honey rain if addPoints is present
+    // Handle addPoints from userrewards.html "Get it"
     if (addPoints > 0) {
         setTimeout(() => {
-            triggerHoneyRain(addPoints); // Show rain effect
+            // Add honey to user's total in familyApp_rewards
             const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
             rewards[userName] = (rewards[userName] || 0) + addPoints;
             localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
-            loadUserReward(userName); // Update displayed amount
-        }, 500); // Small delay to ensure page loads
+            
+            // Trigger honey rain effect
+            triggerHoneyRain(addPoints);
+            
+            // Update displayed reward amount
+            loadUserReward(userName);
+        }, 500); // Small delay for page load
     }
 }
+
+
+
+
+
+
+
+
+
+// Highlight the correct footer icon after hrefs are set
+document.querySelectorAll('.footer a').forEach(link => {
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '');
+    if (currentPath === linkPath) {
+        link.classList.add('active');
+    } else {
+        link.classList.remove('active');
+    }
+});
 
 // ... (rest of the script remains unchanged)
 

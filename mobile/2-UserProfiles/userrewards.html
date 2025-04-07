@@ -297,12 +297,12 @@ let keyTransferData = null;
         if (reward.type === "Honey") {
             button.textContent = "Get it";
             button.onclick = () => {
-                // Move to history
+                // Move to history and redirect
                 const userRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
                 const rewardHistory = JSON.parse(localStorage.getItem("familyApp_reward_history")) || {};
 
                 const rewards = userRewards[userName] || [];
-                if (rewards.length <= actualIndex) return;
+                if (rewards.length <= actualIndex) return; // Safety check
 
                 const receivedReward = rewards.splice(actualIndex, 1)[0];
                 receivedReward.receivedDate = new Date().toLocaleString();
@@ -314,9 +314,14 @@ let keyTransferData = null;
                 localStorage.setItem("familyApp_user_rewards", JSON.stringify(userRewards));
                 localStorage.setItem("familyApp_reward_history", JSON.stringify(rewardHistory));
 
-                // Redirect with points to trigger honey rain in users.html
+                // Redirect to users.html to add honey and trigger rain
                 const encodedUser = encodeURIComponent(userName);
-                window.location.href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?addPoints=${reward.amount}&user=${encodedUser}`;
+                const honeyAmount = Number(reward.amount) || 0; // Ensure amount is a number
+                if (honeyAmount > 0) {
+                    window.location.href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?addPoints=${honeyAmount}&user=${encodedUser}`;
+                } else {
+                    alert("Invalid honey amount!");
+                }
             };
         } else if (isTheKey) {
             button.textContent = "Use it";
@@ -333,8 +338,6 @@ let keyTransferData = null;
         rewardList.appendChild(rewardItem);
     });
 }
-
-
 
 
 
