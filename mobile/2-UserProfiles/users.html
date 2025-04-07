@@ -1424,29 +1424,38 @@ function claimLuckyChest(userName, chestIndex) {
     // Add to user's rewards
     if (!rewards[userName]) rewards[userName] = [];
     const now = new Date();
-    rewards[userName].push({
-    name: claimedChest.name,
-    description: claimedChest.description,
-    image: claimedChest.image,
-    date: now.toLocaleDateString(),
-    claimedAt: now.toISOString(),
-    type: claimedChest.type || "normal",   // important
-    outcomes: claimedChest.outcomes || []  // only present for dice chest
-});
 
+    if (claimedChest.honey) {
+        // 🟡 It's a honey reward
+        rewards[userName].push({
+            name: `${claimedChest.honey} Honey`,
+            type: "Honey",
+            amount: claimedChest.honey,
+            date: now.toLocaleDateString()
+        });
+    } else {
+        // 🟡 It's a normal or dice-type reward
+        rewards[userName].push({
+            name: claimedChest.name,
+            description: claimedChest.description,
+            image: claimedChest.image,
+            date: now.toLocaleDateString(),
+            claimedAt: now.toISOString(),
+            type: claimedChest.type || "normal",
+            outcomes: claimedChest.outcomes || []
+        });
+    }
 
-    // Remove claimed chest from list
+    // Remove the chest after claiming
     userChests.splice(chestIndex, 1);
     allChests[userName] = userChests;
 
-    // Save back
     localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
 
-
-    // Reload
-    loadLuckyChests(userName);
+    loadLuckyChests(userName); // Refresh UI
 }
+
 
 
 

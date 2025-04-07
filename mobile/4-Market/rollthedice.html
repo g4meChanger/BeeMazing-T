@@ -181,6 +181,19 @@
       animateRoll();
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     function grantChestToUser(userName, reward) {
   const allChestsList = JSON.parse(localStorage.getItem("customChests")) || [
     { name: "The Key", quote: "You hold the key to the path of others.", effect: "➡ Transfer one of your tasks to another user. You get the honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Keyy.gif" },
@@ -191,27 +204,28 @@
     { name: "Special Buzz Off", quote: "You’re too cool for chores today.", effect: "➡ Skip all tasks today.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Special.jpg" }
   ];
 
+  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+  if (!allChests[userName]) allChests[userName] = [];
+
+  let chest;
+
   if (reward.type === "Honey (amount)" || reward.type === "honey") {
     const honeyAmount = parseInt(reward.value || reward.amount);
 
-    // Only add it to the rewards list (no chest)
-    const allUserRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
-    if (!allUserRewards[userName]) allUserRewards[userName] = [];
-
-    allUserRewards[userName].push({
+    chest = {
       name: `${honeyAmount} Honey`,
-      type: "Honey", // So it shows "Get it"
+      quote: "",
+      effect: `🍯 Open to collect ${honeyAmount} honey!`,
+      image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/honey.gif",
+      type: "Honey",
       amount: honeyAmount,
-      date: new Date().toLocaleDateString()
-    });
-
-    localStorage.setItem("familyApp_user_rewards", JSON.stringify(allUserRewards));
+      requiredPoints: 0,
+      progress: 0,
+      fromDiceChest: true
+    };
   } else {
-    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-    if (!allChests[userName]) allChests[userName] = [];
-
     const match = allChestsList.find(c => c.name === reward.type);
-    const chest = {
+    chest = {
       name: match?.name || reward.type || "Mystery Reward",
       quote: match?.quote || "",
       effect: match?.effect || "",
@@ -221,13 +235,11 @@
       type: "normal",
       fromDiceChest: true
     };
-
-    allChests[userName].push(chest);
-    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
   }
+
+  allChests[userName].push(chest);
+  localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
 }
-
-
 
 
 
