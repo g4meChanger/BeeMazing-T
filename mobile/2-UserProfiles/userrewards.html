@@ -594,7 +594,25 @@ function showToast(message) {
     setTimeout(() => toast.style.display = "none", 300);
   }, 3000);
 }
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const sound = document.getElementById("headshotSound");
+    if (sound) {
+        // Unlock sound by silent interaction (satisfies autoplay policies)
+        document.body.addEventListener("click", () => {
+            sound.play().then(() => sound.pause()).catch(() => {});
+        }, { once: true });
+    }
+});
+
+
 </script>
+
+
+
+
 
 
 </body>
