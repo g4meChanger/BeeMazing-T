@@ -1462,10 +1462,10 @@ function claimLuckyChest(userName, chestIndex) {
     const now = new Date();
 
     const hasHoney = claimedChest.honey !== undefined && claimedChest.honey > 0;
-    const hasCustomReward = !claimedChest.onlyHoney;
+    const hasCustomReward = !claimedChest.onlyHoney; // If not honey-only, it has a custom reward
 
     if (hasCustomReward) {
-        // Claim custom reward first
+        // First opening: Claim the custom reward (e.g., "Cinema")
         rewards[userName].push({
             name: claimedChest.name,
             quote: claimedChest.quote || "",
@@ -1477,7 +1477,7 @@ function claimLuckyChest(userName, chestIndex) {
         });
 
         if (hasHoney) {
-            // Modify chest to be honey-only for second opening
+            // Update chest to honey-only for second opening
             userChests[chestIndex] = {
                 name: `${claimedChest.honey} Honey`,
                 quote: claimedChest.quote || "",
@@ -1488,12 +1488,16 @@ function claimLuckyChest(userName, chestIndex) {
                 progress: claimedChest.progress,
                 onlyHoney: true
             };
+            allChests[userName] = userChests;
+            localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
         } else {
-            // No honey left, remove the chest
+            // No honey, remove the chest
             userChests.splice(chestIndex, 1);
+            allChests[userName] = userChests;
+            localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
         }
     } else if (hasHoney) {
-        // Claim honey on second opening
+        // Second opening: Claim the honey reward
         rewards[userName].push({
             name: `${claimedChest.honey} Honey`,
             type: "Honey",
@@ -1501,12 +1505,14 @@ function claimLuckyChest(userName, chestIndex) {
             date: now.toLocaleDateString()
         });
         userChests.splice(chestIndex, 1); // Remove chest after honey is claimed
+        allChests[userName] = userChests;
+        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
     }
 
-    allChests[userName] = userChests;
-    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    // Save rewards
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
 
+    // Refresh UI
     loadLuckyChests(userName);
 }
 
