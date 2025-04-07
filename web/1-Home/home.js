@@ -104,50 +104,52 @@ if (!isAdmin && footer) {
     // Function to render users in the main list
     function renderUsers() {
         const isAdmin = localStorage.getItem("isAdmin") === "true";
-        const users = JSON.parse(localStorage.getItem("users")) || [];
         const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
-    
         userList.innerHTML = "";
-    
         users.forEach((username) => {
             const newUserItem = document.createElement("li");
             newUserItem.classList.add("user-list-item");
     
-            const isThisUserAdmin = userPermissions[username] === "Admin";
+            // Container for username and checkmark
+            const nameContainer = document.createElement("div");
+            nameContainer.style.display = "flex";
+            nameContainer.style.alignItems = "center";
+            nameContainer.style.gap = "8px";
     
-            // Container for emoji + name
-            const userInfo = document.createElement("div");
-            userInfo.className = "user-info";
-            userInfo.style.display = "flex";
-            userInfo.style.alignItems = "center";
-            userInfo.style.gap = "6px";
-    
-            // ✅ Add checkmark emoji if admin
-            if (isThisUserAdmin) {
-                const emoji = document.createElement("span");
-                emoji.textContent = "✅";
-                userInfo.appendChild(emoji);
-            }
-    
-            // Username
+            // Add user name
             const userNameSpan = document.createElement("span");
             userNameSpan.textContent = username;
-            userInfo.appendChild(userNameSpan);
     
-            newUserItem.appendChild(userInfo);
+            // Add checkmark if user is an admin
+            if (userPermissions[username] === "Admin") {
+                const checkmark = document.createElement("span");
+                checkmark.textContent = "✓";
+                checkmark.style.color = "#00C4B4"; // A nice teal color, you can change this
+                checkmark.style.fontSize = "16px";
+                checkmark.style.fontWeight = "bold";
+                checkmark.title = "Admin";
+                nameContainer.appendChild(userNameSpan);
+                nameContainer.appendChild(checkmark);
+            } else {
+                nameContainer.appendChild(userNameSpan);
+            }
     
-            // Click to profile
+            // Make the entire user item clickable
             newUserItem.style.cursor = "pointer";
             newUserItem.addEventListener("click", function () {
                 window.location.href = `${basePath}/2-UserProfiles/users.html?user=${encodeURIComponent(username)}`;
             });
     
-            // Admin actions
+            // Append name container
+            newUserItem.appendChild(nameContainer);
+    
+            // Show remove and edit buttons only for mobile AND admin
             if (isMobile && isAdmin) {
                 const actionsContainer = document.createElement("div");
                 actionsContainer.style.display = "flex";
                 actionsContainer.style.gap = "8px";
     
+                // Remove button
                 const removeBtn = document.createElement("button");
                 removeBtn.classList.add("remove-user-btn");
                 removeBtn.textContent = "X";
@@ -156,8 +158,9 @@ if (!isAdmin && footer) {
                     showConfirmModal(username);
                 });
     
+                // Edit button
                 const editBtn = document.createElement("button");
-                editBtn.classList.add("remove-user-btn");
+                editBtn.classList.add("remove-user-btn"); // reusing style
                 editBtn.innerHTML = "⚙️";
                 editBtn.style.fontSize = "16px";
                 editBtn.addEventListener("click", function (event) {
@@ -173,7 +176,6 @@ if (!isAdmin && footer) {
             userList.appendChild(newUserItem);
         });
     }
-    
     
 
     // Function to render users in the manage members modal
