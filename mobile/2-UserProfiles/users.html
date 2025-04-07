@@ -1252,22 +1252,22 @@ generateScrollableDates();
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const userName = params.get("user");
-    const addPoints = parseInt(params.get("addPoints"));
-    const removeRewardIndex = parseInt(params.get("removeReward"));
+  const urlParams = new URLSearchParams(window.location.search);
+  const userName = urlParams.get('user');
 
-    if (userName) {
-        if (!isNaN(addPoints) && addPoints > 0) {
-            giveHoneyReward(userName, addPoints);
-        }
+  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+  const userChests = allChests[userName] || [];
 
-        if (!isNaN(removeRewardIndex)) {
-            removeUserReward(userName, removeRewardIndex);
-        }
-    }
+  const container = document.getElementById("luckyChestContainer");
+
+  if (userChests.length === 0) {
+    container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
+    return;
+  }
+
+  // ✅ Just use the dynamic loader now
+  loadLuckyChests(userName);
 });
-
 
 
 
@@ -1538,15 +1538,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
-
-
-
-
-
-
-
 function removeUserReward(userName, rewardIndex) {
     const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
     const rewardHistory = JSON.parse(localStorage.getItem("familyApp_reward_history")) || {};
@@ -1566,9 +1557,6 @@ function removeUserReward(userName, rewardIndex) {
         localStorage.setItem("familyApp_reward_history", JSON.stringify(rewardHistory));
     }
 }
-
-
-
 
     </script>
 
