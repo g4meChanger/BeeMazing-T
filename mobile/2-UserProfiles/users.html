@@ -1308,52 +1308,50 @@ function updateLuckyChestProgress(userName, earnedHoney) {
 
 
 function loadLuckyChests(userName) {
+    const container = document.getElementById("luckyChestContainer");
     const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
     const userChests = allChests[userName] || [];
-    const chestContainer = document.getElementById("chestContainer"); // Adjust ID if different
 
-    chestContainer.innerHTML = "";
+    container.innerHTML = "";
+
+    if (userChests.length === 0) {
+        container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
+        return;
+    }
 
     userChests.forEach((chest, index) => {
-        const chestCard = document.createElement("div");
-        chestCard.className = "chest-card";
-
         const isUnlocked = chest.progress >= chest.requiredPoints;
+        const hasHoney = chest.honey !== undefined && chest.honey > 0;
+        const hasCustomReward = !chest.onlyHoney; // If not marked as honey-only
 
-        // Chest image (always pulsing)
-        const chestImage = document.createElement("img");
-        chestImage.src = chest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png";
-        chestImage.alt = chest.name;
-        chestImage.className = "chest-image pulse"; // Ensure 'pulse' class is in CSS
+        const chestImage = isUnlocked
+            ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
+            : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
 
-        // Open button
-        const openButton = document.createElement("button");
-        openButton.textContent = "Open";
-        openButton.className = "open-btn";
-        openButton.disabled = !isUnlocked;
-        openButton.onclick = () => claimLuckyChest(userName, index);
+        const displayName = hasCustomReward ? chest.name : `${chest.honey} Honey`;
+
+        const card = document.createElement("div");
+        card.className = "lucky-chest-card";
+        if (!isUnlocked) card.classList.add("locked");
+
+        card.innerHTML = `
+            <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
+            <div class="info">
+                <p>Unlock to reveal your reward!</p>
+                <div class="lucky-chest-progress">
+                    Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
+                </div>
+            </div>
+        `;
 
         if (isUnlocked) {
-            // Unlocked: Show only the pulsing image and button
-            chestCard.appendChild(chestImage);
-            chestCard.appendChild(openButton);
-        } else {
-            // Locked: Show image, text, progress, and button
-            const chestText = document.createElement("p");
-            chestText.textContent = "Unlock to reveal your reward!";
-            chestText.className = "chest-text";
-
-            const chestProgress = document.createElement("p");
-            chestProgress.textContent = `Progress: ${chest.progress}/${chest.requiredPoints}`;
-            chestProgress.className = "chest-progress";
-
-            chestCard.appendChild(chestImage);
-            chestCard.appendChild(chestText);
-            chestCard.appendChild(chestProgress);
-            chestCard.appendChild(openButton);
+            card.style.cursor = "pointer";
+            card.addEventListener("click", () => {
+                revealLuckyChestReward(userName, chest, index, true);
+            });
         }
 
-        chestContainer.appendChild(chestCard);
+        container.appendChild(card);
     });
 }
 
