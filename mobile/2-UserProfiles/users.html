@@ -1417,10 +1417,17 @@ function loadLuckyChests(userName) {
 function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = false) {
     const overlay = document.getElementById("chestVideoOverlay");
     const video = document.getElementById("chestVideo");
+    const audio = document.getElementById("chestUnlockSound"); // Get the audio element
 
     overlay.style.display = "flex";
     video.currentTime = 0;
     video.play();
+
+    // Play the sound effect
+    audio.currentTime = 0; // Reset sound to start
+    audio.play().catch(error => {
+        console.log("Audio playback failed:", error); // Handle potential autoplay issues
+    });
 
     let skipped = false;
 
@@ -1429,6 +1436,7 @@ function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = fals
         skipped = true;
 
         video.pause();
+        audio.pause(); // Pause the sound when skipping
         overlay.style.display = "none";
         showLuckyChestRewardOverlay(userName, chest, chestIndex);
     };
@@ -1636,6 +1644,10 @@ style="
 <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
 Your browser does not support the video tag.
 </video>
+<audio id="chestUnlockSound" preload="auto">
+    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestUnlock.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+</audio>
 
 
 </div>
