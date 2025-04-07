@@ -1075,44 +1075,6 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
             }, 1000);
         }
 
-
-
-
-
-
-
-
-function giveHoneyReward(userName, amount) {
-    const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
-    rewards[userName] = (rewards[userName] || 0) + amount;
-    localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
-    loadUserReward(userName);
-
-    // 🍯 Reward animation
-    if (typeof triggerHoneyRain === 'function') {
-        triggerHoneyRain(amount);
-    }
-
-    // ✅ Clean URL (optional: remove the addPoints param)
-    setTimeout(() => {
-        const url = new URL(window.location.href);
-        url.searchParams.delete("addPoints");
-        window.history.replaceState({}, document.title, url.toString());
-    }, 1500);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
         function showTaskDetails(task) {
             const taskDetails = `
                 <strong>Title:</strong> ${task.title}<br>
@@ -1514,24 +1476,6 @@ window.addEventListener("resize", adjustContentTop);
 window.addEventListener("load", adjustContentTop);
 
 
-
-
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const userName = params.get("user");
-    const addPoints = parseInt(params.get("addPoints"));
-
-    if (userName) {
-        if (!isNaN(addPoints) && addPoints > 0) {
-            giveHoneyReward(userName, addPoints);
-        }
-    }
-});
 
 
 
