@@ -449,7 +449,8 @@ function confirmKeyTransfer() {
     loadUserRewards(userName);
     document.getElementById("keyPopup").style.display = "none";
 
-    alert(`You delegated "${selectedTask}" to ${selectedUser}!`);
+    showToast(`You delegated "${selectedTask}" to ${selectedUser}!`);
+
 }
 
 
@@ -528,6 +529,18 @@ function confirmKeyTransfer() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     </script>
 
   
@@ -535,6 +548,41 @@ function confirmKeyTransfer() {
 
 <audio id="headshotSound" src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/headshot.mp3" preload="auto"></audio>
 
+
+
+
+
+
+<div id="toast" style="
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 9999;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+"></div>
+
+<script>
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+  setTimeout(() => toast.style.opacity = "1", 10);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.style.display = "none", 300);
+  }, 3000);
+}
+</script>
 
 
 </body>
