@@ -110,17 +110,41 @@ if (!isAdmin && footer) {
             newUserItem.classList.add("user-list-item");
     
             // Add user name
-            const userNameSpan = document.createElement("span");
-            userNameSpan.textContent = username;
-    
-            // Make the entire user item clickable
-            newUserItem.style.cursor = "pointer";
-            newUserItem.addEventListener("click", function () {
-                window.location.href = `${basePath}/2-UserProfiles/users.html?user=${encodeURIComponent(username)}`;
-            });
-    
-            // Append username
-            newUserItem.appendChild(userNameSpan);
+            const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || {});
+const isThisUserAdmin = userPermissions[username] === "Admin";
+
+// Create a container for check + name
+const userInfo = document.createElement("div");
+userInfo.className = "user-info";
+userInfo.style.display = "flex";
+userInfo.style.alignItems = "center";
+userInfo.style.gap = "6px";
+
+// Optional blue check
+if (isThisUserAdmin) {
+    const checkIcon = document.createElement("img");
+    checkIcon.src = "/BeeMazing-Y1/mobile/1-Home/check.png";
+    checkIcon.alt = "Admin";
+    checkIcon.style.width = "18px";
+    checkIcon.style.height = "18px";
+    checkIcon.className = "admin-check";
+    userInfo.appendChild(checkIcon);
+}
+
+// Username text
+const userNameSpan = document.createElement("span");
+userNameSpan.textContent = username;
+userInfo.appendChild(userNameSpan);
+
+// Add to user list item
+newUserItem.appendChild(userInfo);
+
+// Clickable redirect
+newUserItem.style.cursor = "pointer";
+newUserItem.addEventListener("click", function () {
+    window.location.href = `${basePath}/2-UserProfiles/users.html?user=${encodeURIComponent(username)}`;
+});
+
     
             // Show remove button only for mobile AND admin
             if (isMobile && isAdmin) {
