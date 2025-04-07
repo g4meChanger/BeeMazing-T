@@ -711,20 +711,16 @@
     padding: 15px 20px;
     margin-top: 10px;
     display: flex;
-    gap: 20px; /* increased spacing between image and text */
+    gap: 20px; /* Spacing for locked chests with text */
     align-items: center;
-    justify-content: flex-start; /* Default for locked chests with text */
+    justify-content: flex-start; /* Default for locked chests */
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-/* Center the image when there's no text (unlocked state) */
+/* Center the image when unlocked */
 .lucky-chest-card.unlocked {
-    justify-content: center; /* Center horizontally when unlocked */
+    justify-content: center; /* Center horizontally */
 }
-
-
-
-
 
 
 
@@ -1353,20 +1349,20 @@ function loadLuckyChests(userName) {
 
         const card = document.createElement("div");
         card.className = "lucky-chest-card";
-        if (!isUnlocked) {
-            card.classList.add("locked");
+        if (isUnlocked) {
+            card.classList.add("unlocked"); // Add class to center the image
         } else {
-            card.classList.add("unlocked"); // Add unlocked class for centering
+            card.classList.add("locked"); // Add locked class for styling
         }
 
         // Different content based on lock status
         if (isUnlocked) {
-            // Show only image when unlocked
+            // Show ONLY the image when unlocked, no text or progress
             card.innerHTML = `
                 <img src="${chestImage}" alt="Chest" class="pulse">
             `;
         } else {
-            // Show image with text when locked
+            // Show image with text and progress when locked
             card.innerHTML = `
                 <img src="${chestImage}" alt="Chest">
                 <div class="info">
