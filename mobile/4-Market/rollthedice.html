@@ -197,17 +197,33 @@
   let chest;
 
   if (reward.type === "Honey (amount)" || reward.type === "honey") {
+    const honeyAmount = parseInt(reward.value || reward.amount);
+
     chest = {
-      name: `${reward.value || reward.amount} Honey`,
+      name: `${honeyAmount} Honey`,
       quote: "",
-      effect: `🍯 Collect ${reward.value || reward.amount} honey instantly!`,
-      image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/honey.gif", // optional: use a honey-themed image
-      honey: parseInt(reward.value || reward.amount),
+      effect: `🍯 Collect ${honeyAmount} honey instantly!`,
+      image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/honey.gif",
+      honey: honeyAmount,
       requiredPoints: 0,
       progress: 0,
       type: "normal",
       fromDiceChest: true
     };
+
+    // Also add a Honey reward to familyApp_user_rewards
+    const allUserRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+    if (!allUserRewards[userName]) allUserRewards[userName] = [];
+
+    allUserRewards[userName].push({
+      name: `${honeyAmount} Honey`,
+      type: "Honey", // Important for showing "Get it" in userrewards.html
+      amount: honeyAmount,
+      date: new Date().toLocaleDateString()
+    });
+
+    localStorage.setItem("familyApp_user_rewards", JSON.stringify(allUserRewards));
+
   } else {
     const match = allChestsList.find(c => c.name === reward.type);
     chest = {
@@ -225,7 +241,6 @@
   allChests[userName].push(chest);
   localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
 }
-
 
     function removeDiceChestFromUser(userName) {
       const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
