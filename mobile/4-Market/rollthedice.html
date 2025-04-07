@@ -144,16 +144,11 @@
 
     function formatOutcomeText(outcome) {
   if (typeof outcome === "string") return outcome;
-  if (
-    outcome?.type === "Points (amount)" ||
-    outcome?.type === "honey" ||
-    outcome?.type === "Honey (amount)"
-  ) {
-    return `${outcome.value || outcome.amount} Points 🍯`;
+  if (outcome?.type === "Honey (amount)" || outcome?.type === "honey") {
+    return `${outcome.value || outcome.amount} Honey 🍯`;
   }
   return outcome?.type || "Mystery Reward";
 }
-
 
 
     function rollDice() {
@@ -191,25 +186,23 @@
   if (!allChests[userName]) allChests[userName] = [];
 
   const allChestsList = JSON.parse(localStorage.getItem("customChests")) || [
-    { name: "The Key", quote: "You hold the key to the path of others.", effect: "➡ Transfer one of your tasks to another user. You get the points", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Keyy.gif" },
-    { name: "Double Trouble", quote: "Today’s efforts are worth double.", effect: "➡ Next task = double Points", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/DoubleTrouble.png" },
+    { name: "The Key", quote: "You hold the key to the path of others.", effect: "➡ Transfer one of your tasks to another user. You get the honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Keyy.gif" },
+    { name: "Double Trouble", quote: "Today’s efforts are worth double.", effect: "➡ Next task = double honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/DoubleTrouble.png" },
     { name: "Roll the Dice", quote: "Test your Luck", effect: "➡ Get a surprise reward.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/dice.gif" },
-    { name: "Dance Party", quote: "Feel the rhythm!", effect: "➡ Dance after a task. If someone joins, both get Points.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Dance.jpg" },
-    { name: "Bee-Witched!", quote: "Your magical aura changes the rules...", effect: "➡ Make a silly rule. Others who follow it get Points", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Bee-Witched.jpg" },
+    { name: "Dance Party", quote: "Feel the rhythm!", effect: "➡ Dance after a task. If someone joins, both get honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Dance.jpg" },
+    { name: "Bee-Witched!", quote: "Your magical aura changes the rules...", effect: "➡ Make a silly rule. Others who follow it get honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Bee-Witched.jpg" },
     { name: "Special Buzz Off", quote: "You’re too cool for chores today.", effect: "➡ Skip all tasks today.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Special.jpg" }
   ];
 
   let chest;
 
-  const honeyTypes = ["Points (amount)", "Honey (amount)", "honey"];
-  if (honeyTypes.includes(reward.type)) {
-    const honeyValue = parseInt(reward.value || reward.amount || "0");
+  if (reward.type === "Honey (amount)" || reward.type === "honey") {
     chest = {
-      name: `${honeyValue} Points`,
+      name: `${reward.value || reward.amount} Honey`,
       quote: "",
-      effect: `🍯 Collect ${honeyValue} Points instantly!`,
-      image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/honey.gif",
-      honey: honeyValue,
+      effect: `🍯 Collect ${reward.value || reward.amount} honey instantly!`,
+      image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/honey.gif", // optional: use a honey-themed image
+      honey: parseInt(reward.value || reward.amount),
       requiredPoints: 0,
       progress: 0,
       type: "normal",
@@ -232,7 +225,6 @@
   allChests[userName].push(chest);
   localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
 }
-
 
 
     function removeDiceChestFromUser(userName) {

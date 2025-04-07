@@ -699,11 +699,6 @@
 
 
 
-@keyframes pop-fade {
-  0% { transform: translate(-50%, 0) scale(0.9); opacity: 0; }
-  30% { transform: translate(-50%, -20px) scale(1.1); opacity: 1; }
-  100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
-}
 
 
 
@@ -1471,107 +1466,6 @@ window.addEventListener("load", adjustContentTop);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const params = new URLSearchParams(window.location.search);
-const pointsToAdd = parseInt(params.get("addPoints"));
-
-if (!isNaN(pointsToAdd) && pointsToAdd > 0 && userName) {
-    let userPoints = parseInt(localStorage.getItem(`points_${userName}`) || "0");
-    userPoints += pointsToAdd;
-    localStorage.setItem(`points_${userName}`, userPoints.toString());
-
-    // Show animation (same as when finishing a task)
-    const pointsDisplay = document.querySelector(`#pointsDisplay-${userName}`); // Adjust if needed
-    if (pointsDisplay) {
-        pointsDisplay.textContent = userPoints;
-        pointsDisplay.classList.add("highlight"); // Use existing animation class
-        setTimeout(() => pointsDisplay.classList.remove("highlight"), 1500);
-    }
-
-    // Optional: show temporary popup animation
-    const popup = document.createElement("div");
-    popup.textContent = `+${pointsToAdd} Points! 🎉`;
-    popup.style.position = "fixed";
-    popup.style.bottom = "100px";
-    popup.style.left = "50%";
-    popup.style.transform = "translateX(-50%)";
-    popup.style.background = "#FFC107";
-    popup.style.color = "#000";
-    popup.style.padding = "10px 20px";
-    popup.style.borderRadius = "10px";
-    popup.style.fontWeight = "bold";
-    popup.style.zIndex = 9999;
-    popup.style.boxShadow = "0 2px 10px rgba(0,0,0,0.3)";
-    document.body.appendChild(popup);
-    setTimeout(() => {
-        popup.style.opacity = 0;
-        setTimeout(() => popup.remove(), 600);
-    }, 1500);
-}
-
-
-
-
-
-
-function checkForPointBonus() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const user = urlParams.get("user");
-    const addPoints = parseInt(urlParams.get("addPoints"));
-
-    if (user && addPoints && !isNaN(addPoints)) {
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-        const targetUser = users.find(u => u.name === user);
-
-        if (targetUser) {
-            targetUser.points = (targetUser.points || 0) + addPoints;
-            localStorage.setItem("users", JSON.stringify(users));
-
-            // Animate reward
-            const container = document.querySelector(`[data-username="${user}"]`);
-            if (container) {
-                const anim = document.createElement("div");
-                anim.className = "honey-reward";
-                anim.textContent = `+${addPoints} Points 🍯`;
-                anim.style.position = "absolute";
-                anim.style.left = "50%";
-                anim.style.top = "30%";
-                anim.style.transform = "translate(-50%, 0)";
-                anim.style.background = "#FFC107";
-                anim.style.color = "#000";
-                anim.style.padding = "12px 20px";
-                anim.style.borderRadius = "16px";
-                anim.style.fontWeight = "bold";
-                anim.style.fontSize = "18px";
-                anim.style.boxShadow = "0 4px 15px rgba(0,0,0,0.4)";
-                anim.style.zIndex = "999";
-                anim.style.animation = "pop-fade 2s ease-out forwards";
-                container.appendChild(anim);
-
-                setTimeout(() => anim.remove(), 2000);
-            }
-
-            // Clean up URL so it doesn't repeat on refresh
-            const cleanUrl = window.location.pathname + `?user=${encodeURIComponent(user)}`;
-            window.history.replaceState({}, document.title, cleanUrl);
-        }
-    }
-}
-
-window.addEventListener("load", checkForPointBonus);
 
 
     </script>
