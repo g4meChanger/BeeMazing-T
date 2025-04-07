@@ -1425,8 +1425,8 @@ function claimLuckyChest(userName, chestIndex) {
     if (!rewards[userName]) rewards[userName] = [];
     const now = new Date();
 
-    if (claimedChest.honey) {
-        // 🟡 It's a honey reward
+    if (claimedChest.hasOwnProperty("honey")) {
+        // ✅ It's a Honey reward (from dice chest or similar)
         rewards[userName].push({
             name: `${claimedChest.honey} Honey`,
             type: "Honey",
@@ -1434,11 +1434,11 @@ function claimLuckyChest(userName, chestIndex) {
             date: now.toLocaleDateString()
         });
     } else {
-        // 🟡 It's a normal or dice-type reward
+        // ✅ It's a normal reward or special chest (The Key, etc)
         rewards[userName].push({
             name: claimedChest.name,
-            description: claimedChest.description,
-            image: claimedChest.image,
+            description: claimedChest.description || "",
+            image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
             date: now.toLocaleDateString(),
             claimedAt: now.toISOString(),
             type: claimedChest.type || "normal",
@@ -1446,14 +1446,16 @@ function claimLuckyChest(userName, chestIndex) {
         });
     }
 
-    // Remove the chest after claiming
+    // 🗑️ Remove the chest after claiming
     userChests.splice(chestIndex, 1);
     allChests[userName] = userChests;
 
+    // 💾 Save updated data
     localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
 
-    loadLuckyChests(userName); // Refresh UI
+    // 🔄 Refresh Lucky Chest UI
+    loadLuckyChests(userName);
 }
 
 
