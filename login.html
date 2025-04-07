@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - BeeMazing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #FFC107;
+      --secondary-color: #212121;
+      --accent-color: #2C2F3A;
+      --light-bg: #1E1F26;
+      --text-color: #FFFFFF;
+      --danger-color: #D32F2F;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      position: relative;
+    }
+
+    .top-left {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 32px;
+      letter-spacing: 1px;
+      color: var(--primary-color);
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    .login-btn {
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+      border: none;
+      padding: 14px 32px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background-color: #FFB300;
+    }
+
+    #passwordPrompt {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    #passwordPrompt input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid #444754;
+      background: var(--accent-color);
+      color: white;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .error {
+      color: var(--danger-color);
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #2A2B32;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+      border: 2px solid #444754;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: var(--accent-color);
+      color: white;
+      border: 2px solid #444754;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .modal-content button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-left" id="setPasswordBtn">Set Admin Password</div>
+
+  <h1>BeeMazing</h1>
+
+  <div class="button-container">
+    <button class="login-btn" id="adminBtn">Admin</button>
+    <button class="login-btn" id="userBtn">User</button>
+  </div>
+
+  <div id="passwordPrompt">
+    <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password" />
+    <button class="login-btn" id="submitPasswordBtn">Login</button>
+    <div class="error" id="passwordError"></div>
+  </div>
+
+  <!-- Modal to set admin password -->
+  <div class="modal" id="adminModal">
+    <div class="modal-content">
+      <h3>Set Admin Password</h3>
+      <input type="password" id="setPasswordInput" placeholder="Enter new password" />
+      <button class="login-btn" id="savePasswordBtn">Save</button>
+    </div>
+  </div>
+
+  <script>
+    const setPasswordBtn = document.getElementById("setPasswordBtn");
+    const adminBtn = document.getElementById("adminBtn");
+    const userBtn = document.getElementById("userBtn");
+    const passwordPrompt = document.getElementById("passwordPrompt");
+    const submitPasswordBtn = document.getElementById("submitPasswordBtn");
+    const adminPasswordInput = document.getElementById("adminPasswordInput");
+    const passwordError = document.getElementById("passwordError");
+
+    const adminModal = document.getElementById("adminModal");
+    const setPasswordInput = document.getElementById("setPasswordInput");
+    const savePasswordBtn = document.getElementById("savePasswordBtn");
+
+    const targetPage = "/BeeMazing-Y1/mobile/1-Home/home.html";
+
+    // Open the modal
+    setPasswordBtn.addEventListener("click", () => {
+      adminModal.classList.add("show");
+      setPasswordInput.value = "";
+      setPasswordInput.focus();
+    });
+
+    // Save the admin password
+    savePasswordBtn.addEventListener("click", () => {
+      const newPassword = setPasswordInput.value.trim();
+      if (newPassword) {
+        localStorage.setItem("adminPassword", newPassword);
+        alert("Admin password set successfully!");
+        adminModal.classList.remove("show");
+      }
+    });
+
+    // Close modal on outside click
+    adminModal.addEventListener("click", (e) => {
+      if (e.target === adminModal) {
+        adminModal.classList.remove("show");
+      }
+    });
+
+    // Admin login
+    adminBtn.addEventListener("click", () => {
+      passwordPrompt.style.display = "flex";
+      adminPasswordInput.focus();
+    });
+
+    submitPasswordBtn.addEventListener("click", () => {
+      const savedPassword = localStorage.getItem("adminPassword");
+      const enteredPassword = adminPasswordInput.value;
+
+      if (enteredPassword === savedPassword) {
+        localStorage.setItem("isAdmin", "true");
+        window.location.href = targetPage;
+      } else {
+        passwordError.textContent = "Incorrect password. Please try again.";
+      }
+    });
+
+    // User login
+    userBtn.addEventListener("click", () => {
+      localStorage.setItem("isAdmin", "false");
+      window.location.href = targetPage;
+    });
+  </script>
+</body>
+</html>

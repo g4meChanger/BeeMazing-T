@@ -1,7 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+    
+    // Redirect to login if user not logged in
+    if (localStorage.getItem("isAdmin") === null) {
+        window.location.href = "/BeeMazing-Y1/login.html";
+        return;
+    }
+
+    // Determine if this user is admin
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    
     const addUserBtn = document.getElementById("addUserBtn");
+    if (!isAdmin && addUserBtn) {
+        addUserBtn.style.display = "none";
+    }
+
     const addUserModal = document.getElementById("addUserModal");
     const submitUserBtn = document.getElementById("submitUserBtn");
+    if (!isAdmin && submitUserBtn) {
+        submitUserBtn.disabled = true;
+    }
+
     const usernameInput = document.getElementById("usernameInput");
     const userList = document.getElementById("userList");
     const manageMembersBtn = document.getElementById("manageMembersBtn");
@@ -19,9 +38,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Show the modal with a smooth animation when "Add Members" button is clicked
     if (addUserBtn) {
         addUserBtn.addEventListener("click", function () {
-            addUserModal.classList.add("show");
+            if (isAdmin) {
+                addUserModal.classList.add("show");
+            }
         });
     }
+
 
     // Add user when "Add" button is clicked
     if (submitUserBtn) {
@@ -181,3 +203,5 @@ document.getElementById("confirmNoBtn").addEventListener("click", () => {
 
 
 });
+
+
