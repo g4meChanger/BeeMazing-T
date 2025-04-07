@@ -705,63 +705,6 @@
 
 
 
-
-.lucky-chest-card {
-    background: var(--card-bg);
-    border: 2px solid var(--border-dark);
-    border-radius: 12px;
-    padding: 15px 20px;
-    margin-top: 10px;
-    display: flex;
-    gap: 20px; /* increased spacing between image and text */
-    align-items: center;
-    justify-content: flex-start;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.lucky-chest-card img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    flex-shrink: 0;
-    border-radius: 12px;
-}
-
-.lucky-chest-card .info {
-    flex: 1;
-    padding-left: 10px;
-}
-
-.lucky-chest-card .info p {
-    margin: 0;
-    font-size: 15px;
-    color: var(--text-color);
-}
-
-.lucky-chest-progress {
-    font-weight: bold;
-    color: var(--text-color);
-    margin-top: 6px;
-}
-
-.lucky-chest-card:hover img {
-    animation: pulse 1s infinite;
-}
-
-.lucky-chest-card.locked img {
-    opacity: 0.8;
-    filter: grayscale(50%);
-}
-
-.pulse {
-    animation: pulse 1.2s ease-in-out infinite;
-}
-
-
-
-
-
-
     </style>
 </head>
 <body>
@@ -1115,11 +1058,7 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
     tasks[taskIndex] = task;
     localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
 
-    playFinishTaskSound();
-
-
-if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
-
+    if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
     if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
     if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
     if (typeof loadUserReward === 'function') loadUserReward(userName);
@@ -1147,34 +1086,27 @@ if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
         }
 
         function triggerHoneyRain(rewardAmount) {
-    // ✅ Use the new Web Audio API version of the sound
-    playFinishTaskSound();
-
-    for (let i = 0; i < 50; i++) {
-        const drop = document.createElement("div");
-        drop.className = "honey-drop";
-        drop.style.left = `${Math.random() * 100}vw`;
-        drop.style.animationDelay = `${Math.random() * 0.5}s`;
-        document.body.appendChild(drop);
-        setTimeout(() => drop.remove(), 2000);
-    }
-
-    const popup = document.createElement("div");
-    popup.className = "reward-popup";
-    popup.textContent = `+${rewardAmount} 🍯`;
-    document.body.appendChild(popup);
-
-    setTimeout(() => {
-        const rewardElement = document.getElementById("rewardAmount");
-        rewardElement.classList.add("pulse");
-        setTimeout(() => {
-            rewardElement.classList.remove("pulse");
-            popup.remove();
-        }, 1000);
-    }, 1000);
-}
-
-
+            for (let i = 0; i < 50; i++) {
+                const drop = document.createElement("div");
+                drop.className = "honey-drop";
+                drop.style.left = `${Math.random() * 100}vw`;
+                drop.style.animationDelay = `${Math.random() * 0.5}s`;
+                document.body.appendChild(drop);
+                setTimeout(() => drop.remove(), 2000);
+            }
+            const popup = document.createElement("div");
+            popup.className = "reward-popup";
+            popup.textContent = `+${rewardAmount} 🍯`;
+            document.body.appendChild(popup);
+            setTimeout(() => {
+                const rewardElement = document.getElementById("rewardAmount");
+                rewardElement.classList.add("pulse");
+                setTimeout(() => {
+                    rewardElement.classList.remove("pulse");
+                    popup.remove();
+                }, 1000);
+            }, 1000);
+        }
 
         function showTaskDetails(task) {
             const taskDetails = `
@@ -1374,6 +1306,7 @@ function updateLuckyChestProgress(userName, earnedHoney) {
 
 
 
+
 function loadLuckyChests(userName) {
     const container = document.getElementById("luckyChestContainer");
     const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
@@ -1388,21 +1321,23 @@ function loadLuckyChests(userName) {
 
     userChests.forEach((chest, index) => {
         const isUnlocked = chest.progress >= chest.requiredPoints;
+        const hasHoney = chest.honey !== undefined && chest.honey > 0;
+        const hasCustomReward = !chest.onlyHoney; // If not marked as honey-only
+
         const chestImage = isUnlocked
             ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
             : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
 
+        const displayName = hasCustomReward ? chest.name : `${chest.honey} Honey`;
+
         const card = document.createElement("div");
         card.className = "lucky-chest-card";
-        if (!isUnlocked) {
-            card.classList.add("locked"); // Apply locked styling
-        }
+        if (!isUnlocked) card.classList.add("locked");
 
-        // Show text and progress for both locked and unlocked, with different messages
         card.innerHTML = `
             <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
             <div class="info">
-                <p>${isUnlocked ? 'CONGRATULATIONS! Chest unlocked!' : 'Unlock to reveal your reward!'}</p>
+                <p>Unlock to reveal your reward!</p>
                 <div class="lucky-chest-progress">
                     Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
                 </div>
@@ -1428,17 +1363,10 @@ function loadLuckyChests(userName) {
 function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = false) {
     const overlay = document.getElementById("chestVideoOverlay");
     const video = document.getElementById("chestVideo");
-    const audio = document.getElementById("chestUnlockSound"); // Get the audio element
 
     overlay.style.display = "flex";
     video.currentTime = 0;
     video.play();
-
-    // Play the sound effect
-    audio.currentTime = 0; // Reset sound to start
-    audio.play().catch(error => {
-        console.log("Audio playback failed:", error); // Handle potential autoplay issues
-    });
 
     let skipped = false;
 
@@ -1447,7 +1375,6 @@ function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = fals
         skipped = true;
 
         video.pause();
-        audio.pause(); // Pause the sound when skipping
         overlay.style.display = "none";
         showLuckyChestRewardOverlay(userName, chest, chestIndex);
     };
@@ -1587,21 +1514,20 @@ function claimLuckyChest(userName, chestIndex) {
             console.log("No honey, removed chest");
             localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
         }
-    } else if ((hasHoney || isHoneyOnlyName) && !claimedChest.fromDiceChest) {
-  console.log("Claiming honey reward");
-  const honeyAmount = hasHoney ? claimedChest.honey : parseInt(claimedChest.name.split(" ")[0]);
-  rewards[userName].push({
-      name: `${honeyAmount} Honey`,
-      type: "Honey",
-      amount: honeyAmount,
-      date: now.toLocaleDateString()
-  });
-  userChests.splice(chestIndex, 1);
-  allChests[userName] = userChests;
-  console.log("Removed chest after honey claim");
-  localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-}
-
+    } else if (hasHoney || isHoneyOnlyName) {
+        console.log("Claiming honey reward");
+        const honeyAmount = hasHoney ? claimedChest.honey : parseInt(claimedChest.name.split(" ")[0]);
+        rewards[userName].push({
+            name: `${honeyAmount} Honey`,
+            type: "Honey",
+            amount: honeyAmount,
+            date: now.toLocaleDateString()
+        });
+        userChests.splice(chestIndex, 1);
+        allChests[userName] = userChests;
+        console.log("Removed chest after honey claim");
+        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    }
 
     console.log("Saving rewards:", rewards[userName]);
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
@@ -1656,109 +1582,10 @@ style="
 <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
 Your browser does not support the video tag.
 </video>
-<audio id="chestUnlockSound" preload="auto">
-    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestUnlock.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
-</audio>
 
-<audio id="finishTaskSound" preload="auto">
-    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/FinishTask.mp3" type="audio/mp3" />
-    Your browser does not support the audio element.
-  </audio>
+
 </div>
 
-
-<script>
-    let finishTaskBuffer = null;
-    let audioContext = null;
-    
-    async function initializeAudioContext() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            // Create a silent buffer to "unlock" the AudioContext on iOS
-            const silentBuffer = audioContext.createBuffer(1, 1, 22050);
-            const source = audioContext.createBufferSource();
-            source.buffer = silentBuffer;
-            source.connect(audioContext.destination);
-            source.start(0);
-            // Ensure the context is running
-            if (audioContext.state === 'suspended') {
-                await audioContext.resume();
-            }
-        }
-    }
-    
-    async function loadFinishTaskSound() {
-        try {
-            await initializeAudioContext(); // Ensure AudioContext is ready
-            const response = await fetch('/BeeMazing-Y1/mobile/4-Market/LuckyChest/FinishTask.mp3');
-            const arrayBuffer = await response.arrayBuffer();
-            finishTaskBuffer = await audioContext.decodeAudioData(arrayBuffer);
-            console.log("Finish Task sound preloaded successfully");
-        } catch (e) {
-            console.error("Failed to preload Finish Task sound:", e);
-        }
-    }
-    
-    function playFinishTaskSound() {
-        if (!audioContext || !finishTaskBuffer) {
-            console.warn("Audio not ready yet");
-            return;
-        }
-        
-        // Resume AudioContext if suspended (iOS requires this on user gesture)
-        if (audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                playSound();
-            });
-        } else {
-            playSound();
-        }
-    }
-    
-    function playSound() {
-        const source = audioContext.createBufferSource();
-        source.buffer = finishTaskBuffer;
-        source.connect(audioContext.destination);
-        source.start(0);
-    }
-    
-    // Start preloading the sound immediately
-    (async () => {
-        await loadFinishTaskSound();
-    })();
-    
-    // Unlock AudioContext on first user interaction with debug logs
-    document.addEventListener("touchstart", () => {
-        console.log("Touchstart event fired");
-        if (audioContext && audioContext.state === 'suspended') {
-            audioContext.resume().then(() => {
-                console.log("AudioContext resumed on touch");
-            });
-        }
-    }, { once: true });
-    
-    // Preload the sound on page load (redundant now with IIFE, but kept as fallback)
-    window.addEventListener("load", () => {
-        loadFinishTaskSound();
-    });
-    
-    // Fallback for silent pre-playback using <audio> element
-    window.addEventListener("load", () => {
-        const finishAudio = document.getElementById("finishTaskSound");
-        if (finishAudio) {
-            finishAudio.volume = 0;
-            finishAudio.play().then(() => {
-                finishAudio.pause();
-                finishAudio.currentTime = 0;
-                finishAudio.volume = 1;
-                console.log("Silent pre-playback succeeded");
-            }).catch(err => {
-                console.warn("Silent pre-playback failed:", err);
-            });
-        }
-    });
-</script>
 
 </body>
 </html>
