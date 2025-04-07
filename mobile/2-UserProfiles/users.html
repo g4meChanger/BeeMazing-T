@@ -915,159 +915,110 @@
     </div>
 
     <script>
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const userName = urlParams.get('user');
-    const addPoints = Number(urlParams.get('addPoints')) || 0;
-
-    if (userName) {
-        document.getElementById('profileName').textContent = userName;
-        document.getElementById('userName').textContent = userName;
-        document.getElementById('rewardsButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
-        document.getElementById('marketButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
-        document.getElementById('profileButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${userName}`;
-
-        loadUserTasks(userName);
-        loadUserReward(userName);
-        loadLuckyChests(userName); // Moved inside DOMContentLoaded
-
-        // Handle addPoints from userrewards.html "Get it"
-        if (addPoints > 0) {
-            setTimeout(() => {
-                const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
-                rewards[userName] = (rewards[userName] || 0) + addPoints;
-                localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
-                triggerHoneyRain(addPoints);
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userName = urlParams.get('user');
+            const addPoints = Number(urlParams.get('addPoints')) || 0;
+        
+            if (userName) {
+                document.getElementById('profileName').textContent = userName;
+                document.getElementById('userName').textContent = userName;
+                document.getElementById('rewardsButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
+                document.getElementById('marketButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
+                document.getElementById('profileButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${userName}`;
+        
+                loadUserTasks(userName);
                 loadUserReward(userName);
-            }, 500);
-        }
-    }
-
-    // Highlight footer icons
-    document.querySelectorAll('.footer a').forEach(link => {
-        const currentPath = window.location.pathname.replace(/\/$/, '');
-        const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '');
-        if (currentPath === linkPath) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-});
-
-
-
-
-
-
-
-
-
-
-function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("sv-SE")) {
-    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
-    const userTasks = tasks.filter(task => task.users.includes(userName));
-    const userTasksDiv = document.getElementById("userTasks");
-
-    if (userTasks.length === 0) {
-        userTasksDiv.innerHTML = "<p>No tasks assigned to this bee.</p>";
-    } else {
-        userTasksDiv.innerHTML = "";
-
-        const today = new Date().toLocaleDateString("sv-SE");
-        const isToday = selectedDate === today;
-
-        userTasks.forEach(task => {
-            const taskDiv = document.createElement("div");
-            taskDiv.className = "task-item";
-
-            let requiredTimes = 1;
-            if (task.repeat === "Daily") requiredTimes = task.timesPerDay || 1;
-            if (task.repeat === "Weekly") requiredTimes = task.timesPerWeek || 1;
-            if (task.repeat === "Monthly") requiredTimes = task.timesPerMonth || 1;
-
-            let completedRaw = task.completions?.[selectedDate] || [];
-            let completedUsers = Array.isArray(completedRaw) ? completedRaw : [];
-            let completedTimes = completedUsers.length;
-
-            let progressText = completedTimes >= requiredTimes
-                ? `<span style="color: green; font-weight: bold;">Completed</span>`
-                : `${completedTimes}/${requiredTimes}`;
-
-            taskDiv.innerHTML = `
-                <strong>${task.title}</strong><br>
-                Honey: ${task.reward || "0"} 🍯<br>
-                Progress: ${progressText}
-            `;
-
-            const currentTurn = task.tempTurnReplacement?.replacement || task.turn || task.users[0];
-            const remainingForUser = completedUsers.filter(u => u === userName).length;
-
-            // Button visibility: allow if today, it's their turn, and they haven't hit the limit
-            const canFinish = isToday &&
-                currentTurn === userName &&
-                remainingForUser < requiredTimes;
-
-            if (canFinish) {
-                const finishedButton = document.createElement("button");
-                finishedButton.textContent = "Finish Task";
-                finishedButton.className = "finished-btn";
-                finishedButton.onclick = (e) => {
-                    e.stopPropagation();
-                    finishTask(userName, task, finishedButton, selectedDate);
-                };
-                taskDiv.appendChild(finishedButton);
+                loadLuckyChests(userName);
+        
+                if (addPoints > 0) {
+                    setTimeout(() => {
+                        const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+                        rewards[userName] = (rewards[userName] || 0) + addPoints;
+                        localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+                        triggerHoneyRain(addPoints);
+                        loadUserReward(userName);
+                    }, 500);
+                }
             }
-
-            taskDiv.addEventListener("click", function () {
-                showTaskDetails(task);
+        
+            document.querySelectorAll('.footer a').forEach(link => {
+                const currentPath = window.location.pathname.replace(/\/$/, '');
+                const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '');
+                if (currentPath === linkPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
             });
-
-            userTasksDiv.appendChild(taskDiv);
+        
+            adjustContentTop();
+            generateScrollableDates();
+            showAdminControlsIfNeeded();
         });
-    }
-}
-
-
-
-
-
-
-
-
-
-
+        
+        function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("sv-SE")) {
+            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+            const userTasks = tasks.filter(task => task.users.includes(userName));
+            const userTasksDiv = document.getElementById("userTasks");
+        
+            if (userTasks.length === 0) {
+                userTasksDiv.innerHTML = "<p>No tasks assigned to this bee.</p>";
+            } else {
+                userTasksDiv.innerHTML = "";
+                const today = new Date().toLocaleDateString("sv-SE");
+                const isToday = selectedDate === today;
+        
+                userTasks.forEach(task => {
+                    const taskDiv = document.createElement("div");
+                    taskDiv.className = "task-item";
+        
+                    let requiredTimes = 1;
+                    if (task.repeat === "Daily") requiredTimes = task.timesPerDay || 1;
+                    if (task.repeat === "Weekly") requiredTimes = task.timesPerWeek || 1;
+                    if (task.repeat === "Monthly") requiredTimes = task.timesPerMonth || 1;
+        
+                    let completedRaw = task.completions?.[selectedDate] || [];
+                    let completedUsers = Array.isArray(completedRaw) ? completedRaw : [];
+                    let completedTimes = completedUsers.length;
+        
+                    let progressText = completedTimes >= requiredTimes
+                        ? `<span style="color: green; font-weight: bold;">Completed</span>`
+                        : `${completedTimes}/${requiredTimes}`;
+        
+                    taskDiv.innerHTML = `
+                        <strong>${task.title}</strong><br>
+                        Honey: ${task.reward || "0"} 🍯<br>
+                        Progress: ${progressText}
+                    `;
+        
+                    const currentTurn = task.tempTurnReplacement?.replacement || task.turn || task.users[0];
+                    const remainingForUser = completedUsers.filter(u => u === userName).length;
+        
+                    const canFinish = isToday && currentTurn === userName && remainingForUser < requiredTimes;
+                    if (canFinish) {
+                        const finishedButton = document.createElement("button");
+                        finishedButton.textContent = "Finish Task";
+                        finishedButton.className = "finished-btn";
+                        finishedButton.onclick = (e) => {
+                            e.stopPropagation();
+                            finishTask(userName, task, finishedButton, selectedDate);
+                        };
+                        taskDiv.appendChild(finishedButton);
+                    }
+        
+                    taskDiv.addEventListener("click", () => showTaskDetails(task));
+                    userTasksDiv.appendChild(taskDiv);
+                });
+            }
+        }
+        
         function loadUserReward(userName) {
             const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
             const userReward = rewards[userName] || 0;
             document.getElementById("rewardAmount").textContent = userReward;
         }
-
-        document.getElementById('sellButton').addEventListener('click', function() {
-            document.getElementById('sellModal').style.display = 'flex';
-        });
-
-        document.getElementById('sellModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                document.getElementById('sellModal').style.display = 'none';
-            }
-        });
-
-        document.getElementById('confirmSell').addEventListener('click', function() {
-            const sellAmount = Number(document.getElementById('sellAmount').value);
-            if (sellAmount > 0) {
-                sellReward(userName, sellAmount);
-                document.getElementById('sellModal').style.display = 'none';
-            } else {
-                alert("Please enter a valid amount.");
-            }
-        });
-
+        
         function sellReward(userName, amount) {
             const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
             const userReward = rewards[userName] || 0;
@@ -1079,96 +1030,99 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
                 alert("Not enough honey!");
             }
         }
-
-
-
-
-        function finishTask(userName, task, button, selectedDate) {
-    const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
-    const taskIndex = tasks.findIndex(t => t.title === task.title && t.date === task.date);
-    if (taskIndex === -1) return;
-
-    const today = selectedDate;
-
-    // Repeat limits
-    const repeatLimit = task.repeat === "Daily" ? task.timesPerDay || 1 :
-                        task.repeat === "Weekly" ? task.timesPerWeek || 1 :
-                        task.repeat === "Monthly" ? task.timesPerMonth || 1 : 1;
-
-    // Init completions if needed
-    if (!task.completions) task.completions = {};
-    if (!Array.isArray(task.completions[today])) task.completions[today] = [];
-
-    // Check if user can still complete (up to repeatLimit)
-    const userCompletions = task.completions[today].filter(u => u === userName).length;
-    if (userCompletions >= repeatLimit) return;
-
-    // Add completion
-    task.completions[today].push(userName);
-
-    // Give reward to original user (if delegated)
-    const rewardAmount = Number(task.reward) || 0;
-    const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
-    const originalUser = task.originalOwner?.[userName] || userName;
-    rewards[originalUser] = (rewards[originalUser] || 0) + rewardAmount;
-    localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
-
-    if (typeof updateLuckyChestProgress === "function") {
-        updateLuckyChestProgress(originalUser, rewardAmount);
-    }
-
-    const completedCount = task.completions[today].length;
-    const userList = task.users;
-    const currentTurn = task.tempTurnReplacement?.replacement || task.turn || userList[0];
-
-    // Handle turn rotation
-    if (task.tempTurnReplacement && userName === task.tempTurnReplacement.replacement) {
-        // Replacement user completed their turn; move to next in original order
-        const originalUser = task.tempTurnReplacement.original;
-        const originalIndex = userList.indexOf(originalUser);
-        const nextIndex = (originalIndex + 1) % userList.length;
-        task.turn = userList[nextIndex];
-
-        // Clean up temporary replacement
-        delete task.tempTurnReplacement;
-        if (task.originalOwner) delete task.originalOwner[userName];
-    } else {
-        // Normal rotation: move to next user who hasn’t completed fully
-        const userCompletionCounts = {};
-        task.completions[today].forEach(u => {
-            userCompletionCounts[u] = (userCompletionCounts[u] || 0) + 1;
+        
+        document.getElementById('sellButton').addEventListener('click', () => {
+            document.getElementById('sellModal').style.display = 'flex';
         });
-        const currentIndex = userList.indexOf(currentTurn);
-        let nextIndex = (currentIndex + 1) % userList.length;
-        let looped = false;
-
-        while ((userCompletionCounts[userList[nextIndex]] || 0) >= repeatLimit && !looped) {
-            nextIndex = (nextIndex + 1) % userList.length;
-            if (nextIndex === currentIndex) looped = true;
+        
+        document.getElementById('sellModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('sellModal')) {
+                document.getElementById('sellModal').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('confirmSell').addEventListener('click', () => {
+            const sellAmount = Number(document.getElementById('sellAmount').value);
+            const urlParams = new URLSearchParams(window.location.search);
+            const userName = urlParams.get('user');
+            if (sellAmount > 0) {
+                sellReward(userName, sellAmount);
+                document.getElementById('sellModal').style.display = 'none';
+            } else {
+                alert("Please enter a valid amount.");
+            }
+        });
+        
+        function finishTask(userName, task, button, selectedDate) {
+            const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
+            const taskIndex = tasks.findIndex(t => t.title === task.title && t.date === task.date);
+            if (taskIndex === -1) return;
+        
+            const today = selectedDate;
+            if (!task.completions) task.completions = {};
+            if (!Array.isArray(task.completions[today])) task.completions[today] = [];
+        
+            const repeatLimit = task.repeat === "Daily" ? task.timesPerDay || 1 :
+                                task.repeat === "Weekly" ? task.timesPerWeek || 1 :
+                                task.repeat === "Monthly" ? task.timesPerMonth || 1 : 1;
+        
+            const userCompletions = task.completions[today].filter(u => u === userName).length;
+            if (userCompletions >= repeatLimit) return;
+        
+            task.completions[today].push(userName);
+            const rewardAmount = Number(task.reward) || 0;
+            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+            const originalUser = task.originalOwner?.[userName] || userName;
+            rewards[originalUser] = (rewards[originalUser] || 0) + rewardAmount;
+            localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+        
+            if (typeof updateLuckyChestProgress === "function") {
+                updateLuckyChestProgress(originalUser, rewardAmount);
+            }
+        
+            const userList = task.users;
+            const currentTurn = task.tempTurnReplacement?.replacement || task.turn || userList[0];
+        
+            if (task.tempTurnReplacement && userName === task.tempTurnReplacement.replacement) {
+                const originalUser = task.tempTurnReplacement.original;
+                const originalIndex = userList.indexOf(originalUser);
+                const nextIndex = (originalIndex + 1) % userList.length;
+                task.turn = userList[nextIndex];
+                delete task.tempTurnReplacement;
+                if (task.originalOwner) delete task.originalOwner[userName];
+            } else {
+                const userCompletionCounts = {};
+                task.completions[today].forEach(u => {
+                    userCompletionCounts[u] = (userCompletionCounts[u] || 0) + 1;
+                });
+                const currentIndex = userList.indexOf(currentTurn);
+                let nextIndex = (currentIndex + 1) % userList.length;
+                let looped = false;
+        
+                while ((userCompletionCounts[userList[nextIndex]] || 0) >= repeatLimit && !looped) {
+                    nextIndex = (nextIndex + 1) % userList.length;
+                    if (nextIndex === currentIndex) looped = true;
+                }
+        
+                task.turn = looped ? userList[0] : userList[nextIndex];
+            }
+        
+            tasks[taskIndex] = task;
+            localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
+        
+            if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
+            if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
+            if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
+            if (typeof loadUserReward === 'function') loadUserReward(userName);
         }
-
-        task.turn = looped ? userList[0] : userList[nextIndex];
-    }
-
-    tasks[taskIndex] = task;
-    localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
-
-    if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
-    if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
-    if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
-    if (typeof loadUserReward === 'function') loadUserReward(userName);
-}
-
-
-
-
+        
         function saveTaskHistory(userName, task) {
             const now = new Date();
             const month = now.toLocaleString("default", { month: "long" });
             const date = now.getDate();
             const time = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
             const dateString = now.toLocaleDateString();
-
+        
             const history = JSON.parse(localStorage.getItem("familyApp_history")) || {};
             if (!history[month]) history[month] = {};
             if (!history[month][date]) history[month][date] = [];
@@ -1179,7 +1133,7 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
             });
             localStorage.setItem("familyApp_history", JSON.stringify(history));
         }
-
+        
         function triggerHoneyRain(rewardAmount) {
             for (let i = 0; i < 50; i++) {
                 const drop = document.createElement("div");
@@ -1202,7 +1156,7 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
                 }, 1000);
             }, 1000);
         }
-
+        
         function showTaskDetails(task) {
             const taskDetails = `
                 <strong>Title:</strong> ${task.title}<br>
@@ -1218,522 +1172,396 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
             `;
             const modal = document.createElement("div");
             modal.className = "modal";
-            modal.innerHTML = `
-                <div class="modal-content">
-                    ${taskDetails}
-                </div>
-            `;
+            modal.innerHTML = `<div class="modal-content">${taskDetails}</div>`;
             document.body.appendChild(modal);
             modal.addEventListener("click", (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
+                if (e.target === modal) modal.remove();
             });
         }
-
-
         
-
-
-
-
-
-
-
-
-
-
-
-
         let monthOffset = 0;
-
-function generateScrollableDates(monthOffset = 0) {
-    const container = document.getElementById("dayScrollContainer");
-    container.innerHTML = "";
-
-    const today = new Date();
-    today.setDate(1); // Start at beginning of the month
-    today.setMonth(today.getMonth() + monthOffset);
-
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-    document.getElementById("monthLabel").textContent = today.toLocaleDateString(undefined, {
-        month: 'long',
-        year: 'numeric'
-    });
-
-    for (let i = 1; i <= daysInMonth; i++) {
-        const date = new Date(currentYear, currentMonth, i);
-        const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-
-        const btn = document.createElement("div");
-        btn.className = "day";
-        btn.textContent = i;
-        btn.dataset.date = dateStr;
-
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
-            btn.classList.add("selected");
-            loadUserTasks(userName, dateStr); // 🔁 pass selected date to task loader
-        });
-
-        const now = new Date();
-        const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        if (dateStr === nowStr) {
-            btn.classList.add("selected");
-            loadUserTasks(userName, dateStr); // ⏳ load today's tasks initially
-        }
-
-        container.appendChild(btn);
-    }
-
-    setTimeout(() => {
-        const selected = document.querySelector(".day.selected");
-        if (selected) {
-            selected.scrollIntoView({ behavior: "smooth", inline: "center" });
-        }
-    }, 50);
-}
-
-document.getElementById("prevMonth").addEventListener("click", () => {
-    monthOffset--;
-    generateScrollableDates(monthOffset);
-});
-
-document.getElementById("nextMonth").addEventListener("click", () => {
-    monthOffset++;
-    generateScrollableDates(monthOffset);
-});
-
-document.getElementById("scrollLeft").addEventListener("click", () => {
-    document.getElementById("dayScrollContainer").scrollBy({
-        left: -200,
-        behavior: "smooth"
-    });
-});
-
-document.getElementById("scrollRight").addEventListener("click", () => {
-    document.getElementById("dayScrollContainer").scrollBy({
-        left: 200,
-        behavior: "smooth"
-    });
-});
-
-// ✅ Initialize
-generateScrollableDates();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function updateLuckyChestProgress(userName, earnedHoney) {
-    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-    const userChests = allChests[userName] || [];
-
-    let updated = false;
-
-    userChests.forEach(chest => {
-        if (chest.progress < chest.requiredPoints) {
-            chest.progress += earnedHoney;
-            if (chest.progress > chest.requiredPoints) {
-                chest.progress = chest.requiredPoints;
-            }
-            updated = true;
-        }
-    });
-
-    if (updated) {
-        allChests[userName] = userChests;
-        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-        loadLuckyChests(userName); // re-render UI
-    }
-}
-
-
-
-
-
-
-function loadLuckyChests(userName) {
-    const container = document.getElementById("luckyChestContainer");
-    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-    const userChests = allChests[userName] || [];
-
-    container.innerHTML = "";
-
-    if (userChests.length === 0) {
-        container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
-        return;
-    }
-
-    userChests.forEach((chest, index) => {
-        const isUnlocked = chest.progress >= chest.requiredPoints;
-        const chestImage = isUnlocked
-            ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
-            : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
-
-        const card = document.createElement("div");
-        card.className = "lucky-chest-card";
-        if (!isUnlocked) {
-            card.classList.add("locked"); // Apply locked styling
-        }
-
-        // Show text and progress for both locked and unlocked, with different messages
-        card.innerHTML = `
-            <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
-            <div class="info">
-                <p>${isUnlocked ? 'CONGRATULATIONS! Chest unlocked!' : 'Unlock to reveal your reward!'}</p>
-                <div class="lucky-chest-progress">
-                    Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
-                </div>
-            </div>
-        `;
-
-        if (isUnlocked) {
-            card.style.cursor = "pointer";
-            card.addEventListener("click", () => {
-                revealLuckyChestReward(userName, chest, index, true);
+        
+        function generateScrollableDates(monthOffset = 0) {
+            const container = document.getElementById("dayScrollContainer");
+            container.innerHTML = "";
+        
+            const today = new Date();
+            today.setDate(1);
+            today.setMonth(today.getMonth() + monthOffset);
+        
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        
+            document.getElementById("monthLabel").textContent = today.toLocaleDateString(undefined, {
+                month: 'long',
+                year: 'numeric'
             });
-        }
-
-        container.appendChild(card);
-    });
-}
-
-
-
-
-
-
-function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = false) {
-    const overlay = document.getElementById("chestVideoOverlay");
-    const video = document.getElementById("chestVideo");
-    const audio = document.getElementById("chestUnlockSound"); // Get the audio element
-
-    overlay.style.display = "flex";
-    video.currentTime = 0;
-    video.play();
-
-    // Play the sound effect
-    audio.currentTime = 0; // Reset sound to start
-    audio.play().catch(error => {
-        console.log("Audio playback failed:", error); // Handle potential autoplay issues
-    });
-
-    let skipped = false;
-
-    const skipVideo = () => {
-        if (skipped) return;
-        skipped = true;
-
-        video.pause();
-        audio.pause(); // Pause the sound when skipping
-        overlay.style.display = "none";
-        showLuckyChestRewardOverlay(userName, chest, chestIndex);
-    };
-
-    overlay.addEventListener("click", skipVideo, { once: true });
-    video.onended = () => skipVideo();
-    video.onerror = () => skipVideo();
-}
-
-function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
-    const flash = document.createElement("div");
-    flash.className = "flash-effect";
-    document.body.appendChild(flash);
-
-    setTimeout(() => {
-        flash.remove();
-
-        const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-        const userChests = allChests[userName] || [];
-        const currentChest = userChests[chestIndex];
-
-        let rewardToShow;
-        const hasHoney = currentChest.honey !== undefined && currentChest.honey > 0;
-        const hasCustomReward = !currentChest.onlyHoney;
-
-        if (hasCustomReward) {
-            // Show custom reward first
-            rewardToShow = {
-                name: currentChest.name,
-                quote: currentChest.quote || "",
-                effect: currentChest.effect || "",
-                image: currentChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
-            };
-        } else if (hasHoney) {
-            // Show honey second
-            rewardToShow = {
-                name: `${currentChest.honey} Honey`,
-                quote: currentChest.quote || "",
-                effect: currentChest.effect || "",
-                image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
-            };
-        }
-
-        const rewardOverlay = document.createElement("div");
-        rewardOverlay.className = "reward-overlay";
-
-        const modal = document.createElement("div");
-        modal.className = "modal-content reward-reveal";
-        modal.innerHTML = `
-            <img src="${rewardToShow.image}" alt="Reward" class="reward-image">
-            <h2 class="reward-title">${rewardToShow.name}</h2>
-            <p class="reward-description">
-                ${rewardToShow.quote ? `<em>"${rewardToShow.quote}"</em><br>` : ""}
-                ${rewardToShow.effect || "You unlocked a surprise!"}
-            </p>
-            <button class="claim-button">Claim Reward</button>
-        `;
-
-        rewardOverlay.addEventListener("click", (e) => {
-            if (!e.target.closest(".modal-content")) {
-                rewardOverlay.remove();
-            }
-        });
-
-        rewardOverlay.appendChild(modal);
-        document.body.appendChild(rewardOverlay);
-
-        modal.querySelector(".claim-button").addEventListener("click", () => {
-            claimLuckyChest(userName, chestIndex);
-            rewardOverlay.remove();
-        });
-    }, 500);
-}
-
-function claimLuckyChest(userName, chestIndex) {
-    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-    const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
-    const userChests = allChests[userName] || [];
-
-    const claimedChest = userChests[chestIndex];
-    if (!claimedChest) {
-        console.log("No chest found at index", chestIndex);
-        return;
-    }
-
-    console.log("Claiming chest:", claimedChest);
-
-    if (!rewards[userName]) rewards[userName] = [];
-    const now = new Date();
-
-    const hasHoney = claimedChest.honey !== undefined && claimedChest.honey > 0;
-    const hasCustomReward = !claimedChest.onlyHoney;
-    const isHoneyOnlyName = !hasHoney && claimedChest.name.endsWith(" Honey");
-
-    if (claimedChest.type === "dice") {
-        console.log("Claiming dice chest");
-        rewards[userName].push({
-            name: claimedChest.name,
-            type: "dice",
-            outcomes: claimedChest.outcomes,
-            date: now.toLocaleDateString(),
-            claimedAt: now.toISOString()
-        });
-        userChests.splice(chestIndex, 1);
-        allChests[userName] = userChests;
-        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-    } else if (hasCustomReward && !isHoneyOnlyName) {
-        console.log("Claiming custom reward, hasHoney:", hasHoney);
-        rewards[userName].push({
-            name: claimedChest.name,
-            quote: claimedChest.quote || "",
-            effect: claimedChest.effect || "",
-            image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
-            date: now.toLocaleDateString(),
-            claimedAt: now.toISOString(),
-            type: "normal"
-        });
-
-        if (hasHoney) {
-            const updatedChest = {
-                name: `${claimedChest.honey} Honey`,
-                quote: claimedChest.quote || "",
-                effect: claimedChest.effect || "",
-                honey: claimedChest.honey,
-                image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
-                requiredPoints: claimedChest.requiredPoints,
-                progress: claimedChest.progress,
-                onlyHoney: true
-            };
-            userChests[chestIndex] = updatedChest;
-            allChests[userName] = userChests;
-            console.log("Updated chest to honey-only:", updatedChest);
-            localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-        } else {
-            userChests.splice(chestIndex, 1);
-            allChests[userName] = userChests;
-            console.log("No honey, removed chest");
-            localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-        }
-    } else if (hasHoney || isHoneyOnlyName) {
-        console.log("Claiming honey reward");
-        const honeyAmount = hasHoney ? claimedChest.honey : parseInt(claimedChest.name.split(" ")[0]);
-        rewards[userName].push({
-            name: `${honeyAmount} Honey`,
-            type: "Honey",
-            amount: honeyAmount,
-            date: now.toLocaleDateString()
-        });
-        userChests.splice(chestIndex, 1);
-        allChests[userName] = userChests;
-        console.log("Removed chest after honey claim");
-        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-    }
-
-    console.log("Saving rewards:", rewards[userName]);
-    localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
-
-    loadLuckyChests(userName);
-}
-
-function adjustContentTop() {
-    const header = document.querySelector(".date-header");
-    const content = document.querySelector(".content");
-
-    if (header && content) {
-        const headerHeight = header.getBoundingClientRect().height;
-        content.style.top = `${headerHeight}px`;
-    }
-}
-
-
-window.addEventListener("resize", adjustContentTop);
-window.addEventListener("load", adjustContentTop);
-
-
-
-
-
-
-
-
-
-function showAdminControlsIfNeeded() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentUser = urlParams.get('user');
-    console.log("Current User from URL:", currentUser);
-
-    const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
-    const isUserAdmin = userPermissions[currentUser] === "Admin";
-    console.log("User Permissions:", userPermissions);
-    console.log("Is User Admin?", isUserAdmin);
-
-    const isLoggedInAsAdmin = localStorage.getItem("isAdmin") === "true";
-    console.log("Is Logged In As Admin?", isLoggedInAsAdmin);
-
-    const changePasswordBtn = document.getElementById("changePasswordBtn");
-    console.log("Change Password Button Element:", changePasswordBtn);
-
-    // Show button only if user is an admin in permissions AND logged in as admin
-    if (isUserAdmin && isLoggedInAsAdmin) {
-        console.log("Conditions met, showing Change Admin Password button");
-        changePasswordBtn.style.display = "inline-block";
-
-        // Add event listeners only once
-        if (!changePasswordBtn.dataset.listenersAdded) {
-            changePasswordBtn.addEventListener("click", () => {
-                const modal = document.getElementById("changePasswordModal");
-                modal.style.display = "flex";
-                document.getElementById("newAdminPassword").value = "";
-                document.getElementById("newAdminPassword").focus();
-            });
-
-            document.getElementById("confirmChangePasswordBtn").addEventListener("click", () => {
-                const newPassword = document.getElementById("newAdminPassword").value.trim();
-                if (newPassword.length < 4) {
-                    alert("Password must be at least 4 characters.");
-                    return;
+        
+            const urlParams = new URLSearchParams(window.location.search);
+            const userName = urlParams.get('user');
+        
+            for (let i = 1; i <= daysInMonth; i++) {
+                const date = new Date(currentYear, currentMonth, i);
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        
+                const btn = document.createElement("div");
+                btn.className = "day";
+                btn.textContent = i;
+                btn.dataset.date = dateStr;
+        
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+                    btn.classList.add("selected");
+                    loadUserTasks(userName, dateStr);
+                });
+        
+                const now = new Date();
+                const nowStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                if (dateStr === nowStr) {
+                    btn.classList.add("selected");
+                    loadUserTasks(userName, dateStr);
                 }
-                localStorage.setItem("adminPassword", newPassword);
-                alert("Admin password updated!");
-                document.getElementById("changePasswordModal").style.display = "none";
+        
+                container.appendChild(btn);
+            }
+        
+            setTimeout(() => {
+                const selected = document.querySelector(".day.selected");
+                if (selected) {
+                    selected.scrollIntoView({ behavior: "smooth", inline: "center" });
+                }
+            }, 50);
+        }
+        
+        document.getElementById("prevMonth").addEventListener("click", () => {
+            monthOffset--;
+            generateScrollableDates(monthOffset);
+        });
+        
+        document.getElementById("nextMonth").addEventListener("click", () => {
+            monthOffset++;
+            generateScrollableDates(monthOffset);
+        });
+        
+        document.getElementById("scrollLeft").addEventListener("click", () => {
+            document.getElementById("dayScrollContainer").scrollBy({
+                left: -200,
+                behavior: "smooth"
             });
-
-            document.getElementById("changePasswordModal").addEventListener("click", (e) => {
-                if (e.target.id === "changePasswordModal") {
-                    document.getElementById("changePasswordModal").style.display = "none";
+        });
+        
+        document.getElementById("scrollRight").addEventListener("click", () => {
+            document.getElementById("dayScrollContainer").scrollBy({
+                left: 200,
+                behavior: "smooth"
+            });
+        });
+        
+        function updateLuckyChestProgress(userName, earnedHoney) {
+            const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+            const userChests = allChests[userName] || [];
+        
+            let updated = false;
+        
+            userChests.forEach(chest => {
+                if (chest.progress < chest.requiredPoints) {
+                    chest.progress += earnedHoney;
+                    if (chest.progress > chest.requiredPoints) {
+                        chest.progress = chest.requiredPoints;
+                    }
+                    updated = true;
                 }
             });
-
-            changePasswordBtn.dataset.listenersAdded = "true"; // Flag to prevent duplicate listeners
+        
+            if (updated) {
+                allChests[userName] = userChests;
+                localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+                loadLuckyChests(userName);
+            }
         }
-    } else {
-        console.log("Conditions not met, hiding Change Admin Password button");
-        if (changePasswordBtn) {
-            changePasswordBtn.style.display = "none";
+        
+        function loadLuckyChests(userName) {
+            const container = document.getElementById("luckyChestContainer");
+            const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+            const userChests = allChests[userName] || [];
+        
+            container.innerHTML = "";
+        
+            if (userChests.length === 0) {
+                container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
+                return;
+            }
+        
+            userChests.forEach((chest, index) => {
+                const isUnlocked = chest.progress >= chest.requiredPoints;
+                const chestImage = isUnlocked
+                    ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
+                    : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
+        
+                const card = document.createElement("div");
+                card.className = "lucky-chest-card";
+                if (!isUnlocked) {
+                    card.classList.add("locked");
+                }
+        
+                card.innerHTML = `
+                    <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
+                    <div class="info">
+                        <p>${isUnlocked ? 'CONGRATULATIONS! Chest unlocked!' : 'Unlock to reveal your reward!'}</p>
+                        <div class="lucky-chest-progress">
+                            Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
+                        </div>
+                    </div>
+                `;
+        
+                if (isUnlocked) {
+                    card.style.cursor = "pointer";
+                    card.addEventListener("click", () => revealLuckyChestReward(userName, chest, index, true));
+                }
+        
+                container.appendChild(card);
+            });
         }
-    }
-}
-
-// Run on page load
-document.addEventListener("DOMContentLoaded", () => {
-    console.log("Page loaded, running showAdminControlsIfNeeded");
-    showAdminControlsIfNeeded();
-});
-
-// Listen for changes to isAdmin or userPermissions across tabs
-window.addEventListener("storage", (event) => {
-    if (event.key === "isAdmin" || event.key === "userPermissions") {
-        console.log("Storage event detected for key:", event.key);
-        showAdminControlsIfNeeded();
-    }
-});
-
-// Run on page load
-document.addEventListener("DOMContentLoaded", () => {
-    showAdminControlsIfNeeded();
-});
-
-// Listen for changes to isAdmin across tabs
-window.addEventListener("storage", (event) => {
-    if (event.key === "isAdmin" || event.key === "userPermissions") {
-        showAdminControlsIfNeeded();
-    }
-});
-
-
-
-
-
-
-
-
-
-
-// Run on page load
-document.addEventListener("DOMContentLoaded", () => {
-    showAdminControlsIfNeeded();
-});
-
-// Listen for changes to isAdmin across tabs
-window.addEventListener("storage", (event) => {
-    if (event.key === "isAdmin") {
-        showAdminControlsIfNeeded();
-    }
-});
-
-
-    </script>
+        
+        function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = false) {
+            const overlay = document.getElementById("chestVideoOverlay");
+            const video = document.getElementById("chestVideo");
+            const audio = document.getElementById("chestUnlockSound");
+        
+            overlay.style.display = "flex";
+            video.currentTime = 0;
+            video.play();
+        
+            audio.currentTime = 0;
+            audio.play().catch(error => console.log("Audio playback failed:", error));
+        
+            let skipped = false;
+        
+            const skipVideo = () => {
+                if (skipped) return;
+                skipped = true;
+                video.pause();
+                audio.pause();
+                overlay.style.display = "none";
+                showLuckyChestRewardOverlay(userName, chest, chestIndex);
+            };
+        
+            overlay.addEventListener("click", skipVideo, { once: true });
+            video.onended = () => skipVideo();
+            video.onerror = () => skipVideo();
+        }
+        
+        function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
+            const flash = document.createElement("div");
+            flash.className = "flash-effect";
+            document.body.appendChild(flash);
+        
+            setTimeout(() => {
+                flash.remove();
+        
+                const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+                const userChests = allChests[userName] || [];
+                const currentChest = userChests[chestIndex];
+        
+                let rewardToShow;
+                const hasHoney = currentChest.honey !== undefined && currentChest.honey > 0;
+                const hasCustomReward = !currentChest.onlyHoney;
+        
+                if (hasCustomReward) {
+                    rewardToShow = {
+                        name: currentChest.name,
+                        quote: currentChest.quote || "",
+                        effect: currentChest.effect || "",
+                        image: currentChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+                    };
+                } else if (hasHoney) {
+                    rewardToShow = {
+                        name: `${currentChest.honey} Honey`,
+                        quote: currentChest.quote || "",
+                        effect: currentChest.effect || "",
+                        image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+                    };
+                }
+        
+                const rewardOverlay = document.createElement("div");
+                rewardOverlay.className = "reward-overlay";
+        
+                const modal = document.createElement("div");
+                modal.className = "modal-content reward-reveal";
+                modal.innerHTML = `
+                    <img src="${rewardToShow.image}" alt="Reward" class="reward-image">
+                    <h2 class="reward-title">${rewardToShow.name}</h2>
+                    <p class="reward-description">
+                        ${rewardToShow.quote ? `<em>"${rewardToShow.quote}"</em><br>` : ""}
+                        ${rewardToShow.effect || "You unlocked a surprise!"}
+                    </p>
+                    <button class="claim-button">Claim Reward</button>
+                `;
+        
+                rewardOverlay.addEventListener("click", (e) => {
+                    if (!e.target.closest(".modal-content")) rewardOverlay.remove();
+                });
+        
+                rewardOverlay.appendChild(modal);
+                document.body.appendChild(rewardOverlay);
+        
+                modal.querySelector(".claim-button").addEventListener("click", () => {
+                    claimLuckyChest(userName, chestIndex);
+                    rewardOverlay.remove();
+                });
+            }, 500);
+        }
+        
+        function claimLuckyChest(userName, chestIndex) {
+            const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+            const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+            const userChests = allChests[userName] || [];
+        
+            const claimedChest = userChests[chestIndex];
+            if (!claimedChest) {
+                console.log("No chest found at index", chestIndex);
+                return;
+            }
+        
+            console.log("Claiming chest:", claimedChest);
+        
+            if (!rewards[userName]) rewards[userName] = [];
+            const now = new Date();
+        
+            const hasHoney = claimedChest.honey !== undefined && claimedChest.honey > 0;
+            const hasCustomReward = !claimedChest.onlyHoney;
+            const isHoneyOnlyName = !hasHoney && claimedChest.name.endsWith(" Honey");
+        
+            if (claimedChest.type === "dice") {
+                console.log("Claiming dice chest");
+                rewards[userName].push({
+                    name: claimedChest.name,
+                    type: "dice",
+                    outcomes: claimedChest.outcomes,
+                    date: now.toLocaleDateString(),
+                    claimedAt: now.toISOString()
+                });
+                userChests.splice(chestIndex, 1);
+                allChests[userName] = userChests;
+                localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+            } else if (hasCustomReward && !isHoneyOnlyName) {
+                console.log("Claiming custom reward, hasHoney:", hasHoney);
+                rewards[userName].push({
+                    name: claimedChest.name,
+                    quote: claimedChest.quote || "",
+                    effect: claimedChest.effect || "",
+                    image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
+                    date: now.toLocaleDateString(),
+                    claimedAt: now.toISOString(),
+                    type: "normal"
+                });
+        
+                if (hasHoney) {
+                    const updatedChest = {
+                        name: `${claimedChest.honey} Honey`,
+                        quote: claimedChest.quote || "",
+                        effect: claimedChest.effect || "",
+                        honey: claimedChest.honey,
+                        image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
+                        requiredPoints: claimedChest.requiredPoints,
+                        progress: claimedChest.progress,
+                        onlyHoney: true
+                    };
+                    userChests[chestIndex] = updatedChest;
+                    allChests[userName] = userChests;
+                    console.log("Updated chest to honey-only:", updatedChest);
+                    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+                } else {
+                    userChests.splice(chestIndex, 1);
+                    allChests[userName] = userChests;
+                    console.log("No honey, removed chest");
+                    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+                }
+            } else if (hasHoney || isHoneyOnlyName) {
+                console.log("Claiming honey reward");
+                const honeyAmount = hasHoney ? claimedChest.honey : parseInt(claimedChest.name.split(" ")[0]);
+                rewards[userName].push({
+                    name: `${honeyAmount} Honey`,
+                    type: "Honey",
+                    amount: honeyAmount,
+                    date: now.toLocaleDateString()
+                });
+                userChests.splice(chestIndex, 1);
+                allChests[userName] = userChests;
+                console.log("Removed chest after honey claim");
+                localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+            }
+        
+            console.log("Saving rewards:", rewards[userName]);
+            localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
+        
+            loadLuckyChests(userName);
+        }
+        
+        function adjustContentTop() {
+            const header = document.querySelector(".date-header");
+            const content = document.querySelector(".content");
+            if (header && content) {
+                const headerHeight = header.getBoundingClientRect().height;
+                content.style.top = `${headerHeight}px`;
+            }
+        }
+        
+        function showAdminControlsIfNeeded() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentUser = urlParams.get('user');
+            const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
+            const isUserAdmin = userPermissions[currentUser] === "Admin";
+            const isLoggedInAsAdmin = localStorage.getItem("isAdmin") === "true";
+            const changePasswordBtn = document.getElementById("changePasswordBtn");
+        
+            if (isUserAdmin && isLoggedInAsAdmin) {
+                changePasswordBtn.style.display = "inline-block";
+                if (!changePasswordBtn.dataset.listenersAdded) {
+                    changePasswordBtn.addEventListener("click", () => {
+                        const modal = document.getElementById("changePasswordModal");
+                        modal.style.display = "flex";
+                        document.getElementById("newAdminPassword").value = "";
+                        document.getElementById("newAdminPassword").focus();
+                    });
+        
+                    document.getElementById("confirmChangePasswordBtn").addEventListener("click", () => {
+                        const newPassword = document.getElementById("newAdminPassword").value.trim();
+                        if (newPassword.length < 4) {
+                            alert("Password must be at least 4 characters.");
+                            return;
+                        }
+                        localStorage.setItem("adminPassword", newPassword);
+                        alert("Admin password updated!");
+                        document.getElementById("changePasswordModal").style.display = "none";
+                    });
+        
+                    document.getElementById("changePasswordModal").addEventListener("click", (e) => {
+                        if (e.target.id === "changePasswordModal") {
+                            document.getElementById("changePasswordModal").style.display = "none";
+                        }
+                    });
+        
+                    changePasswordBtn.dataset.listenersAdded = "true";
+                }
+            } else {
+                if (changePasswordBtn) changePasswordBtn.style.display = "none";
+            }
+        }
+        
+        window.addEventListener("resize", adjustContentTop);
+        window.addEventListener("load", adjustContentTop);
+        window.addEventListener("storage", (event) => {
+            if (event.key === "isAdmin" || event.key === "userPermissions") {
+                showAdminControlsIfNeeded();
+            }
+        });
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            showAdminControlsIfNeeded();
+        });
+        </script>
 
 <div id="chestVideoOverlay" style="
     display:none;
