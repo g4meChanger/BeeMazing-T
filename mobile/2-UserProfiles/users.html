@@ -955,9 +955,6 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
 
 
 
-
-        
-
         function finishTask(userName, task, button, selectedDate) {
     const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
     const taskIndex = tasks.findIndex(t => t.title === task.title && t.date === task.date);
@@ -1085,7 +1082,7 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
 
 
 
-        function giveHoneyReward(userName, amount) {
+function giveHoneyReward(userName, amount) {
     const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
     rewards[userName] = (rewards[userName] || 0) + amount;
     localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
@@ -1537,26 +1534,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-function removeUserReward(userName, rewardIndex) {
-    const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
-    const rewardHistory = JSON.parse(localStorage.getItem("familyApp_reward_history")) || {};
-
-    const userRewards = rewards[userName] || [];
-    if (userRewards.length > rewardIndex) {
-        const reward = userRewards.splice(rewardIndex, 1)[0];
-
-        reward.receivedDate = new Date().toLocaleString();
-
-        if (!rewardHistory[userName]) rewardHistory[userName] = [];
-        rewardHistory[userName].push(reward);
-
-        rewards[userName] = userRewards;
-
-        localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
-        localStorage.setItem("familyApp_reward_history", JSON.stringify(rewardHistory));
-    }
-}
 
     </script>
 
