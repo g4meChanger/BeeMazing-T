@@ -515,16 +515,22 @@ function confirmKeyTransfer() {
 
 
     document.getElementById("sendTaskBtn").addEventListener("click", () => {
+    // 1. Play sound immediately
     const sound = document.getElementById("headshotSound");
     if (sound) {
-        sound.currentTime = 0; // ensure it plays from start
-        sound.play().catch(err => {
-            console.warn("Sound play blocked:", err);
-        });
+        sound.currentTime = 0;
+        sound.play().catch(err => console.warn("Sound play blocked:", err));
     }
 
-    confirmKeyTransfer();
+    // 2. Close the popup visually
+    document.getElementById("keyPopup").style.display = "none";
+
+    // 3. Trigger the logic
+    setTimeout(() => {
+        confirmKeyTransfer();
+    }, 10); // small delay to avoid UI race
 });
+
 
 
 
