@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Login - BeeMazing</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
@@ -13,20 +13,31 @@
       --light-bg: #1E1F26;
       --text-color: #FFFFFF;
       --danger-color: #D32F2F;
+      --border-dark: #444754;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
       font-family: 'Poppins', sans-serif;
       background-color: var(--light-bg);
       color: var(--text-color);
-      margin: 0;
-      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wrapper {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      position: relative;
+      padding: 20px;
     }
 
     .top-left {
@@ -39,6 +50,7 @@
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
+      z-index: 10;
     }
 
     h1 {
@@ -46,13 +58,14 @@
       font-size: 32px;
       letter-spacing: 1px;
       color: var(--primary-color);
+      text-align: center;
     }
 
     .button-container {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      width: 80%;
+      width: 100%;
       max-width: 300px;
     }
 
@@ -77,7 +90,7 @@
       flex-direction: column;
       align-items: center;
       margin-top: 20px;
-      width: 80%;
+      width: 100%;
       max-width: 300px;
     }
 
@@ -85,7 +98,7 @@
       width: 100%;
       padding: 10px;
       border-radius: 8px;
-      border: 2px solid #444754;
+      border: 2px solid var(--border-dark);
       background: var(--accent-color);
       color: white;
       margin-bottom: 10px;
@@ -96,9 +109,9 @@
       color: var(--danger-color);
       font-size: 14px;
       margin-top: 5px;
+      text-align: center;
     }
 
-    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -122,7 +135,7 @@
       width: 90%;
       max-width: 400px;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-      border: 2px solid #444754;
+      border: 2px solid var(--border-dark);
     }
 
     .modal-content input {
@@ -131,7 +144,7 @@
       margin: 10px 0;
       background: var(--accent-color);
       color: white;
-      border: 2px solid #444754;
+      border: 2px solid var(--border-dark);
       border-radius: 8px;
       font-size: 16px;
     }
@@ -139,26 +152,35 @@
     .modal-content button {
       margin-top: 10px;
     }
+
+    @media (max-height: 600px) {
+      .wrapper {
+        justify-content: flex-start;
+        padding-top: 80px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="top-left" id="setPasswordBtn">Set Admin Password</div>
 
-  <h1>BeeMazing</h1>
+  <div class="wrapper">
+    <h1>BeeMazing</h1>
 
-  <div class="button-container">
-    <button class="login-btn" id="adminBtn">Admin</button>
-    <button class="login-btn" id="userBtn">User</button>
+    <div class="button-container">
+      <button class="login-btn" id="adminBtn">Admin</button>
+      <button class="login-btn" id="userBtn">User</button>
+    </div>
+
+    <div id="passwordPrompt">
+      <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password" />
+      <button class="login-btn" id="submitPasswordBtn">Login</button>
+      <div class="error" id="passwordError"></div>
+    </div>
   </div>
 
-  <div id="passwordPrompt">
-    <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password" />
-    <button class="login-btn" id="submitPasswordBtn">Login</button>
-    <div class="error" id="passwordError"></div>
-  </div>
-
-  <!-- Modal to set admin password -->
+  <!-- Modal -->
   <div class="modal" id="adminModal">
     <div class="modal-content">
       <h3>Set Admin Password</h3>

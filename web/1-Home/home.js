@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Determine if this user is admin
     const isAdmin = localStorage.getItem("isAdmin") === "true";
-    
+
     const addUserBtn = document.getElementById("addUserBtn");
     if (!isAdmin && addUserBtn) {
         addUserBtn.style.display = "none";
@@ -116,17 +116,18 @@ document.addEventListener("DOMContentLoaded", function () {
             newUserItem.appendChild(userNameSpan);
 
             // Add remove button only for mobile version
-            if (isMobile) {
-                const removeBtn = document.createElement("button");
-                removeBtn.classList.add("remove-user-btn");
-                removeBtn.textContent = "X";
-                removeBtn.addEventListener("click", function (event) {
-                    event.stopPropagation();
-                    showConfirmModal(username);
-                });
-                
-                newUserItem.appendChild(removeBtn);
-            }
+        if (isMobile && isAdmin) {
+    const removeBtn = document.createElement("button");
+    removeBtn.classList.add("remove-user-btn");
+    removeBtn.textContent = "X";
+    removeBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        showConfirmModal(username);
+    });
+
+    newUserItem.appendChild(removeBtn);
+}
+
 
             userList.appendChild(newUserItem);
         });
