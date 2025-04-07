@@ -705,6 +705,63 @@
 
 
 
+
+.lucky-chest-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-top: 10px;
+    display: flex;
+    gap: 20px; /* increased spacing between image and text */
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.lucky-chest-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    flex-shrink: 0;
+    border-radius: 12px;
+}
+
+.lucky-chest-card .info {
+    flex: 1;
+    padding-left: 10px;
+}
+
+.lucky-chest-card .info p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--text-color);
+}
+
+.lucky-chest-progress {
+    font-weight: bold;
+    color: var(--text-color);
+    margin-top: 6px;
+}
+
+.lucky-chest-card:hover img {
+    animation: pulse 1s infinite;
+}
+
+.lucky-chest-card.locked img {
+    opacity: 0.8;
+    filter: grayscale(50%);
+}
+
+.pulse {
+    animation: pulse 1.2s ease-in-out infinite;
+}
+
+
+
+
+
+
     </style>
 </head>
 <body>
@@ -730,7 +787,7 @@
 
                    <!-- 🎁 Lucky Chest Section -->
 <div class="lucky-chests-section">
-    <h3 style="margin-top: 30px; color: var(--primary-color);">🎁 Lucky Chests</h3>
+    <h3 style="margin-top: 30px; color: var(--primary-color);">🕋 Lucky Chests</h3>
     <div id="luckyChestContainer"></div>
   </div>
 
@@ -788,25 +845,58 @@
 
 
 
+// At the top of the script, after URL parameter parsing
+const urlParams = new URLSearchParams(window.location.search);
+const userName = urlParams.get('user');
+const addPoints = Number(urlParams.get('addPoints')) || 0;
 
-
-
-
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const userName = urlParams.get('user');
-
-        if (userName) {
+if (userName) {
     document.getElementById('profileName').textContent = userName;
     document.getElementById('userName').textContent = userName;
     document.getElementById('rewardsButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
     document.getElementById('marketButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
-    // 🆕 add this line
     document.getElementById('profileButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${userName}`;
 
     loadUserTasks(userName);
     loadUserReward(userName);
+
+    // Handle addPoints from userrewards.html "Get it"
+    if (addPoints > 0) {
+        setTimeout(() => {
+            // Add honey to user's total in familyApp_rewards
+            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+            rewards[userName] = (rewards[userName] || 0) + addPoints;
+            localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+            
+            // Trigger honey rain effect
+            triggerHoneyRain(addPoints);
+            
+            // Update displayed reward amount
+            loadUserReward(userName);
+        }, 500); // Small delay for page load
+    }
 }
+
+
+
+
+
+
+
+
+
+// Highlight the correct footer icon after hrefs are set
+document.querySelectorAll('.footer a').forEach(link => {
+    const currentPath = window.location.pathname.replace(/\/$/, '');
+    const linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '');
+    if (currentPath === linkPath) {
+        link.classList.add('active');
+    } else {
+        link.classList.remove('active');
+    }
+});
+
+// ... (rest of the script remains unchanged)
 
 
 
@@ -1025,7 +1115,11 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
     tasks[taskIndex] = task;
     localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
 
-    if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
+    playFinishTaskSound();
+
+
+if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
+
     if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
     if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
     if (typeof loadUserReward === 'function') loadUserReward(userName);
@@ -1053,27 +1147,34 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
         }
 
         function triggerHoneyRain(rewardAmount) {
-            for (let i = 0; i < 50; i++) {
-                const drop = document.createElement("div");
-                drop.className = "honey-drop";
-                drop.style.left = `${Math.random() * 100}vw`;
-                drop.style.animationDelay = `${Math.random() * 0.5}s`;
-                document.body.appendChild(drop);
-                setTimeout(() => drop.remove(), 2000);
-            }
-            const popup = document.createElement("div");
-            popup.className = "reward-popup";
-            popup.textContent = `+${rewardAmount} 🍯`;
-            document.body.appendChild(popup);
-            setTimeout(() => {
-                const rewardElement = document.getElementById("rewardAmount");
-                rewardElement.classList.add("pulse");
-                setTimeout(() => {
-                    rewardElement.classList.remove("pulse");
-                    popup.remove();
-                }, 1000);
-            }, 1000);
-        }
+    // ✅ Use the new Web Audio API version of the sound
+    playFinishTaskSound();
+
+    for (let i = 0; i < 50; i++) {
+        const drop = document.createElement("div");
+        drop.className = "honey-drop";
+        drop.style.left = `${Math.random() * 100}vw`;
+        drop.style.animationDelay = `${Math.random() * 0.5}s`;
+        document.body.appendChild(drop);
+        setTimeout(() => drop.remove(), 2000);
+    }
+
+    const popup = document.createElement("div");
+    popup.className = "reward-popup";
+    popup.textContent = `+${rewardAmount} 🍯`;
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+        const rewardElement = document.getElementById("rewardAmount");
+        rewardElement.classList.add("pulse");
+        setTimeout(() => {
+            rewardElement.classList.remove("pulse");
+            popup.remove();
+        }, 1000);
+    }, 1000);
+}
+
+
 
         function showTaskDetails(task) {
             const taskDetails = `
@@ -1273,7 +1374,6 @@ function updateLuckyChestProgress(userName, earnedHoney) {
 
 
 
-
 function loadLuckyChests(userName) {
     const container = document.getElementById("luckyChestContainer");
     const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
@@ -1288,20 +1388,21 @@ function loadLuckyChests(userName) {
 
     userChests.forEach((chest, index) => {
         const isUnlocked = chest.progress >= chest.requiredPoints;
-
         const chestImage = isUnlocked
             ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
             : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
 
         const card = document.createElement("div");
         card.className = "lucky-chest-card";
-        if (!isUnlocked) card.classList.add("locked");
+        if (!isUnlocked) {
+            card.classList.add("locked"); // Apply locked styling
+        }
 
+        // Show text and progress for both locked and unlocked, with different messages
         card.innerHTML = `
             <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
             <div class="info">
-                <h4></h4>
-                <p>Unlock to reveal your reward!</p>
+                <p>${isUnlocked ? 'CONGRATULATIONS! Chest unlocked!' : 'Unlock to reveal your reward!'}</p>
                 <div class="lucky-chest-progress">
                     Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
                 </div>
@@ -1311,8 +1412,8 @@ function loadLuckyChests(userName) {
         if (isUnlocked) {
             card.style.cursor = "pointer";
             card.addEventListener("click", () => {
-    revealLuckyChestReward(userName, chest, index, true);
-});
+                revealLuckyChestReward(userName, chest, index, true);
+            });
         }
 
         container.appendChild(card);
@@ -1324,15 +1425,20 @@ function loadLuckyChests(userName) {
 
 
 
-
-
 function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = false) {
     const overlay = document.getElementById("chestVideoOverlay");
     const video = document.getElementById("chestVideo");
+    const audio = document.getElementById("chestUnlockSound"); // Get the audio element
 
     overlay.style.display = "flex";
     video.currentTime = 0;
     video.play();
+
+    // Play the sound effect
+    audio.currentTime = 0; // Reset sound to start
+    audio.play().catch(error => {
+        console.log("Audio playback failed:", error); // Handle potential autoplay issues
+    });
 
     let skipped = false;
 
@@ -1341,27 +1447,15 @@ function revealLuckyChestReward(userName, chest, chestIndex, isUserAction = fals
         skipped = true;
 
         video.pause();
+        audio.pause(); // Pause the sound when skipping
         overlay.style.display = "none";
         showLuckyChestRewardOverlay(userName, chest, chestIndex);
     };
 
-    // Skip on tap/click
     overlay.addEventListener("click", skipVideo, { once: true });
-
     video.onended = () => skipVideo();
     video.onerror = () => skipVideo();
 }
-
-
-
-
-
-
-
-
-
-
-
 
 function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
     const flash = document.createElement("div");
@@ -1371,9 +1465,31 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
     setTimeout(() => {
         flash.remove();
 
-        const image = chest.image && chest.image.trim() !== ""
-            ? (chest.image.startsWith("/") ? chest.image : "/" + chest.image)
-            : "https://cdn-icons-png.flaticon.com/512/766/766544.png";
+        const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+        const userChests = allChests[userName] || [];
+        const currentChest = userChests[chestIndex];
+
+        let rewardToShow;
+        const hasHoney = currentChest.honey !== undefined && currentChest.honey > 0;
+        const hasCustomReward = !currentChest.onlyHoney;
+
+        if (hasCustomReward) {
+            // Show custom reward first
+            rewardToShow = {
+                name: currentChest.name,
+                quote: currentChest.quote || "",
+                effect: currentChest.effect || "",
+                image: currentChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+            };
+        } else if (hasHoney) {
+            // Show honey second
+            rewardToShow = {
+                name: `${currentChest.honey} Honey`,
+                quote: currentChest.quote || "",
+                effect: currentChest.effect || "",
+                image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+            };
+        }
 
         const rewardOverlay = document.createElement("div");
         rewardOverlay.className = "reward-overlay";
@@ -1381,13 +1497,12 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
         const modal = document.createElement("div");
         modal.className = "modal-content reward-reveal";
         modal.innerHTML = `
-            <img src="${image}" alt="Reward" class="reward-image">
-            <h2 class="reward-title">${chest.name}</h2>
+            <img src="${rewardToShow.image}" alt="Reward" class="reward-image">
+            <h2 class="reward-title">${rewardToShow.name}</h2>
             <p class="reward-description">
-  ${chest.quote ? `<em>"${chest.quote}"</em><br>` : ""}
-  ${chest.effect || "You unlocked a surprise!"}
-</p>
-
+                ${rewardToShow.quote ? `<em>"${rewardToShow.quote}"</em><br>` : ""}
+                ${rewardToShow.effect || "You unlocked a surprise!"}
+            </p>
             <button class="claim-button">Claim Reward</button>
         `;
 
@@ -1407,57 +1522,91 @@ function showLuckyChestRewardOverlay(userName, chest, chestIndex) {
     }, 500);
 }
 
-
-
-
-
-
-
 function claimLuckyChest(userName, chestIndex) {
     const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
     const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
     const userChests = allChests[userName] || [];
 
     const claimedChest = userChests[chestIndex];
-    if (!claimedChest) return;
+    if (!claimedChest) {
+        console.log("No chest found at index", chestIndex);
+        return;
+    }
 
-    // Add to user's rewards
+    console.log("Claiming chest:", claimedChest);
+
     if (!rewards[userName]) rewards[userName] = [];
     const now = new Date();
 
-    if (claimedChest.honey) {
-        // 🟡 It's a honey reward
-        rewards[userName].push({
-            name: `${claimedChest.honey} Honey`,
-            type: "Honey",
-            amount: claimedChest.honey,
-            date: now.toLocaleDateString()
-        });
-    } else {
-        // 🟡 It's a normal or dice-type reward
+    const hasHoney = claimedChest.honey !== undefined && claimedChest.honey > 0;
+    const hasCustomReward = !claimedChest.onlyHoney;
+    const isHoneyOnlyName = !hasHoney && claimedChest.name.endsWith(" Honey");
+
+    if (claimedChest.type === "dice") {
+        console.log("Claiming dice chest");
         rewards[userName].push({
             name: claimedChest.name,
-            description: claimedChest.description,
-            image: claimedChest.image,
+            type: "dice",
+            outcomes: claimedChest.outcomes,
+            date: now.toLocaleDateString(),
+            claimedAt: now.toISOString()
+        });
+        userChests.splice(chestIndex, 1);
+        allChests[userName] = userChests;
+        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    } else if (hasCustomReward && !isHoneyOnlyName) {
+        console.log("Claiming custom reward, hasHoney:", hasHoney);
+        rewards[userName].push({
+            name: claimedChest.name,
+            quote: claimedChest.quote || "",
+            effect: claimedChest.effect || "",
+            image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
             date: now.toLocaleDateString(),
             claimedAt: now.toISOString(),
-            type: claimedChest.type || "normal",
-            outcomes: claimedChest.outcomes || []
+            type: "normal"
         });
+
+        if (hasHoney) {
+            const updatedChest = {
+                name: `${claimedChest.honey} Honey`,
+                quote: claimedChest.quote || "",
+                effect: claimedChest.effect || "",
+                honey: claimedChest.honey,
+                image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
+                requiredPoints: claimedChest.requiredPoints,
+                progress: claimedChest.progress,
+                onlyHoney: true
+            };
+            userChests[chestIndex] = updatedChest;
+            allChests[userName] = userChests;
+            console.log("Updated chest to honey-only:", updatedChest);
+            localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+        } else {
+            userChests.splice(chestIndex, 1);
+            allChests[userName] = userChests;
+            console.log("No honey, removed chest");
+            localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+        }
+    } else if (hasHoney || isHoneyOnlyName) {
+        console.log("Claiming honey reward");
+        const honeyAmount = hasHoney ? claimedChest.honey : parseInt(claimedChest.name.split(" ")[0]);
+        rewards[userName].push({
+            name: `${honeyAmount} Honey`,
+            type: "Honey",
+            amount: honeyAmount,
+            date: now.toLocaleDateString()
+        });
+        userChests.splice(chestIndex, 1);
+        allChests[userName] = userChests;
+        console.log("Removed chest after honey claim");
+        localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
     }
 
-    // Remove the chest after claiming
-    userChests.splice(chestIndex, 1);
-    allChests[userName] = userChests;
-
-    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    console.log("Saving rewards:", rewards[userName]);
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
 
-    loadLuckyChests(userName); // Refresh UI
+    loadLuckyChests(userName);
 }
-
-
-
 
 function adjustContentTop() {
     const header = document.querySelector(".date-header");
@@ -1506,10 +1655,109 @@ style="
 <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
 Your browser does not support the video tag.
 </video>
+<audio id="chestUnlockSound" preload="auto">
+    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestUnlock.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+</audio>
 
-
+<audio id="finishTaskSound" preload="auto">
+    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/FinishTask.mp3" type="audio/mp3" />
+    Your browser does not support the audio element.
+  </audio>
 </div>
 
+
+<script>
+    let finishTaskBuffer = null;
+    let audioContext = null;
+    
+    async function initializeAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // Create a silent buffer to "unlock" the AudioContext on iOS
+            const silentBuffer = audioContext.createBuffer(1, 1, 22050);
+            const source = audioContext.createBufferSource();
+            source.buffer = silentBuffer;
+            source.connect(audioContext.destination);
+            source.start(0);
+            // Ensure the context is running
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+        }
+    }
+    
+    async function loadFinishTaskSound() {
+        try {
+            await initializeAudioContext(); // Ensure AudioContext is ready
+            const response = await fetch('/BeeMazing-Y1/mobile/4-Market/LuckyChest/FinishTask.mp3');
+            const arrayBuffer = await response.arrayBuffer();
+            finishTaskBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            console.log("Finish Task sound preloaded successfully");
+        } catch (e) {
+            console.error("Failed to preload Finish Task sound:", e);
+        }
+    }
+    
+    function playFinishTaskSound() {
+        if (!audioContext || !finishTaskBuffer) {
+            console.warn("Audio not ready yet");
+            return;
+        }
+        
+        // Resume AudioContext if suspended (iOS requires this on user gesture)
+        if (audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                playSound();
+            });
+        } else {
+            playSound();
+        }
+    }
+    
+    function playSound() {
+        const source = audioContext.createBufferSource();
+        source.buffer = finishTaskBuffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+    }
+    
+    // Start preloading the sound immediately
+    (async () => {
+        await loadFinishTaskSound();
+    })();
+    
+    // Unlock AudioContext on first user interaction with debug logs
+    document.addEventListener("touchstart", () => {
+        console.log("Touchstart event fired");
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume().then(() => {
+                console.log("AudioContext resumed on touch");
+            });
+        }
+    }, { once: true });
+    
+    // Preload the sound on page load (redundant now with IIFE, but kept as fallback)
+    window.addEventListener("load", () => {
+        loadFinishTaskSound();
+    });
+    
+    // Fallback for silent pre-playback using <audio> element
+    window.addEventListener("load", () => {
+        const finishAudio = document.getElementById("finishTaskSound");
+        if (finishAudio) {
+            finishAudio.volume = 0;
+            finishAudio.play().then(() => {
+                finishAudio.pause();
+                finishAudio.currentTime = 0;
+                finishAudio.volume = 1;
+                console.log("Silent pre-playback succeeded");
+            }).catch(err => {
+                console.warn("Silent pre-playback failed:", err);
+            });
+        }
+    });
+</script>
 
 </body>
 </html>
