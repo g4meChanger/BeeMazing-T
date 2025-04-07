@@ -296,8 +296,11 @@ let keyTransferData = null;
       ? `useTheKey('${userName}', ${actualIndex})` 
       : isDiceChest 
         ? `useDiceChest('${userName}', ${actualIndex})`
-        : `redeemReward('${userName}', ${actualIndex})`}">
-      ${isTheKey || isDiceChest ? "Use it" : "Received"}
+        : reward.type === "Honey (amount)" || reward.type === "honey"
+    ? `claimPoints('${userName}', ${actualIndex})`
+    : `redeemReward('${userName}', ${actualIndex})`}">
+    ${isTheKey || isDiceChest ? "Use it" : (reward.type === "Honey (amount)" || reward.type === "honey" ? "Get it" : "Received")}
+
   </button>
 `;
 
@@ -479,6 +482,41 @@ function confirmKeyTransfer() {
     });
     
     
+
+
+
+
+
+
+    function claimPoints(userName, rewardIndex) {
+    const userRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+    const rewards = userRewards[userName] || [];
+    const reward = rewards[rewardIndex];
+
+    if (!reward || !(reward.type === "Honey (amount)" || reward.type === "honey")) {
+        alert("Invalid reward");
+        return;
+    }
+
+    const amount = parseInt(reward.value || reward.amount || 0);
+    if (isNaN(amount) || amount <= 0) {
+        alert("Invalid honey amount");
+        return;
+    }
+
+    // Remove the reward from user rewards
+    rewards.splice(rewardIndex, 1);
+    userRewards[userName] = rewards;
+    localStorage.setItem("familyApp_user_rewards", JSON.stringify(userRewards));
+
+    // Send the user to users.html and add points
+    window.location.href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${encodeURIComponent(userName)}&addPoints=${amount}`;
+}
+
+
+
+
+
     </script>
 
   

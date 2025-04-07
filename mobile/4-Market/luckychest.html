@@ -337,7 +337,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest 17</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest 18</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -391,7 +391,7 @@
         <input type="text" id="newChestEffect" placeholder="Reward effect" />
       </div>
       <div class="form-group">
-        <label>Honey (optional):</label>
+        <label>Points (optional):</label>
         <input type="number" id="newChestHoney" min="0" placeholder="e.g. 50" />
       </div>
       <div class="form-group">
@@ -468,7 +468,7 @@
         <h4>${chest.name}</h4>
         <div class="quote">"${chest.quote || 'No quote provided'}"</div>
         <div class="effect">${chest.effect || 'No effect provided'}</div>
-        ${chest.honey !== undefined && chest.honey !== "" ? `<div class="honey">Honey: ${chest.honey}</div>` : ''}
+        ${chest.honey !== undefined && chest.honey !== "" ? `<div class="honey">Points: ${chest.honey}</div>` : ''}
       `;
       card.addEventListener("click", () => {
         console.log(`Card clicked for ${chest.name}, opening modal`);
@@ -624,7 +624,7 @@
 
       const honeyValue = honey ? parseInt(honey) : ""; // Convert to number if provided, else empty string
       if (honey && (isNaN(honeyValue) || honeyValue < 0)) {
-        alert("Honey must be a non-negative number");
+        alert("Points must be a non-negative number");
         return;
       }
 
@@ -635,7 +635,7 @@
 
       // Require at least name or honey to proceed
       if (!name) {
-        alert("Please provide at least a Name or a Honey amount");
+        alert("Please provide at least a Name or a Point value");
         return;
       }
 
