@@ -782,6 +782,16 @@
 
     <div class="content">
         <div class="profile-card">
+
+            <div class="modal" id="changePasswordModal" style="display: none;">
+                <div class="modal-content">
+                  <h3>Change Admin Password</h3>
+                  <input type="password" id="newAdminPassword" placeholder="Enter new password" />
+                  <button id="confirmChangePasswordBtn">Update Password</button>
+                </div>
+              </div>
+
+              
             <h1 id="profileName">Bee Name</h1>
             <p>Welcome to the hive of <span id="userName"></span>.</p>
 
@@ -1612,6 +1622,43 @@ window.addEventListener("resize", adjustContentTop);
 window.addEventListener("load", adjustContentTop);
 
 
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+
+    if (isAdmin) {
+        const changePasswordBtn = document.getElementById("changePasswordBtn");
+        changePasswordBtn.style.display = "inline-block";
+
+        changePasswordBtn.addEventListener("click", () => {
+            const modal = document.getElementById("changePasswordModal");
+            modal.style.display = "flex";
+            document.getElementById("newAdminPassword").value = "";
+            document.getElementById("newAdminPassword").focus();
+        });
+
+        document.getElementById("confirmChangePasswordBtn").addEventListener("click", () => {
+            const newPassword = document.getElementById("newAdminPassword").value.trim();
+            if (newPassword.length < 4) {
+                alert("Password must be at least 4 characters.");
+                return;
+            }
+            localStorage.setItem("adminPassword", newPassword);
+            alert("Admin password updated!");
+            document.getElementById("changePasswordModal").style.display = "none";
+        });
+
+        document.getElementById("changePasswordModal").addEventListener("click", (e) => {
+            if (e.target.id === "changePasswordModal") {
+                document.getElementById("changePasswordModal").style.display = "none";
+            }
+        });
+    }
+});
 
 
 

@@ -349,7 +349,6 @@ body {
 
     <div id="logoutContainer" class="logout-container">
         <button id="logoutBtn">Logout</button>
-        <button id="changePasswordBtn" style="margin-left: 10px; display: none;">Change Admin Password</button>
       </div>
       
 
@@ -382,20 +381,13 @@ body {
 
 <div class="modal" id="permissionModal">
     <div class="modal-content">
-      <h3 id="permissionModalUser">Permissions</h3>
-      <select id="permissionSelect" style="width: 100%; padding: 10px; border-radius: 8px; margin-top: 10px;">
+      <h3>Edit Permissions</h3>
+      <p id="permissionModalUser" style="margin-bottom: 10px;"></p>
+      <select id="permissionSelect" style="width: 100%; padding: 10px; font-size: 16px; border-radius: 8px; margin-bottom: 20px;">
         <option value="User">User</option>
         <option value="Admin">Admin</option>
       </select>
-      <button class="login-btn" id="savePermissionBtn" style="margin-top: 20px;">Save</button>
-    </div>
-  </div>
-  
-  <div class="modal" id="changePasswordModal">
-    <div class="modal-content">
-      <h3>Change Admin Password</h3>
-      <input type="password" id="newAdminPassword" placeholder="Enter new password" />
-      <button class="login-btn" id="confirmChangePasswordBtn">Update Password</button>
+      <button id="savePermissionBtn">Save</button>
     </div>
   </div>
   

@@ -305,7 +305,6 @@ confirmChangePasswordBtn.addEventListener("click", () => {
 document.getElementById("changePasswordModal").addEventListener("click", (e) => {
   if (e.target.id === "changePasswordModal") {
     document.getElementById("changePasswordModal").classList.remove("show");
-    document.getElementById("newAdminPassword").value = "";
   }
 });
 
