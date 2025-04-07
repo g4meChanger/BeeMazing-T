@@ -410,6 +410,10 @@ function useTheKey(userName, rewardIndex) {
 
 
 function confirmKeyTransfer() {
+ // 🔊 Play sound
+    const sound = document.getElementById("headshotSound");
+    if (sound) sound.play();
+
     const { userName, rewardIndex } = keyTransferData;
     const selectedTask = document.getElementById("taskSelect").value;
     const selectedUser = document.getElementById("userSelect").value;
@@ -512,5 +516,11 @@ function confirmKeyTransfer() {
     </script>
 
   
+
+
+<audio id="headshotSound" src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/headshot.mp3" preload="auto"></audio>
+
+
+
 </body>
 </html>
