@@ -265,49 +265,46 @@ let keyTransferData = null;
 
 
     function loadUserRewards(userName) {
-    const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
-    const userRewards = rewards[userName] || [];
+    const userRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+    const rewards = userRewards[userName] || [];
+    const rewardList = document.getElementById("rewardList");
 
-    const container = document.getElementById("rewardList");
-    container.innerHTML = "";
-
-    if (userRewards.length === 0) {
-        container.innerHTML = "<p>No rewards yet.</p>";
+    rewardList.innerHTML = "";
+    if (rewards.length === 0) {
+        rewardList.innerHTML = "<p>No rewards in the hive yet.</p>";
         return;
     }
 
-    userRewards.forEach((reward, index) => {
-        const card = document.createElement("div");
-        card.className = "reward-card";
-        card.innerHTML = `
-            <img src="${reward.image || '/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png'}" alt="${reward.name}" class="reward-image">
-            <div class="reward-info">
-                <h3>${reward.name}</h3>
-                <p>${reward.description || reward.effect || ""}</p>
-                <p><em>${reward.date || ''}</em></p>
-                <button class="reward-btn">${reward.type === "Honey" ? "Get it" : "Received"}</button>
-            </div>
-        `;
+    const reversedRewards = [...rewards].reverse();
 
-        const button = card.querySelector(".reward-btn");
+    reversedRewards.forEach((reward, index) => {
+        const actualIndex = rewards.length - 1 - index;
 
-        if (reward.type === "Honey") {
-            // 🎁 Redirect to users.html with honey
-            button.addEventListener("click", () => {
-                const amount = reward.amount || parseInt(reward.name) || 0;
-                const url = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${encodeURIComponent(userName)}&addPoints=${amount}`;
-                window.location.href = url;
-            });
-        } else {
-            // ✅ Mark reward as received
-            button.addEventListener("click", () => {
-                markRewardAsReceived(userName, index);
-            });
-        }
+        const rewardItem = document.createElement("li");
+        rewardItem.className = "reward-item";
 
-        container.appendChild(card);
+        const isTheKey = reward.name === "The Key";
+        const isDiceChest = reward.type === "dice";
+
+
+        rewardItem.innerHTML = `
+  <div class="reward-details">
+      <strong>${reward.name}</strong><br>
+      Collected on: ${reward.date}
+  </div>
+  <button class="redeem-btn" onclick="${isTheKey 
+      ? `useTheKey('${userName}', ${actualIndex})` 
+      : isDiceChest 
+        ? `useDiceChest('${userName}', ${actualIndex})`
+        : `redeemReward('${userName}', ${actualIndex})`}">
+      ${isTheKey || isDiceChest ? "Use it" : "Received"}
+  </button>
+`;
+
+        rewardList.appendChild(rewardItem);
     });
 }
+
 
 
 
