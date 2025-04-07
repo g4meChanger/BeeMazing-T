@@ -410,9 +410,6 @@ function useTheKey(userName, rewardIndex) {
 
 
 function confirmKeyTransfer() {
- // 🔊 Play sound
-    const sound = document.getElementById("headshotSound");
-    if (sound) sound.play();
 
     const { userName, rewardIndex } = keyTransferData;
     const selectedTask = document.getElementById("taskSelect").value;
@@ -498,7 +495,7 @@ function confirmKeyTransfer() {
       <select id="taskSelect" style="width: 100%; padding: 8px; margin-bottom: 10px;"></select>
       <label>Select user:</label>
       <select id="userSelect" style="width: 100%; padding: 8px; margin-bottom: 15px;"></select>
-      <button class="redeem-btn" onclick="confirmKeyTransfer()">Send Task</button>
+      <button class="redeem-btn" id="sendTaskBtn">Send Task</button>
     </div>
   </div>
 
@@ -513,6 +510,24 @@ function confirmKeyTransfer() {
     });
     
     
+
+
+
+    document.getElementById("sendTaskBtn").addEventListener("click", () => {
+    const sound = document.getElementById("headshotSound");
+    if (sound) {
+        sound.currentTime = 0; // ensure it plays from start
+        sound.play().catch(err => {
+            console.warn("Sound play blocked:", err);
+        });
+    }
+
+    confirmKeyTransfer();
+});
+
+
+
+
     </script>
 
   
