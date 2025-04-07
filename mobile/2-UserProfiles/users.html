@@ -955,6 +955,9 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
 
 
 
+
+        
+
         function finishTask(userName, task, button, selectedDate) {
     const tasks = JSON.parse(localStorage.getItem("familyApp_tasks")) || [];
     const taskIndex = tasks.findIndex(t => t.title === task.title && t.date === task.date);
@@ -1247,24 +1250,33 @@ generateScrollableDates();
 
 
 
-
 document.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const userName = urlParams.get('user');
+    const params = new URLSearchParams(window.location.search);
+    const userName = params.get("user");
+    const addPoints = parseInt(params.get("addPoints"));
+    const removeRewardIndex = parseInt(params.get("removeReward"));
 
-  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-  const userChests = allChests[userName] || [];
+    if (userName) {
+        if (!isNaN(addPoints) && addPoints > 0) {
+            giveHoneyReward(userName, addPoints);
+        }
 
-  const container = document.getElementById("luckyChestContainer");
-
-  if (userChests.length === 0) {
-    container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
-    return;
-  }
-
-  // ✅ Just use the dynamic loader now
-  loadLuckyChests(userName);
+        if (!isNaN(removeRewardIndex)) {
+            removeUserReward(userName, removeRewardIndex);
+        }
+    }
 });
+
+function removeUserReward(userName, rewardIndex) {
+    const rewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+    const userRewards = rewards[userName] || [];
+    if (userRewards.length > rewardIndex) {
+        userRewards.splice(rewardIndex, 1);
+        rewards[userName] = userRewards;
+        localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
+    }
+}
+
 
 
 
