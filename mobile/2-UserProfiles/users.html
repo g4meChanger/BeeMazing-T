@@ -1337,7 +1337,6 @@ function loadLuckyChests(userName) {
         card.innerHTML = `
             <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
             <div class="info">
-                <h4>${displayName}</h4>
                 <p>Unlock to reveal your reward!</p>
                 <div class="lucky-chest-progress">
                     Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯

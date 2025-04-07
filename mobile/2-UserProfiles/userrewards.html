@@ -285,6 +285,9 @@ let keyTransferData = null;
         const rewardItem = document.createElement("li");
         rewardItem.className = "reward-item";
 
+        const isTheKey = reward.name === "The Key";
+        const isDiceChest = reward.type === "dice";
+
         const rewardDetails = document.createElement("div");
         rewardDetails.className = "reward-details";
         rewardDetails.innerHTML = `<strong>${reward.name}</strong><br>Collected on: ${reward.date}`;
@@ -320,6 +323,12 @@ let keyTransferData = null;
                     alert("Invalid honey amount!");
                 }
             };
+        } else if (isTheKey) {
+            button.textContent = "Use it";
+            button.onclick = () => useTheKey(userName, actualIndex);
+        } else if (isDiceChest) {
+            button.textContent = "Use it";
+            button.onclick = () => useDiceChest(userName, actualIndex);
         } else {
             button.textContent = "Received";
             button.onclick = () => redeemReward(userName, actualIndex);

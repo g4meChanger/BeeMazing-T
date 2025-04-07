@@ -337,7 +337,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest 7A</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest 8A</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -569,43 +569,40 @@
     }
 
     function saveDiceChest() {
-  const user = diceUserSelect.value;
-  if (!user) return alert("Select a user");
+    const user = diceUserSelect.value;
+    if (!user) return alert("Select a user");
 
-  // Get required points
-  const requiredPoints = parseInt(document.getElementById("diceRequiredPoints").value);
-  if (isNaN(requiredPoints) || requiredPoints <= 0) {
-    return alert("Please enter a valid point requirement.");
-  }
-
-  // Get dice outcomes
-  const outcomes = [];
-  for (let i = 1; i <= 6; i++) {
-    const type = document.getElementById(`rewardSelect${i}`).value;
-    const value = document.getElementById(`extraInput${i}`).value;
-    if ((type === "Honey (amount)" || type === "Custom") && !value) {
-      return alert(`Please fill in value for dice ${i}`);
+    const requiredPoints = parseInt(document.getElementById("diceRequiredPoints").value);
+    if (isNaN(requiredPoints) || requiredPoints <= 0) {
+        return alert("Please enter a valid point requirement.");
     }
-    outcomes.push({ type, value: value || null });
-  }
 
-  // Save to localStorage
-  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-  if (!allChests[user]) allChests[user] = [];
+    const outcomes = [];
+    for (let i = 1; i <= 6; i++) {
+        const type = document.getElementById(`rewardSelect${i}`).value;
+        const value = document.getElementById(`extraInput${i}`).value;
+        if ((type === "Honey (amount)" || type === "Custom") && !value) {
+            return alert(`Please fill in value for dice ${i}`);
+        }
+        outcomes.push({ type, value: value || null });
+    }
 
-  allChests[user].push({
-    name: "Roll the Dice",
-    type: "dice",
-    image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/dice.gif",
-    outcomes,
-    progress: 0,
-    requiredPoints
-  });
+    const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
+    if (!allChests[user]) allChests[user] = [];
 
-  localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-  diceModal.classList.remove("show");
-  alert("Dice Chest assigned!");
-  window.location.href = "market.html";
+    allChests[user].push({
+        name: "Roll the Dice",
+        type: "dice",
+        image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/dice.gif",
+        outcomes,
+        progress: 0,
+        requiredPoints
+    });
+
+    localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
+    diceModal.classList.remove("show");
+    alert("Dice Chest assigned!");
+    window.location.href = "market.html";
 }
 
 
