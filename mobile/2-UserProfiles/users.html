@@ -1115,7 +1115,14 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
     tasks[taskIndex] = task;
     localStorage.setItem("familyApp_tasks", JSON.stringify(tasks));
 
-    if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
+    const audio = document.getElementById("finishTaskSound");
+if (audio) {
+    audio.currentTime = 0;
+    audio.play().catch(err => console.warn("Finish task sound playback failed", err));
+}
+
+if (typeof triggerHoneyRain === 'function') triggerHoneyRain(rewardAmount);
+
     if (typeof loadTasksForDate === 'function') loadTasksForDate(selectedDate);
     if (typeof loadUserTasks === 'function') loadUserTasks(userName, selectedDate);
     if (typeof loadUserReward === 'function') loadUserReward(userName);
@@ -1149,7 +1156,7 @@ function loadUserTasks(userName, selectedDate = new Date().toLocaleDateString("s
         audio.currentTime = 0;
         audio.play().catch(err => console.warn("Finish task sound playback failed", err));
     }
-    
+
             for (let i = 0; i < 50; i++) {
                 const drop = document.createElement("div");
                 drop.className = "honey-drop";
