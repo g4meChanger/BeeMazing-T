@@ -1252,6 +1252,54 @@ document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
   const userName = urlParams.get('user');
 
+  const addPoints = urlParams.get("addPoints");
+const removeReward = urlParams.get("removeReward");
+
+if (addPoints && !isNaN(addPoints)) {
+    const amount = parseInt(addPoints);
+    if (amount > 0) {
+        // ✅ Add Honey
+        const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+        rewards[userName] = (rewards[userName] || 0) + amount;
+        localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+
+        // ✅ Trigger animation
+        if (typeof triggerHoneyRain === "function") triggerHoneyRain(amount);
+        if (typeof loadUserReward === "function") loadUserReward(userName);
+
+        // ✅ Remove the Honey reward
+        if (removeReward !== null) {
+            const userRewards = JSON.parse(localStorage.getItem("familyApp_user_rewards")) || {};
+            const rewardHistory = JSON.parse(localStorage.getItem("familyApp_reward_history")) || {};
+            const rewardIndex = parseInt(removeReward);
+
+            const userList = userRewards[userName] || [];
+            const historyList = rewardHistory[userName] || [];
+
+            const rewardToMove = userList[rewardIndex];
+            if (rewardToMove) {
+                userList.splice(rewardIndex, 1);
+                historyList.push({
+                    ...rewardToMove,
+                    receivedDate: new Date().toLocaleDateString()
+                });
+
+                userRewards[userName] = userList;
+                rewardHistory[userName] = historyList;
+
+                localStorage.setItem("familyApp_user_rewards", JSON.stringify(userRewards));
+                localStorage.setItem("familyApp_reward_history", JSON.stringify(rewardHistory));
+            }
+        }
+
+        // ✅ Clean URL
+        setTimeout(() => {
+            window.history.replaceState({}, document.title, window.location.pathname + `?user=${encodeURIComponent(userName)}`);
+        }, 1000);
+    }
+}
+
+
   const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
   const userChests = allChests[userName] || [];
 
