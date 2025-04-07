@@ -124,6 +124,11 @@ if (!isAdmin && footer) {
     
             // Show remove button only for mobile AND admin
             if (isMobile && isAdmin) {
+                const actionsContainer = document.createElement("div");
+                actionsContainer.style.display = "flex";
+                actionsContainer.style.gap = "8px";
+            
+                // Remove button
                 const removeBtn = document.createElement("button");
                 removeBtn.classList.add("remove-user-btn");
                 removeBtn.textContent = "X";
@@ -131,9 +136,22 @@ if (!isAdmin && footer) {
                     event.stopPropagation();
                     showConfirmModal(username);
                 });
-    
-                newUserItem.appendChild(removeBtn);
+            
+                // Edit button
+                const editBtn = document.createElement("button");
+                editBtn.classList.add("remove-user-btn"); // reusing style
+                editBtn.innerHTML = "⚙️";
+                editBtn.style.fontSize = "16px";
+                editBtn.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    showPermissionModal(username);
+                });
+            
+                actionsContainer.appendChild(editBtn);
+                actionsContainer.appendChild(removeBtn);
+                newUserItem.appendChild(actionsContainer);
             }
+            
     
             userList.appendChild(newUserItem);
         });
@@ -223,6 +241,37 @@ if (logoutBtn) {
 
 
 
+const permissionModal = document.getElementById("permissionModal");
+const permissionModalUser = document.getElementById("permissionModalUser");
+const permissionSelect = document.getElementById("permissionSelect");
+const savePermissionBtn = document.getElementById("savePermissionBtn");
+
+let selectedUserForPermission = null;
+
+function showPermissionModal(username) {
+    selectedUserForPermission = username;
+    permissionModalUser.textContent = `Permissions for ${username}`;
+    
+    const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
+    permissionSelect.value = userPermissions[username] || "User";
+
+    permissionModal.classList.add("show");
+}
+
+savePermissionBtn.addEventListener("click", () => {
+    const permissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
+    if (selectedUserForPermission) {
+        permissions[selectedUserForPermission] = permissionSelect.value;
+        localStorage.setItem("userPermissions", JSON.stringify(permissions));
+    }
+    permissionModal.classList.remove("show");
+});
+
+permissionModal.addEventListener("click", (e) => {
+    if (e.target === permissionModal) {
+        permissionModal.classList.remove("show");
+    }
+});
 
 
 

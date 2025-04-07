@@ -166,7 +166,7 @@
   <div class="top-left" id="setPasswordBtn">Set Admin Password</div>
 
   <div class="wrapper">
-    <h1>BeeMazing Q6</h1> <!-- whaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-->
+    <h1>BeeMazing Q7</h1> <!-- whaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-->
 
     <div class="button-container">
       <button class="login-btn" id="adminBtn">Admin</button>
@@ -190,67 +190,86 @@
   </div>
 
   <script>
-    const setPasswordBtn = document.getElementById("setPasswordBtn");
-    const adminBtn = document.getElementById("adminBtn");
-    const userBtn = document.getElementById("userBtn");
-    const passwordPrompt = document.getElementById("passwordPrompt");
-    const submitPasswordBtn = document.getElementById("submitPasswordBtn");
-    const adminPasswordInput = document.getElementById("adminPasswordInput");
-    const passwordError = document.getElementById("passwordError");
+   document.addEventListener("DOMContentLoaded", () => {
+  const setPasswordBtn = document.getElementById("setPasswordBtn");
+  const adminBtn = document.getElementById("adminBtn");
+  const userBtn = document.getElementById("userBtn");
+  const passwordPrompt = document.getElementById("passwordPrompt");
+  const submitPasswordBtn = document.getElementById("submitPasswordBtn");
+  const adminPasswordInput = document.getElementById("adminPasswordInput");
+  const passwordError = document.getElementById("passwordError");
 
-    const adminModal = document.getElementById("adminModal");
-    const setPasswordInput = document.getElementById("setPasswordInput");
-    const savePasswordBtn = document.getElementById("savePasswordBtn");
+  const adminModal = document.getElementById("adminModal");
+  const setPasswordInput = document.getElementById("setPasswordInput");
+  const savePasswordBtn = document.getElementById("savePasswordBtn");
 
-    const targetPage = "/BeeMazing-Y1/mobile/1-Home/home.html";
+  const targetPage = "/BeeMazing-Y1/mobile/1-Home/home.html";
 
-    // Open the modal
-    setPasswordBtn.addEventListener("click", () => {
-      adminModal.classList.add("show");
-      setPasswordInput.value = "";
-      setPasswordInput.focus();
-    });
+  // Hide "Set Admin Password" if one already exists
+  const existingPassword = localStorage.getItem("adminPassword");
+  if (existingPassword) {
+    setPasswordBtn.style.display = "none";
+  }
 
-    // Save the admin password
-    savePasswordBtn.addEventListener("click", () => {
-      const newPassword = setPasswordInput.value.trim();
-      if (newPassword) {
-        localStorage.setItem("adminPassword", newPassword);
-        alert("Admin password set successfully!");
-        adminModal.classList.remove("show");
-      }
-    });
+  // Show modal to set admin password
+  if (!localStorage.getItem("adminPassword")) {
+  setPasswordBtn.style.display = "block";
+  setPasswordBtn.addEventListener("click", () => {
+    adminModal.classList.add("show");
+    setPasswordInput.value = "";
+    setPasswordInput.focus();
+  });
+} else {
+  setPasswordBtn.style.display = "none";
+}
 
-    // Close modal on outside click
-    adminModal.addEventListener("click", (e) => {
-      if (e.target === adminModal) {
-        adminModal.classList.remove("show");
-      }
-    });
 
-    // Admin login
-    adminBtn.addEventListener("click", () => {
-      passwordPrompt.style.display = "flex";
-      adminPasswordInput.focus();
-    });
+  // Save new admin password (only if it hasn’t been set)
+  savePasswordBtn.addEventListener("click", () => {
+    const newPassword = setPasswordInput.value.trim();
+    if (newPassword && !localStorage.getItem("adminPassword")) {
+      localStorage.setItem("adminPassword", newPassword);
+      alert("Admin password set successfully!");
+      adminModal.classList.remove("show");
+      setPasswordBtn.style.display = "none"; // hide button after setting
+    } else {
+      alert("Password already set. Use 'Change Admin Password' in your profile.");
+      adminModal.classList.remove("show");
+    }
+  });
 
-    submitPasswordBtn.addEventListener("click", () => {
-      const savedPassword = localStorage.getItem("adminPassword");
-      const enteredPassword = adminPasswordInput.value;
+  // Close modal if clicked outside
+  adminModal.addEventListener("click", (e) => {
+    if (e.target === adminModal) {
+      adminModal.classList.remove("show");
+    }
+  });
 
-      if (enteredPassword === savedPassword) {
-        localStorage.setItem("isAdmin", "true");
-        window.location.href = targetPage;
-      } else {
-        passwordError.textContent = "Incorrect password. Please try again.";
-      }
-    });
+  // Admin login
+  adminBtn.addEventListener("click", () => {
+    passwordPrompt.style.display = "flex";
+    adminPasswordInput.focus();
+  });
 
-    // User login
-    userBtn.addEventListener("click", () => {
-      localStorage.setItem("isAdmin", "false");
+  submitPasswordBtn.addEventListener("click", () => {
+    const savedPassword = localStorage.getItem("adminPassword");
+    const enteredPassword = adminPasswordInput.value;
+
+    if (enteredPassword === savedPassword) {
+      localStorage.setItem("isAdmin", "true");
       window.location.href = targetPage;
-    });
+    } else {
+      passwordError.textContent = "Incorrect password. Please try again.";
+    }
+  });
+
+  // User login
+  userBtn.addEventListener("click", () => {
+    localStorage.setItem("isAdmin", "false");
+    window.location.href = targetPage;
+  });
+});
+
   </script>
 </body>
 </html>
