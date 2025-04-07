@@ -703,6 +703,71 @@
 
 
 
+.chest-card {
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    max-width: 300px;
+}
+
+.chest-image {
+    width: 100px;
+    height: 100px;
+}
+
+.pulse {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.chest-text {
+    color: var(--text-color);
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.chest-progress {
+    color: var(--primary-color);
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.open-btn {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.open-btn:disabled {
+    background: #888;
+    cursor: not-allowed;
+}
+
+.open-btn:hover:not(:disabled) {
+    background: #FFB300;
+}
+
+
+
+
 
 
     </style>
@@ -1244,24 +1309,12 @@ generateScrollableDates();
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const userName = urlParams.get('user');
-
-  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-  const userChests = allChests[userName] || [];
-
-  const container = document.getElementById("luckyChestContainer");
-
-  if (userChests.length === 0) {
-    container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
-    return;
-  }
-
-  // ✅ Just use the dynamic loader now
-  loadLuckyChests(userName);
+    const urlParams = new URLSearchParams(window.location.search);
+    const userName = urlParams.get('user');
+    if (userName) {
+        loadLuckyChests(userName); // Just call it directly
+    }
 });
-
-
 
 
 
@@ -1297,7 +1350,7 @@ function updateLuckyChestProgress(userName, earnedHoney) {
     if (updated) {
         allChests[userName] = userChests;
         localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
-        loadLuckyChests(userName); // re-render UI
+        loadLuckyChests(userName); // This should now update the UI correctly
     }
 }
 
@@ -1308,50 +1361,52 @@ function updateLuckyChestProgress(userName, earnedHoney) {
 
 
 function loadLuckyChests(userName) {
-    const container = document.getElementById("luckyChestContainer");
     const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
     const userChests = allChests[userName] || [];
+    const chestContainer = document.getElementById("luckyChestContainer"); // Fixed ID
 
-    container.innerHTML = "";
-
-    if (userChests.length === 0) {
-        container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
-        return;
-    }
+    chestContainer.innerHTML = "";
 
     userChests.forEach((chest, index) => {
+        const chestCard = document.createElement("div");
+        chestCard.className = "chest-card";
+
         const isUnlocked = chest.progress >= chest.requiredPoints;
-        const hasHoney = chest.honey !== undefined && chest.honey > 0;
-        const hasCustomReward = !chest.onlyHoney; // If not marked as honey-only
 
-        const chestImage = isUnlocked
-            ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
-            : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
+        // Chest image (always pulsing)
+        const chestImage = document.createElement("img");
+        chestImage.src = chest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png";
+        chestImage.alt = chest.name;
+        chestImage.className = "chest-image pulse";
 
-        const displayName = hasCustomReward ? chest.name : `${chest.honey} Honey`;
-
-        const card = document.createElement("div");
-        card.className = "lucky-chest-card";
-        if (!isUnlocked) card.classList.add("locked");
-
-        card.innerHTML = `
-            <img src="${chestImage}" alt="Chest" class="${isUnlocked ? 'pulse' : ''}">
-            <div class="info">
-                <p>Unlock to reveal your reward!</p>
-                <div class="lucky-chest-progress">
-                    Progress: ${chest.progress || 0} / ${chest.requiredPoints} 🍯
-                </div>
-            </div>
-        `;
+        // Open button
+        const openButton = document.createElement("button");
+        openButton.textContent = "Open";
+        openButton.className = "open-btn";
+        openButton.disabled = !isUnlocked;
+        openButton.onclick = () => claimLuckyChest(userName, index);
 
         if (isUnlocked) {
-            card.style.cursor = "pointer";
-            card.addEventListener("click", () => {
-                revealLuckyChestReward(userName, chest, index, true);
-            });
+            // Unlocked: Show only the pulsing image and button
+            chestCard.appendChild(chestImage);
+            chestCard.appendChild(openButton);
+        } else {
+            // Locked: Show image, text, progress, and button
+            const chestText = document.createElement("p");
+            chestText.textContent = "Unlock to reveal your reward!";
+            chestText.className = "chest-text";
+
+            const chestProgress = document.createElement("p");
+            chestProgress.textContent = `Progress: ${chest.progress}/${chest.requiredPoints}`;
+            chestProgress.className = "chest-progress";
+
+            chestCard.appendChild(chestImage);
+            chestCard.appendChild(chestText);
+            chestCard.appendChild(chestProgress);
+            chestCard.appendChild(openButton);
         }
 
-        container.appendChild(card);
+        chestContainer.appendChild(chestCard);
     });
 }
 
