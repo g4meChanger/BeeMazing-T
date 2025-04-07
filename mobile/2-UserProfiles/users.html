@@ -788,25 +788,34 @@
 
 
 
+// At the top of the script, after URL parameter parsing
+const urlParams = new URLSearchParams(window.location.search);
+const userName = urlParams.get('user');
+const addPoints = Number(urlParams.get('addPoints')); // Get honey amount from URL
 
-
-
-
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const userName = urlParams.get('user');
-
-        if (userName) {
+if (userName) {
     document.getElementById('profileName').textContent = userName;
     document.getElementById('userName').textContent = userName;
     document.getElementById('rewardsButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
     document.getElementById('marketButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
-    // 🆕 add this line
     document.getElementById('profileButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${userName}`;
 
     loadUserTasks(userName);
     loadUserReward(userName);
+
+    // Trigger honey rain if addPoints is present
+    if (addPoints > 0) {
+        setTimeout(() => {
+            triggerHoneyRain(addPoints); // Show rain effect
+            const rewards = JSON.parse(localStorage.getItem("familyApp_rewards")) || {};
+            rewards[userName] = (rewards[userName] || 0) + addPoints;
+            localStorage.setItem("familyApp_rewards", JSON.stringify(rewards));
+            loadUserReward(userName); // Update displayed amount
+        }, 500); // Small delay to ensure page loads
+    }
 }
+
+// ... (rest of the script remains unchanged)
 
 
 
@@ -1421,12 +1430,11 @@ function claimLuckyChest(userName, chestIndex) {
     const claimedChest = userChests[chestIndex];
     if (!claimedChest) return;
 
-    // Add to user's rewards
     if (!rewards[userName]) rewards[userName] = [];
     const now = new Date();
 
     if (claimedChest.hasOwnProperty("honey")) {
-        // ✅ It's a Honey reward (from dice chest or similar)
+        // Handle Honey reward
         rewards[userName].push({
             name: `${claimedChest.honey} Honey`,
             type: "Honey",
@@ -1434,7 +1442,7 @@ function claimLuckyChest(userName, chestIndex) {
             date: now.toLocaleDateString()
         });
     } else {
-        // ✅ It's a normal reward or special chest (The Key, etc)
+        // Handle other rewards
         rewards[userName].push({
             name: claimedChest.name,
             description: claimedChest.description || "",
@@ -1446,18 +1454,17 @@ function claimLuckyChest(userName, chestIndex) {
         });
     }
 
-    // 🗑️ Remove the chest after claiming
+    // Remove the chest after claiming
     userChests.splice(chestIndex, 1);
     allChests[userName] = userChests;
 
-    // 💾 Save updated data
+    // Save updated data
     localStorage.setItem("familyApp_luckyChests", JSON.stringify(allChests));
     localStorage.setItem("familyApp_user_rewards", JSON.stringify(rewards));
 
-    // 🔄 Refresh Lucky Chest UI
+    // Refresh UI
     loadLuckyChests(userName);
 }
-
 
 
 
