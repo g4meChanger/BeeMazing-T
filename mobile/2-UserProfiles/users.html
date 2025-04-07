@@ -1314,35 +1314,6 @@ generateScrollableDates();
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const userName = urlParams.get('user');
-
-  const allChests = JSON.parse(localStorage.getItem("familyApp_luckyChests")) || {};
-  const userChests = allChests[userName] || [];
-
-  const container = document.getElementById("luckyChestContainer");
-
-  if (userChests.length === 0) {
-    container.innerHTML = "<p>No Lucky Chests assigned yet.</p>";
-    return;
-  }
-
-  // ✅ Just use the dynamic loader now
-  loadLuckyChests(userName);
-});
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1631,11 +1602,14 @@ window.addEventListener("load", adjustContentTop);
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-    if (isAdmin) {
-        const changePasswordBtn = document.getElementById("changePasswordBtn");
+
+
+function showAdminControlsIfNeeded() {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const changePasswordBtn = document.getElementById("changePasswordBtn");
+
+    if (isAdmin && changePasswordBtn.style.display !== "inline-block") {
         changePasswordBtn.style.display = "inline-block";
 
         changePasswordBtn.addEventListener("click", () => {
@@ -1662,8 +1636,27 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+}
+
+
+
+
+
+
+
+
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", () => {
+    showAdminControlsIfNeeded();
 });
 
+// Listen for changes to isAdmin across tabs
+window.addEventListener("storage", (event) => {
+    if (event.key === "isAdmin") {
+        showAdminControlsIfNeeded();
+    }
+});
 
 
     </script>
