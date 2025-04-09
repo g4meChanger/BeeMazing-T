@@ -357,25 +357,25 @@
 
         <!-- Scary Overlay -->
         <div class="scary-overlay" id="scaryOverlay">
-            <img src="/BeeMazing-T/mobile/999/screaming.png" alt="Scary Face">
+            <img src="/BeeMazing-Y1/mobile/999/screaming.png" alt="Scary Face">
         </div>
     </div>
 
     <div class="footer">
-        <a href="/BeeMazing-T/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
-            <img src="/BeeMazing-T/mobile/1-Home/HomeBtn.png" alt="Home" />
+        <a href="/BeeMazing-Y1/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/BeeMazing-Y1/mobile/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
         </a>
-        <a href="/BeeMazing-T/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
-            <img src="/BeeMazing-T/mobile/1-Home/TasksBtn.png" alt="Tasks" />
+        <a href="/BeeMazing-Y1/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
+            <img src="/BeeMazing-Y1/mobile/1-Home/TasksBtn.png" alt="Tasks" />
             <span>Tasks</span>
         </a>
-        <a href="/BeeMazing-T/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
-            <img src="/BeeMazing-T/mobile/1-Home/MarketBtn.png" alt="Market" />
+        <a href="/BeeMazing-Y1/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
+            <img src="/BeeMazing-Y1/mobile/1-Home/MarketBtn.png" alt="Market" />
             <span>Market</span>
         </a>
-        <a href="/BeeMazing-T/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
-            <img src="/BeeMazing-T/mobile/1-Home/StatsBtn.png" alt="Stats" />
+        <a href="/BeeMazing-Y1/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
+            <img src="/BeeMazing-Y1/mobile/1-Home/StatsBtn.png" alt="Stats" />
             <span>Stats</span>
         </a>
     </div>
@@ -542,6 +542,56 @@
         });
 
         document.addEventListener("DOMContentLoaded", renderHistory);
+
+        const screamAudio = new Audio('/BeeMazing-Y1/mobile/999/scream.mp3');
+        screamAudio.load();
+
+        function triggerPrank() {
+            const overlay = document.getElementById('scaryOverlay');
+            overlay.style.display = 'flex';
+
+            screamAudio.currentTime = 0;
+            screamAudio.play();
+
+            const initialImage = document.createElement('img');
+            initialImage.src = '/BeeMazing-Y1/mobile/999/igm1.png';
+            initialImage.alt = 'Initial Scary Face';
+            initialImage.style.width = 'auto';
+            initialImage.style.height = 'auto';
+            initialImage.style.maxWidth = '100vw';
+            initialImage.style.maxHeight = '100vh';
+            initialImage.style.objectFit = 'contain';
+            initialImage.style.margin = 'auto';
+            initialImage.style.position = 'absolute';
+            initialImage.style.top = '0';
+            initialImage.style.left = '0';
+            initialImage.style.right = '0';
+            initialImage.style.bottom = '0';
+            initialImage.style.animation = 'none';
+            overlay.innerHTML = '';
+            overlay.appendChild(initialImage);
+
+            setTimeout(() => {
+                overlay.innerHTML = '';
+                const finalImage = document.createElement('img');
+                finalImage.src = '/BeeMazing-Y1/mobile/999/screaming.png';
+                finalImage.alt = 'Final Scary Face';
+                finalImage.style.width = 'auto';
+                finalImage.style.height = 'auto';
+                finalImage.style.animation = 'zoomIn 2s ease-out forwards';
+                finalImage.style.margin = 'auto';
+                finalImage.style.position = 'absolute';
+                finalImage.style.top = '0';
+                finalImage.style.left = '0';
+                finalImage.style.right = '0';
+                finalImage.style.bottom = '0';
+                overlay.appendChild(finalImage);
+            }, 300);
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 3000);
+        }
     </script>
 </body>
 </html>
