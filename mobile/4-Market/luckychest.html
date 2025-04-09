@@ -337,7 +337,7 @@
   </style>
 </head>
 <body>
-  <div class="header">Lucky Chest Mindblow1</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
+  <div class="header">Lucky Chest</div> <!-- comment awgawawdgawgawgawgawgaeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeewgawgawgawgawgaw -->
   <div class="container" id="chestContainer"></div>
 
   <div class="modal" id="assignModal">
@@ -405,32 +405,32 @@
   <div class="add-reward-btn" id="openNewChestModal" aria-label="Add Reward">+</div>
 
   <div class="footer">
-    <a href="/BeeMazing-Y1/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
-      <img src="/BeeMazing-Y1/mobile/1-Home/HomeBtn.png" alt="Home" />
+    <a href="/BeeMazing-T/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+      <img src="/BeeMazing-T/mobile/1-Home/HomeBtn.png" alt="Home" />
       <span>Home</span>
     </a>
-    <a href="/BeeMazing-Y1/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
-      <img src="/BeeMazing-Y1/mobile/1-Home/TasksBtn.png" alt="Tasks" />
+    <a href="/BeeMazing-T/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
+      <img src="/BeeMazing-T/mobile/1-Home/TasksBtn.png" alt="Tasks" />
       <span>Tasks</span>
     </a>
-    <a href="/BeeMazing-Y1/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
-      <img src="/BeeMazing-Y1/mobile/1-Home/MarketBtn.png" alt="Market" />
-      <span>Market</span>
+    <a href="/BeeMazing-T/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
+      <img src="/BeeMazing-T/mobile/1-Home/MarketBtn.png" alt="Market" />
+      <span>Market Dash</span>
     </a>
-    <a href="/BeeMazing-Y1/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
-      <img src="/BeeMazing-Y1/mobile/1-Home/StatsBtn.png" alt="Stats" />
+    <a href="/BeeMazing-T/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
+      <img src="/BeeMazing-T/mobile/1-Home/StatsBtn.png" alt="Stats" />
       <span>Stats</span>
     </a>
   </div>
 
   <script>
     let chests = JSON.parse(localStorage.getItem("customChests")) || [
-      { name: "The Key", quote: "You hold the key to the path of others.", effect: "➡ Transfer one of your tasks to another user. You get the honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Keyy.gif", isCustom: false },
-      { name: "Double Trouble", quote: "Today’s efforts are worth double.", effect: "➡ Next task = double honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/DoubleTrouble.png", isCustom: false },
-      { name: "Roll the Dice", quote: "Test your Luck", effect: "➡ Get a surprise reward.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/dice.gif", isCustom: false },
-      { name: "Dance Party", quote: "Feel the rhythm!", effect: "➡ Dance after a task. If someone joins, both get honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Dance.jpg", isCustom: false },
-      { name: "Bee-Witched!", quote: "Your magical aura changes the rules...", effect: "➡ Make a silly rule. Others who follow it get honey.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Bee-Witched.jpg", isCustom: false },
-      { name: "Special Buzz Off", quote: "You’re too cool for chores today.", effect: "➡ Skip all tasks today.", image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/Special.jpg", isCustom: false }
+      { name: "The Key", quote: "You hold the key to the path of others.", effect: "➡ Transfer one of your tasks to another user. You get the honey.", image: "/BeeMazing-T/mobile/4-Market/LuckyChest/Keyy.gif", isCustom: false },
+      { name: "Double Trouble", quote: "Today’s efforts are worth double.", effect: "➡ Next task = double honey.", image: "/BeeMazing-T/mobile/4-Market/LuckyChest/DoubleTrouble.png", isCustom: false },
+      { name: "Roll the Dice", quote: "Test your Luck", effect: "➡ Get a surprise reward.", image: "/BeeMazing-T/mobile/4-Market/LuckyChest/dice.gif", isCustom: false },
+      { name: "Dance Party", quote: "Feel the rhythm!", effect: "➡ Dance after a task. If someone joins, both get honey.", image: "/BeeMazing-T/mobile/4-Market/LuckyChest/Dance.jpg", isCustom: false },
+      { name: "Bee-Witched!", quote: "Your magical aura changes the rules...", effect: "➡ Make a silly rule. Others who follow it get honey.", image: "/BeeMazing-T/mobile/4-Market/LuckyChest/Bee-Witched.jpg", isCustom: false },
+      { name: "Special Buzz Off", quote: "You’re too cool for chores today.", effect: "➡ Skip all tasks today.", image: "/BeeMazing-T/mobile/4-Market/LuckyChest/Special.jpg", isCustom: false }
     ];
 
     const rewardOptions = [
@@ -442,7 +442,7 @@
       "Honey (amount)"
     ];
 
-    const defaultChestImage = "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png";
+    const defaultChestImage = "/BeeMazing-T/mobile/4-Market/LuckyChest/default.png";
 
     const chestContainer = document.getElementById("chestContainer");
     const assignModal = document.getElementById("assignModal");
@@ -593,7 +593,7 @@
     allChests[user].push({
         name: "Roll the Dice",
         type: "dice",
-        image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/dice.gif",
+        image: "/BeeMazing-T/mobile/4-Market/LuckyChest/dice.gif",
         outcomes,
         progress: 0,
         requiredPoints
@@ -713,7 +713,7 @@
     document.querySelectorAll('.footer a').forEach(link => {
       const currentPath = window.location.pathname.replace(/\/$/, '');
       const linkPath = new URL(link.href).pathname.replace(/\/$/, '');
-      if (linkPath === "/BeeMazing-Y1/mobile/4-Market/market.html" && currentPath.startsWith("/BeeMazing-Y1/mobile/4-Market/")) {
+      if (linkPath === "/BeeMazing-T/mobile/4-Market/market.html" && currentPath.startsWith("/BeeMazing-T/mobile/4-Market/")) {
         link.classList.add('active');
       } else if (currentPath === linkPath) {
         link.classList.add('active');

@@ -1,19 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-
-    const addUserModal = document.getElementById("inviteUserModal");
-
-
-    const urlParams = new URLSearchParams(window.location.search);
-const adminFromURL = urlParams.get("admin");
-if (adminFromURL) {
-    localStorage.setItem("currentAdminEmail", adminFromURL);
-}
-
-
+    
     // Redirect to login if user not logged in
     if (localStorage.getItem("isAdmin") === null) {
-        window.location.href = "/BeeMazing-Y1/login.html";
+        window.location.href = "/BeeMazing-T/login.html";
         return;
     }
 
@@ -31,101 +21,59 @@ if (!isAdmin && footer) {
         addUserBtn.style.display = "none";
     }
 
+    const addUserModal = document.getElementById("addUserModal");
+    const submitUserBtn = document.getElementById("submitUserBtn");
+    if (!isAdmin && submitUserBtn) {
+        submitUserBtn.disabled = true;
+    }
 
+    const usernameInput = document.getElementById("usernameInput");
     const userList = document.getElementById("userList");
     const manageMembersBtn = document.getElementById("manageMembersBtn");
     const manageMembersModal = document.getElementById("manageMembersModal");
     const manageMembersList = document.getElementById("manageMembersList");
 
     // Determine the base path (mobile or web) based on the current URL
-    const isMobile = window.location.pathname.includes("/BeeMazing-Y1/mobile/");
-    const basePath = isMobile ? "/BeeMazing-Y1/mobile" : "/web";
+    const isMobile = window.location.pathname.includes("/BeeMazing-T/mobile/");
+    const basePath = isMobile ? "/BeeMazing-T/mobile" : "/mobile";
 
     // Load users from localStorage on page load
-    let currentAdmin = null;
-
-    // Wait until currentAdminEmail is available in localStorage (max 2 sec)
-    const waitForAdmin = setInterval(() => {
-      const stored = localStorage.getItem("currentAdminEmail");
-      if (stored) {
-        clearInterval(waitForAdmin);
-        currentAdmin = stored;
-        fetchUsersFromServer(currentAdmin);
-        renderUsers();
-      }
-    }, 100);
-    
-    // Stop trying after 2 seconds to avoid infinite loop
-    setTimeout(() => clearInterval(waitForAdmin), 2000);
-    
-
-    async function fetchUsersFromServer(email) {
-        try {
-          const res = await fetch(`https://beemazing.onrender.com/get-users?adminEmail=${encodeURIComponent(email)}`);
-          const data = await res.json();
-      
-          if (data.success) {
-            const allUserData = JSON.parse(localStorage.getItem("userData")) || {};
-            if (!allUserData[email]) {
-              allUserData[email] = { users: [], permissions: {} };
-            }
-      
-            allUserData[email].users = data.users || [];
-            allUserData[email].permissions = data.permissions || {};
-      
-            localStorage.setItem("userData", JSON.stringify(allUserData));
-            renderUsers(); // Refresh UI
-          }
-        } catch (err) {
-          console.error("❌ Failed to fetch user list from server:", err);
-        }
-      }
-      
-      
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    renderUsers();
 
     // Show the modal with a smooth animation when "Add Members" button is clicked
-    if (addUserBtn && isAdmin) {
-        addUserBtn.addEventListener("click", () => {
-            addUserModal.style.display = "flex";
+    if (addUserBtn) {
+        addUserBtn.addEventListener("click", function () {
+            if (isAdmin) {
+                addUserModal.classList.add("show");
+            }
         });
     }
-    
 
-    const sendInviteBtn = document.getElementById("sendInviteBtn");
-    if (sendInviteBtn) {
-        sendInviteBtn.addEventListener("click", async () => {
-            const email = document.getElementById("inviteEmail").value.trim();
-            const name = document.getElementById("inviteName").value.trim();
-            const tempPassword = document.getElementById("inviteTempPassword").value.trim();
-            const currentAdmin = localStorage.getItem("currentAdminEmail");
-        
-    
-            if (!email || !name || !tempPassword) {
-                alert("Please fill out all fields.");
-                return;
-            }
-    
-            try {
-                const allUserData = JSON.parse(localStorage.getItem("userData")) || {};
-                if (!allUserData[currentAdmin]) {
-                    allUserData[currentAdmin] = { users: [], permissions: {} };
+
+    // Add user when "Add" button is clicked
+    if (submitUserBtn) {
+        submitUserBtn.addEventListener("click", function () {
+            const username = usernameInput.value.trim();
+            const errorMessage = document.getElementById("errorMessage");
+
+            if (username) {
+                users.push(username);
+                localStorage.setItem("users", JSON.stringify(users));
+                renderUsers();
+                usernameInput.value = "";
+                addUserModal.classList.remove("show");
+                errorMessage.style.display = "none";
+                // Refresh the manage members modal if it's open
+                if (manageMembersModal && manageMembersModal.classList.contains("show")) {
+                    renderManageMembers();
                 }
-                allUserData[currentAdmin].users.push(name);
-                localStorage.setItem("userData", JSON.stringify(allUserData));
-    
-                const encodedAdmin = encodeURIComponent(currentAdmin);
-                const encodedUser = encodeURIComponent(name);
-                const inviteLink = `${window.location.origin}/BeeMazing-Y1/mobile/2-UserProfiles/users.html?admin=${encodedAdmin}&user=${encodedUser}`;
-                alert(`Invite sent to ${email}!\n\nShare this link with them:\n${inviteLink}`);
-    
-                addUserModal.style.display = "none"; // reuse variable
-            } catch (err) {
-                console.error("Error sending invite:", err);
-                alert("Something went wrong. Try again.");
+            } else {
+                errorMessage.textContent = "Please enter a valid user name.";
+                errorMessage.style.display = "block";
             }
         });
     }
-    
 
     // Close modal when clicking outside the modal content
     if (addUserModal) {
@@ -156,9 +104,7 @@ if (!isAdmin && footer) {
     // Function to render users in the main list
     function renderUsers() {
         const isAdmin = localStorage.getItem("isAdmin") === "true";
-        const allUserData = JSON.parse(localStorage.getItem("userData")) || {};
-        const users = allUserData[currentAdmin]?.users || [];
-        const userPermissions = allUserData[currentAdmin]?.permissions || {};        
+        const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
         userList.innerHTML = "";
         users.forEach((username) => {
             const newUserItem = document.createElement("li");
@@ -237,11 +183,7 @@ if (!isAdmin && footer) {
         if (!manageMembersList) return; // Skip if not in web version
 
         manageMembersList.innerHTML = "";
-        const updatedUserData = JSON.parse(localStorage.getItem("userData")) || {};
-const updatedUsers = updatedUserData[currentAdmin]?.users || [];
-
-updatedUsers.forEach((username, index) => {
-
+        users.forEach((username, index) => {
             const manageItem = document.createElement("li");
             manageItem.classList.add("manage-members-item");
 
@@ -250,16 +192,11 @@ updatedUsers.forEach((username, index) => {
             input.type = "text";
             input.value = username;
             input.addEventListener("change", function () {
-                const newName = input.value.trim();
-                if (newName !== "") {
-                    updatedUsers[index] = newName;
-                } else {
-                    updatedUsers.splice(index, 1);
+                users[index] = input.value.trim();
+                if (users[index] === "") {
+                    users.splice(index, 1); // Remove if the name is cleared
                 }
-                allUserData[currentAdmin].users = updatedUsers;
-                localStorage.setItem("userData", JSON.stringify(allUserData));
-                
-
+                localStorage.setItem("users", JSON.stringify(users));
                 renderUsers();
                 renderManageMembers();
             });
@@ -269,11 +206,8 @@ updatedUsers.forEach((username, index) => {
             deleteBtn.classList.add("delete-btn");
             deleteBtn.textContent = "Delete";
             deleteBtn.addEventListener("click", function () {
-                updatedUsers.splice(index, 1);
-                allUserData[currentAdmin].users = updatedUsers;        
-                localStorage.setItem("userData", JSON.stringify(allUserData));
-                
-
+                users.splice(index, 1);
+                localStorage.setItem("users", JSON.stringify(users));
                 renderUsers();
                 renderManageMembers();
             });
@@ -284,9 +218,9 @@ updatedUsers.forEach((username, index) => {
         });
 
         // Show a message if no users exist
-        if (updatedUsers.length === 0) {
+        if (users.length === 0) {
             manageMembersList.innerHTML = "<p>No members to manage.</p>";
-        }        
+        }
     }
 
 
@@ -299,13 +233,9 @@ function showConfirmModal(username) {
 
 document.getElementById("confirmYesBtn").addEventListener("click", () => {
     if (userToRemove) {
-
-const allUserData = JSON.parse(localStorage.getItem("userData")) || {};
-let users = allUserData[currentAdmin]?.users || [];
-users = users.filter(user => user !== userToRemove);
-allUserData[currentAdmin].users = users;
-localStorage.setItem("userData", JSON.stringify(allUserData));
-
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const updated = users.filter(user => user !== userToRemove);
+        localStorage.setItem("users", JSON.stringify(updated));
         userToRemove = null;
         document.getElementById("confirmModal").classList.remove("show");
         location.reload(); // Reload to re-render the user list
@@ -325,7 +255,7 @@ const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
         localStorage.removeItem("isAdmin");
-        window.location.href = "/BeeMazing-Y1/login.html";
+        window.location.href = "/BeeMazing-T/login.html";
     });
 }
 
@@ -341,27 +271,21 @@ let selectedUserForPermission = null;
 function showPermissionModal(username) {
     selectedUserForPermission = username;
     permissionModalUser.textContent = `Permissions for ${username}`;
-
-    const allUserData = JSON.parse(localStorage.getItem("userData")) || {}; // ✅ NOW it's fresh
-    const userPermissions = allUserData[currentAdmin]?.permissions || {};
+    
+    const userPermissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
     permissionSelect.value = userPermissions[username] || "User";
 
     permissionModal.classList.add("show");
 }
 
-
 savePermissionBtn.addEventListener("click", () => {
-    const allUserData = JSON.parse(localStorage.getItem("userData")) || {};
-    if (!allUserData[currentAdmin].permissions) {
-      allUserData[currentAdmin].permissions = {};
-    }
+    const permissions = JSON.parse(localStorage.getItem("userPermissions") || "{}");
     if (selectedUserForPermission) {
-      allUserData[currentAdmin].permissions[selectedUserForPermission] = permissionSelect.value;
-      localStorage.setItem("userData", JSON.stringify(allUserData));
+        permissions[selectedUserForPermission] = permissionSelect.value;
+        localStorage.setItem("userPermissions", JSON.stringify(permissions));
     }
     permissionModal.classList.remove("show");
-  });
-  
+});
 
 permissionModal.addEventListener("click", (e) => {
     if (e.target === permissionModal) {
@@ -404,16 +328,6 @@ document.getElementById("changePasswordModal").addEventListener("click", (e) => 
   }
 });
 
-
-  
-  // Close Invite Modal on outside click
-  document.getElementById("inviteUserModal").addEventListener("click", (e) => {
-    if (e.target.id === "inviteUserModal") {
-      e.target.style.display = "none";
-    }
-  });
-  
- 
 
 
 });
