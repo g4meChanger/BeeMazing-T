@@ -35,7 +35,7 @@ if (!isAdmin && footer) {
 
     // Determine the base path (mobile or web) based on the current URL
     const isMobile = window.location.pathname.includes("/BeeMazing-T/mobile/");
-    const basePath = isMobile ? "/BeeMazing-T/mobile" : "/web";
+    const basePath = isMobile ? "/BeeMazing-T/mobile" : "/mobile";
 
     // Load users from localStorage on page load
     const users = JSON.parse(localStorage.getItem("users")) || [];
