@@ -479,24 +479,24 @@ body {
         <!-- Tasks will be loaded dynamically here -->
     </div>
 
-    <a href="/BeeMazing-Y1/mobile/3-Tasks/addtasks.html" class="add-task-btn" aria-label="Add Task" onclick="localStorage.removeItem('familyApp_editTask'); localStorage.removeItem('familyApp_editTask_index');">+</a>
+    <a href="/BeeMazing-T/mobile/3-Tasks/addtasks.html" class="add-task-btn" aria-label="Add Task" onclick="localStorage.removeItem('familyApp_editTask'); localStorage.removeItem('familyApp_editTask_index');">+</a>
 
 
     <div class="footer">
-        <a href="/BeeMazing-Y1/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
-            <img src="/BeeMazing-Y1/mobile/1-Home/HomeBtn.png" alt="Home" />
+        <a href="/BeeMazing-T/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/BeeMazing-T/mobile/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
         </a>
-        <a href="/BeeMazing-Y1/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
-            <img src="/BeeMazing-Y1/mobile/1-Home/TasksBtn.png" alt="Tasks" />
+        <a href="/BeeMazing-T/mobile/3-Tasks/tasks.html" class="footer-icon" aria-label="Tasks">
+            <img src="/BeeMazing-T/mobile/1-Home/TasksBtn.png" alt="Tasks" />
             <span>Tasks</span>
         </a>
-        <a href="/BeeMazing-Y1/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
-            <img src="/BeeMazing-Y1/mobile/1-Home/MarketBtn.png" alt="Market" />
+        <a href="/BeeMazing-T/mobile/4-Market/market.html" class="footer-icon" aria-label="Market">
+            <img src="/BeeMazing-T/mobile/1-Home/MarketBtn.png" alt="Market" />
             <span>Market</span>
         </a>
-        <a href="/BeeMazing-Y1/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
-            <img src="/BeeMazing-Y1/mobile/1-Home/StatsBtn.png" alt="Stats" />
+        <a href="/BeeMazing-T/mobile/5-Stats/stats.html" class="footer-icon" aria-label="Stats">
+            <img src="/BeeMazing-T/mobile/1-Home/StatsBtn.png" alt="Stats" />
             <span>Stats</span>
         </a>
     </div>
@@ -789,7 +789,7 @@ const completedRaw = task.completions?.[selectedDate] || [];
     document.getElementById("editTaskBtn").addEventListener("click", () => {
         localStorage.setItem("familyApp_editTask", JSON.stringify(task));
         localStorage.setItem("familyApp_editTask_index", task.title + "-" + task.date);
-        window.location.href = "/BeeMazing-Y1/mobile/3-Tasks/addtasks.html";
+        window.location.href = "/BeeMazing-T/mobile/3-Tasks/addtasks.html";
     });
 
     const editBtn = document.getElementById("editCompletionBtn");

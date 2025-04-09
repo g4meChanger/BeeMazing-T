@@ -886,20 +886,20 @@
 
 
     <div class="footer">
-        <a href="/BeeMazing-Y1/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
-            <img src="/BeeMazing-Y1/mobile/1-Home/HomeBtn.png" alt="Home" />
+        <a href="/BeeMazing-T/mobile/1-Home/home.html" class="footer-icon" aria-label="Home">
+            <img src="/BeeMazing-T/mobile/1-Home/HomeBtn.png" alt="Home" />
             <span>Home</span>
         </a>
         <a href="#" id="profileButton" class="footer-icon" aria-label="Profile">
-            <img src="/BeeMazing-Y1/mobile/1-Home/ProfileBtn.png" alt="Profile" />
+            <img src="/BeeMazing-T/mobile/1-Home/ProfileBtn.png" alt="Profile" />
             <span>Profile</span>
         </a>
         <a href="#" id="marketButton" class="footer-icon" aria-label="Market">
-            <img src="/BeeMazing-Y1/mobile/1-Home/MarketBtn.png" alt="Market" />
+            <img src="/BeeMazing-T/mobile/1-Home/MarketBtn.png" alt="Market" />
             <span>Market</span>
         </a>
         <a href="#" id="rewardsButton" class="footer-icon" aria-label="Rewards">
-            <img src="/BeeMazing-Y1/mobile/1-Home/RewardsBtn.png" alt="Rewards" />
+            <img src="/BeeMazing-T/mobile/1-Home/RewardsBtn.png" alt="Rewards" />
             <span>Rewards</span>
         </a>
     </div>
@@ -925,9 +925,9 @@
             if (userName) {
                 document.getElementById('profileName').textContent = userName;
                 document.getElementById('userName').textContent = userName;
-                document.getElementById('rewardsButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
-                document.getElementById('marketButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
-                document.getElementById('profileButton').href = `/BeeMazing-Y1/mobile/2-UserProfiles/users.html?user=${userName}`;
+                document.getElementById('rewardsButton').href = `/BeeMazing-T/mobile/2-UserProfiles/userrewards.html?user=${userName}`;
+                document.getElementById('marketButton').href = `/BeeMazing-T/mobile/2-UserProfiles/usermarket.html?user=${userName}`;
+                document.getElementById('profileButton').href = `/BeeMazing-T/mobile/2-UserProfiles/users.html?user=${userName}`;
         
                 loadUserTasks(userName);
                 loadUserReward(userName);
@@ -1298,8 +1298,8 @@
             userChests.forEach((chest, index) => {
                 const isUnlocked = chest.progress >= chest.requiredPoints;
                 const chestImage = isUnlocked
-                    ? '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestReady.gif'
-                    : '/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestPending.png';
+                    ? '/BeeMazing-T/mobile/4-Market/LuckyChest/ChestReady.gif'
+                    : '/BeeMazing-T/mobile/4-Market/LuckyChest/ChestPending.png';
         
                 const card = document.createElement("div");
                 card.className = "lucky-chest-card";
@@ -1375,14 +1375,14 @@
                         name: currentChest.name,
                         quote: currentChest.quote || "",
                         effect: currentChest.effect || "",
-                        image: currentChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+                        image: currentChest.image || "/BeeMazing-T/mobile/4-Market/LuckyChest/default.png"
                     };
                 } else if (hasHoney) {
                     rewardToShow = {
                         name: `${currentChest.honey} Honey`,
                         quote: currentChest.quote || "",
                         effect: currentChest.effect || "",
-                        image: "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png"
+                        image: "/BeeMazing-T/mobile/4-Market/LuckyChest/default.png"
                     };
                 }
         
@@ -1453,7 +1453,7 @@
                     name: claimedChest.name,
                     quote: claimedChest.quote || "",
                     effect: claimedChest.effect || "",
-                    image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
+                    image: claimedChest.image || "/BeeMazing-T/mobile/4-Market/LuckyChest/default.png",
                     date: now.toLocaleDateString(),
                     claimedAt: now.toISOString(),
                     type: "normal"
@@ -1465,7 +1465,7 @@
                         quote: claimedChest.quote || "",
                         effect: claimedChest.effect || "",
                         honey: claimedChest.honey,
-                        image: claimedChest.image || "/BeeMazing-Y1/mobile/4-Market/LuckyChest/default.png",
+                        image: claimedChest.image || "/BeeMazing-T/mobile/4-Market/LuckyChest/default.png",
                         requiredPoints: claimedChest.requiredPoints,
                         progress: claimedChest.progress,
                         onlyHoney: true
@@ -1589,11 +1589,11 @@ style="
     background: #1a1a1a;
     display: block;
 ">
-<source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
+<source src="/BeeMazing-T/mobile/4-Market/LuckyChest/Chest_fixed.mp4" type="video/mp4" />
 Your browser does not support the video tag.
 </video>
 <audio id="chestUnlockSound" preload="auto">
-    <source src="/BeeMazing-Y1/mobile/4-Market/LuckyChest/ChestUnlock.mp3" type="audio/mp3" />
+    <source src="/BeeMazing-T/mobile/4-Market/LuckyChest/ChestUnlock.mp3" type="audio/mp3" />
     Your browser does not support the audio element.
 </audio>
 
